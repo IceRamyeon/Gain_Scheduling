@@ -10,6 +10,7 @@ Thumbs.db
 # Editor directories
 .vscode/
 .idea/
+*.asv
 
 # Environment & Secrets
 .env
