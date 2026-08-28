@@ -1,7 +1,6 @@
 close all;
 clc; clear;
 
-addpath('./lib');
 %% DEFINE
 R2D = 180/pi;
 D2R = pi/180;
@@ -80,7 +79,7 @@ drone1 = Drone(drone1_params, drone1_initStates, drone1_initInputs, ...
 
 
 %% Init. 3D Fig.
-fig1 = figure('pos',[0 100 800 700]);
+fig1 = figure('pos',[0 100 800 700], "Theme", "light");
 h = gca;
 view(3);
 fig1.CurrentAxes.ZDir = 'Reverse';
@@ -169,7 +168,7 @@ h_traj = animatedline('Color', 'r', 'LineStyle', ':', 'LineWidth', 1.5, 'Parent'
 hold(gca, 'off');
 
 %% Init. 3D Fig.
-fig2 = figure('pos',[800 250 800 550]);
+fig2 = figure('pos',[800 250 800 550], "Theme", "light");
 
 subplot(2,3,1); h_phi = animatedline('Color', 'b', 'LineWidth', 1.5); title('phi[deg]'); grid on;
 subplot(2,3,2); h_theta = animatedline('Color', 'r', 'LineWidth', 1.5); title('theta[deg]'); grid on;
