@@ -45,7 +45,7 @@ function finalize_and_save_results(log_data, cfg)
 
     subplot(3,1,3);
     % Yaw 목표값 (cfg.target_yaw 사용)
-    plot(t_hist, ones(size(t_hist))*cfg.target_yaw*R2D, 'r--', 'LineWidth', 1.5); hold on; 
+    plot(t_hist, att_des_hist(3,:)*R2D, 'r--', 'LineWidth', 1.5); hold on; 
     plot(t_hist, state_hist(9,:)*R2D, 'b', 'LineWidth', 1.2);
     xlabel('Time [s]'); ylabel('Yaw (\psi) [deg]'); title('Yaw: Desired vs Actual'); grid on;
 

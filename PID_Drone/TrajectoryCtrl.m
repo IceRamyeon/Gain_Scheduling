@@ -1,101 +1,110 @@
 classdef TrajectoryCtrl < handle
-%% MEMBERS
+    %% MEMBERS
     properties
         waypoints
-        num_segments
-        dt_segment
-
         tf
-
-        % 5차 다항식 경로 생성 계수
-        coeffs_x
-        coeffs_y
-        coeffs_z
-
+        total_length
+        speed
+        
+        % 스플라인 구조체 (x, y, z 각각)
+        sp_x
+        sp_y
+        sp_z
+        
+        arc_lengths % 누적 곡선 길이
+        u_samples   % 샘플링된 파라미터 u
     end
-%% METHODS
+    
+    %% METHODS
     methods
         %% Constructor
         function obj = TrajectoryCtrl(init_pos, waypoints_in, duration)
-
-            obj.waypoints = [init_pos(:), waypoints_in];
-
-            obj.num_segments = size(obj.waypoints, 2) - 1; % 점이 3개면 구간은 2개
+            % 시작점과 웨이포인트 합치기 (총 5개 점)
+            pts = [init_pos(:), waypoints_in];
             obj.tf = duration;
-            obj.dt_segment = obj.tf / obj.num_segments;
-
-            % precalculation of Coefficients
-            obj.coeffs_x = zeros(6, obj.num_segments);
-            obj.coeffs_y = zeros(6, obj.num_segments);
-            obj.coeffs_z = zeros(6, obj.num_segments);
-
-            for i = 1:obj.num_segments
-                % i번째 구간의 시작점(p_start)과 끝점(p_end)
-                p_start = obj.waypoints(:, i);
-                p_end   = obj.waypoints(:, i+1);
-
-                obj.coeffs_x(:, i) = obj.calc_coeff(p_start(1), p_end(1), obj.dt_segment);
-                obj.coeffs_y(:, i) = obj.calc_coeff(p_start(2), p_end(2), obj.dt_segment);
-                obj.coeffs_z(:, i) = obj.calc_coeff(p_start(3), p_end(3), obj.dt_segment);
+            
+            % 1. 점들 사이의 직선 거리(현의 길이)를 기준으로 파라미터 u 생성
+            num_pts = size(pts, 2);
+            u = zeros(1, num_pts);
+            for i = 2:num_pts
+                u(i) = u(i-1) + norm(pts(:,i) - pts(:,i-1));
             end
-
+            u = u / u(end); % 0 ~ 1 사이로 정규화
+            
+            % 2. 3차 스플라인 곡선 생성
+            obj.sp_x = spline(u, pts(1,:));
+            obj.sp_y = spline(u, pts(2,:));
+            obj.sp_z = spline(u, pts(3,:));
+            
+            % 3. 곡선의 실제 '호의 길이(Arc length)' 계산 (잘게 쪼개서 더하기)
+            N_sample = 1000;
+            obj.u_samples = linspace(0, 1, N_sample);
+            
+            px = ppval(obj.sp_x, obj.u_samples);
+            py = ppval(obj.sp_y, obj.u_samples);
+            pz = ppval(obj.sp_z, obj.u_samples);
+            
+            % 점과 점 사이 거리 계산
+            dx = diff(px); dy = diff(py); dz = diff(pz);
+            segment_lengths = sqrt(dx.^2 + dy.^2 + dz.^2);
+            
+            % 누적 거리 저장 및 총 길이 계산
+            obj.arc_lengths = [0, cumsum(segment_lengths)];
+            obj.total_length = obj.arc_lengths(end);
+            
+            % 4. 등속 비행을 위한 속력 계산 (전체 거리 / 비행 시간)
+            obj.speed = obj.total_length / obj.tf;
+            
+            disp(['으헤~ 스플라인 궤적 총 길이: ', num2str(obj.total_length), 'm, 비행 속력: ', num2str(obj.speed), 'm/s']);
         end
 
-        function a = calc_coeff(~, start_val, end_val, tf)
-            del_p = end_val - start_val;
-        
-            a = zeros(6, 1);
-            a(1) = start_val;
-            a(2) = 0;
-            a(3) = 0;
-            a(4) = 10 * del_p / (tf^3);
-            a(5) = -15 * del_p / (tf^4);
-            a(6) = 6 * del_p / (tf^5);
-        end
-
-        function pos_des = get_position(obj, t)
-            % 시간이 끝나면 최종 위치 반환
-            if t >= obj.tf
-                pos_des = obj.waypoints(:, end);
-                return;
-            end
+        %% Get Position & Velocity
+        function [pos_des, vel_des] = get_position(obj, t)
+            % 시간 제한 (0 ~ tf)
+            t = max(0, min(t, obj.tf));
             
-            % 1. 현재 몇 번째 구간인지 찾기 (Segment Index)
-            % 예: 5초 비행, 구간 2개 -> 구간당 2.5초
-            % t=1.0 -> 1구간, t=3.0 -> 2구간
-            seg_idx = floor(t / obj.dt_segment) + 1;
+            % 1. 현재 시간에 가야 할 목표 이동 거리 (d = v * t)
+            d_target = obj.speed * t;
             
-            % (혹시 모를 인덱스 초과 방지)
-            if seg_idx > obj.num_segments
-                seg_idx = obj.num_segments;
-            end
+            % 2. 목표 거리에 해당하는 파라미터 u 찾기 (보간법)
+            u_target = interp1(obj.arc_lengths, obj.u_samples, d_target, 'linear', 'extrap');
+            u_target = max(0, min(u_target, 1));
             
-            % 2. 해당 구간 내에서의 '로컬 시간' 계산
-            % 2구간(2.5초~5.0초)에 있다면, t=3.0일 때 로컬시간은 0.5초
-            t_local = t - (seg_idx - 1) * obj.dt_segment;
-            
-            % 3. 해당 구간의 계수 꺼내기
-            cx = obj.coeffs_x(:, seg_idx);
-            cy = obj.coeffs_y(:, seg_idx);
-            cz = obj.coeffs_z(:, seg_idx);
-            
-            % 4. 5차 다항식 계산
-            time_vec = [1; t_local; t_local^2; t_local^3; t_local^4; t_local^5];
-            
-            x_d = cx' * time_vec;
-            y_d = cy' * time_vec;
-            z_d = cz' * time_vec;
-            
+            % 3. 목표 위치 계산
+            x_d = ppval(obj.sp_x, u_target);
+            y_d = ppval(obj.sp_y, u_target);
+            z_d = ppval(obj.sp_z, u_target);
             pos_des = [x_d; y_d; z_d];
+            
+            % 4. 목표 속도 벡터(접선 방향) 계산 (수치 미분 활용)
+            du = 1e-5;
+            u_eval = min(u_target + du, 1);
+            u_prev = max(u_target - du, 0);
+            
+            dp_x = ppval(obj.sp_x, u_eval) - ppval(obj.sp_x, u_prev);
+            dp_y = ppval(obj.sp_y, u_eval) - ppval(obj.sp_y, u_prev);
+            dp_z = ppval(obj.sp_z, u_eval) - ppval(obj.sp_z, u_prev);
+            
+            tangent = [dp_x; dp_y; dp_z];
+            tangent_norm = norm(tangent);
+            
+            if tangent_norm > 1e-6
+                tangent = tangent / tangent_norm;
+            else
+                tangent = [1; 0; 0]; % 혹시 정지해 있을 경우 대비
+            end
+            
+            % 최종 목표 속도 = 방향 벡터 * 지정된 속력
+            vel_des = obj.speed * tangent;
         end
-        % TrajectoryCtrl.m 안의 methods 부분 끝에 추가
+        
+        %% Get Full Path (애니메이션에서 점선 그리기용)
         function [X, Y, Z] = get_full_path(obj, dt_sample)
-            % 0초부터 tf까지 dt_sample 간격으로 시간 벡터 생성
             time_vec = 0:dt_sample:obj.tf;
             pts = zeros(3, length(time_vec));
             
             for i = 1:length(time_vec)
-                pts(:, i) = obj.get_position(time_vec(i));
+                [pts(:, i), ~] = obj.get_position(time_vec(i));
             end
             
             X = pts(1, :);

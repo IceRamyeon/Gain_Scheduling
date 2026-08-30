@@ -3,14 +3,21 @@ close all; clc; clear;
 %% 0. Simulation Configuration (CFG)
 cfg = struct();
 
+% drone initial position
+% 초기 상태: [x, y, z, dx, dy, dz, phi, theta, psi, p, q, r]'
+cfg.drone1_init_states = [ 0.0, 0.0, -6.0, ...                                      
+                          0, 0, 0, ...                                                                
+                          0, 0, 0, ...                                                                
+                          0, 0, 0]';
+
 % 기본 설정
-cfg.simTime = 30;           % [sec]
+cfg.simTime = 10;           % [sec]
 cfg.dt = 0.01;              % Time step
-cfg.target_yaw = 0.0;
+cfg.target_yaw = [];
 
 % 저장 설정 추가
-cfg.auto_save = true;               % 자동 저장 여부 (true / false)
-cfg.save_dir  = './sim_results';    % 저장할 디렉토리 경로 지정
+cfg.auto_save = 1;               % 자동 저장 여부 (true / false)
+cfg.save_dir  = './sim_results/260831/4';    % 저장할 디렉토리 경로 지정
 
 % Position Control Gains
 cfg.posGain = containers.Map(...

@@ -102,6 +102,5 @@
                 obj.euler = obj.x(7:9);
                 obj.w = obj.x(10:12);
             end
-
     end
     end
