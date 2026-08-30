@@ -17,7 +17,7 @@ cfg.target_yaw = [];
 
 % 저장 설정 추가
 cfg.auto_save = 1;               % 자동 저장 여부 (true / false)
-cfg.save_dir  = './sim_results/260831/4';    % 저장할 디렉토리 경로 지정
+cfg.save_dir  = './sim_results/260831/1';    % 저장할 디렉토리 경로 지정
 
 % Position Control Gains
 cfg.posGain = containers.Map(...
