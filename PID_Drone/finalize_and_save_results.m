@@ -68,25 +68,26 @@ function finalize_and_save_results(log_data, cfg)
     plot(t_hist, u_hist(4,:), 'b', 'LineWidth', 1.2);
     xlabel('Time [s]'); ylabel('Mz [N\cdotm]'); title('Yawing Moment (U4)'); grid on;
 
-    %% 4. 자동 저장 로직 (Auto Save)
+    %% 4. 자동 저장 로직 (데이터 + 이미지)
     if isfield(cfg, 'auto_save') && cfg.auto_save
-        % 디렉토리가 없으면 폴더를 새로 만들기
         if ~exist(cfg.save_dir, 'dir')
             mkdir(cfg.save_dir);
         end
         
-        % 파일명 생성 (예: DroneSimResult_20260829_214718.mat)
         currentTimeString = datestr(now, 'yyyymmdd_HHMMSS');
-        fileName = fullfile(cfg.save_dir, sprintf('DroneSimResult_%s.mat', currentTimeString));
+        baseFileName = fullfile(cfg.save_dir, sprintf('DroneSimResult_%s', currentTimeString));
         
-        % log_data 구조체랑 cfg 통째로 저장해버리기
-        save(fileName, 'log_data', 'cfg');
+        % 1) 데이터 저장 (.mat)
+        matFileName = [baseFileName, '.mat'];
+        save(matFileName, 'log_data', 'cfg');
         
-        disp(['으헤~ 결과 데이터가 여기 저장됐어: ', fileName]);
+        % 2) 이미지 저장 (.png) - Resolution 300으로 선명하게
+        exportgraphics(h_fig_pos, [baseFileName, '_Position.png'], 'Resolution', 300);
+        exportgraphics(h_fig_att, [baseFileName, '_Attitude.png'], 'Resolution', 300);
+        exportgraphics(h_fig_in, [baseFileName, '_ControlInput.png'], 'Resolution', 300);
+        
+        disp(['으헤~ 데이터랑 그래프 이미지들 전부 저장했어: ', cfg.save_dir]);
     else
-        disp('자동 저장은 꺼져 있어서 파일로 남기지는 않았어.');
+        disp('자동 저장은 꺼져 있어서 아무것도 안 남겼어.');
     end
-    
-    % 완료 메시지 창 띄우기
-    msgbox('Simulation, Plotting & Auto-Saving Complete!', 'Success');
 end

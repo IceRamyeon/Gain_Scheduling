@@ -1,4 +1,4 @@
-function play_simulation_graphics(log_data, obstacles, cfg)
+function play_simulation_graphics(log_data, cfg)
     % PLAY_SIMULATION_GRAPHICS 계산된 데이터를 바탕으로 애니메이션 재생
     
     %% 드론 형상 정의
@@ -16,26 +16,6 @@ function play_simulation_graphics(log_data, obstacles, cfg)
     fig1.CurrentAxes.YDir = 'Reverse';
     xlim([-6 6]); ylim([-6 6]); zlim([-8 0]);
     xlabel('X[m]'); ylabel('Y[m]'); zlabel('Height[m]');
-
-    % 장애물 그리기
-    for k = 1:length(obstacles)
-        curr_obs = obstacles{k};
-        if isempty(curr_obs), continue; end
-
-        obs_x_min = curr_obs(1, 1); obs_x_max = curr_obs(1, 2);
-        obs_y_min = curr_obs(2, 1); obs_y_max = curr_obs(2, 2);
-        obs_z_min = curr_obs(3, 1); obs_z_max = curr_obs(3, 2);
-
-        obs_verts = [
-            obs_x_min obs_y_min obs_z_min; obs_x_max obs_y_min obs_z_min;
-            obs_x_max obs_y_max obs_z_min; obs_x_min obs_y_max obs_z_min;
-            obs_x_min obs_y_min obs_z_max; obs_x_max obs_y_min obs_z_max;
-            obs_x_max obs_y_max obs_z_max; obs_x_min obs_y_max obs_z_max];
-        obs_faces = [1 2 6 5; 2 3 7 6; 3 4 8 7; 4 1 5 8; 1 2 3 4; 5 6 7 8];
-
-        patch('Vertices', obs_verts, 'Faces', obs_faces, ...
-            'FaceColor', [0.8 0.2 0.2], 'FaceAlpha', 0.5, 'EdgeColor', 'g');
-    end
 
     % 드론 핸들 초기화
     fig1_ARM13 = plot3(gca, 0,0,0, '-ro', 'MarkerSize', 5);
@@ -59,6 +39,19 @@ function play_simulation_graphics(log_data, obstacles, cfg)
     
     R2D = 180/pi;
     valid_len = length(log_data.t_hist);
+
+    % 동영상 저장 설정
+    if isfield(cfg, 'auto_save') && cfg.auto_save
+        if ~exist(cfg.save_dir, 'dir')
+            mkdir(cfg.save_dir);
+        end
+        currentTimeString = datestr(now, 'yyyymmdd_HHMMSS');
+        videoFileName = fullfile(cfg.save_dir, sprintf('DroneSim_Video_%s.mp4', currentTimeString));
+        
+        v = VideoWriter(videoFileName, 'MPEG-4');
+        v.FrameRate = 30; % 재생 속도에 맞춰서 조절해
+        open(v);
+    end
 
     for i = 1:2:valid_len % 렌더링 속도 조절을 위해 2스텝씩 건너뛰어도 돼 (필요시 1로 변경)
         t_curr = log_data.t_hist(i);
@@ -88,5 +81,12 @@ function play_simulation_graphics(log_data, obstacles, cfg)
         addpoints(h_z, t_curr, z_curr);
 
         drawnow limitrate;
+
+        if isfield(cfg, 'auto_save') && cfg.auto_save
+            % fig1(3D 화면)만 녹화하고 싶으면 getframe(fig1)
+            % 전체 화면을 다 하려면 그냥 getframe(gcf)
+            frame = getframe(fig1); 
+            writeVideo(v, frame);
+        end
     end
 end

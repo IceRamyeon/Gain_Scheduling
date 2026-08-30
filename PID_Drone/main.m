@@ -33,15 +33,15 @@ cfg.attGain = containers.Map(...
      8.0, 0.01, 1.0});
 
 %% 1. Initialization
-[drone1, obstacles] = init_drone_and_env(cfg);
+[drone1] = init_drone_and_env(cfg);
 
 %% 2. Run Simulation
 disp('Running Simulation Loop.');
-[log_data, valid_len] = run_simulation_loop(drone1, obstacles, cfg);
+[log_data, valid_len] = run_simulation_loop(drone1, cfg);
 disp('Running Simulation Loop Finished.');
 
 %% 3. Play Animation
-play_simulation_graphics(log_data, obstacles, cfg);
+play_simulation_graphics(log_data, cfg);
 
 %% 4. Final Plot & Auto Save
 finalize_and_save_results(log_data, cfg);

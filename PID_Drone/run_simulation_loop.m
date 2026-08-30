@@ -1,4 +1,4 @@
-function [log_data, valid_len] = run_simulation_loop(drone1, obstacles, cfg)
+function [log_data, valid_len] = run_simulation_loop(drone1, cfg)
     % RUN_SIMULATION_LOOP 그래픽 없이 시뮬레이션 연산만 수행
     
     num_steps = round(cfg.simTime / cfg.dt);
@@ -46,28 +46,6 @@ function [log_data, valid_len] = run_simulation_loop(drone1, obstacles, cfg)
         if z_curr > 0
             is_hit = true;
             disp(['Ground Crash at t = ', num2str(current_time)]);
-        end
-
-        % 장애물 충돌 체크
-        if ~is_hit
-            for k = 1:length(obstacles)
-                obs = obstacles{k};
-                if isempty(obs), continue; end
-                
-                if (x_curr >= obs(1,1) && x_curr <= obs(1,2)) && ...
-                   (y_curr >= obs(2,1) && y_curr <= obs(2,2)) && ...
-                   (z_curr >= obs(3,1) && z_curr <= obs(3,2))
-                    is_hit = true;
-                    disp(['Wall Crash at t = ', num2str(current_time)]);
-                    break;
-                end
-            end
-        end
-
-        % 충돌 시 루프 종료
-        if is_hit
-            valid_len = i;
-            break;
         end
     end
 
