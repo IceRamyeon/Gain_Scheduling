@@ -1,4 +1,4 @@
-function play_simulation_graphics(log_data, cfg)
+function play_simulation_graphics(drone1, log_data, cfg)
     % PLAY_SIMULATION_GRAPHICS 계산된 데이터를 바탕으로 애니메이션 재생
     
     %% 드론 형상 정의
@@ -24,8 +24,12 @@ function play_simulation_graphics(log_data, cfg)
     fig1_shadow = plot3(gca, 0,0,0, 'xk', 'Linewidth', 3);
     h_traj = animatedline('Color', 'r', 'LineStyle', ':', 'LineWidth', 1.5);
 
+    % Plot the desired trajectory
+    [traj_X, traj_Y, traj_Z] = drone1.trajCtrl.get_full_path(0.1);
+    plot3(gca, traj_X, traj_Y, traj_Z, 'k--', 'LineWidth', 1.5);
+
     %% Figure 2 (실시간 그래프) 초기화
-    fig2 = figure('Name','State Tracking','pos',[800 250 800 550], "Theme", "light");
+    figure('Name','State Tracking','pos',[800 250 800 550], "Theme", "light");
     subplot(2,3,1); h_phi = animatedline('Color', 'b', 'LineWidth', 1.5); title('phi[deg]'); grid on;
     subplot(2,3,2); h_theta = animatedline('Color', 'r', 'LineWidth', 1.5); title('theta[deg]'); grid on;
     subplot(2,3,3); h_psi = animatedline('Color', 'g', 'LineWidth', 1.5); title('psi[deg]'); grid on;

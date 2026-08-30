@@ -41,7 +41,7 @@ disp('Running Simulation Loop.');
 disp('Running Simulation Loop Finished.');
 
 %% 3. Play Animation
-play_simulation_graphics(log_data, cfg);
+play_simulation_graphics(drone1, log_data, cfg);
 
 %% 4. Final Plot & Auto Save
 finalize_and_save_results(log_data, cfg);

@@ -88,5 +88,19 @@ classdef TrajectoryCtrl < handle
             
             pos_des = [x_d; y_d; z_d];
         end
+        % TrajectoryCtrl.m 안의 methods 부분 끝에 추가
+        function [X, Y, Z] = get_full_path(obj, dt_sample)
+            % 0초부터 tf까지 dt_sample 간격으로 시간 벡터 생성
+            time_vec = 0:dt_sample:obj.tf;
+            pts = zeros(3, length(time_vec));
+            
+            for i = 1:length(time_vec)
+                pts(:, i) = obj.get_position(time_vec(i));
+            end
+            
+            X = pts(1, :);
+            Y = pts(2, :);
+            Z = pts(3, :);
+        end
     end
 end
