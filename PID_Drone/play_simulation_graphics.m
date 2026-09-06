@@ -38,8 +38,8 @@ function play_simulation_graphics(drone1, log_data, cfg)
     subplot(2,3,6); h_z = animatedline('Color', 'g', 'LineWidth', 1.5); title('z[m]'); grid on;
 
     %% 애니메이션 루프 (Playback)
-    disp('0.1 Animation Delay 0.1 sec');
-    pause(0.1);
+    disp('Animation Delay 1 sec');
+    pause(1);
     
     R2D = 180/pi;
     valid_len = length(log_data.t_hist);

@@ -11,12 +11,12 @@ cfg.drone1_init_states = [ 0.0, 0.0, -6.0, ...
                           0, 0, 0]';
 
 % 기본 설정
-cfg.simTime = 10;           % [sec]
+cfg.simTime = 100;           % [sec]
 cfg.dt = 0.01;              % Time step
 cfg.target_yaw = [];
 
 % 저장 설정 추가
-cfg.auto_save = 1;               % 자동 저장 여부 (true / false)
+cfg.auto_save = 0;               % 자동 저장 여부 (true / false)
 cfg.save_dir  = './sim_results/260831/1';    % 저장할 디렉토리 경로 지정
 
 % Position Control Gains
