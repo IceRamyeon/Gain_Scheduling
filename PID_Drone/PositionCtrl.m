@@ -31,7 +31,7 @@ classdef PositionCtrl < handle
             obj.kP_y = gains('P_y'); obj.kI_y = gains('I_y'); obj.kD_y = gains('D_y');
             obj.kP_z = gains('P_z'); obj.kI_z = gains('I_z'); obj.kD_z = gains('D_z');
             
-            obj.max_angle = 20 * (pi/180); 
+            obj.max_angle = 180 * (pi/180); 
             
             obj.Reset();
         end
