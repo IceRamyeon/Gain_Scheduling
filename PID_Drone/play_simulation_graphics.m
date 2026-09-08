@@ -39,6 +39,7 @@ function play_simulation_graphics(drone1, log_data, cfg)
 
     %% 애니메이션 루프 (Playback)
     disp('Animation Delay 1 sec');
+    drawnow;
     pause(1);
     
     R2D = 180/pi;
