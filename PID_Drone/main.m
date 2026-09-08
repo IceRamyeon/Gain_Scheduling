@@ -10,8 +10,10 @@ cfg.drone1_init_states = [ 0.0, 0.0, -6.0, ...
                           0, 0, 0, ...                                                                
                           0, 0, 0]';
 
+cfg.start_with_yaw = true;
+
 % 기본 설정
-cfg.simTime = 100;           % [sec]
+cfg.simTime = 20;           % [sec]
 cfg.dt = 0.01;              % Time step
 cfg.target_yaw = [];
 

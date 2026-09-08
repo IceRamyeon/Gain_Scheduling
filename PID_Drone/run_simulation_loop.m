@@ -11,18 +11,20 @@ function [log_data, valid_len] = run_simulation_loop(drone1, cfg)
     
     valid_len = num_steps;
 
-    %% 0. 초기 Yaw 설정
-    % cfg.target_yaw가 비어있으면 출발 시점의 궤적 방향을 바라보게 설정
+%% 0. 초기 Yaw 설정
+if cfg.start_with_yaw
     if isempty(cfg.target_yaw)
-        init_vel = drone1.trajCtrl.get_position(0);
+        init_vel = drone1.trajCtrl.get_velocity(0); 
+        
         if norm(init_vel(1:2)) > 1e-3
-            prev_yaw = atan2(init_vel(2), init_vel(1));
+            cfg.drone1_init_states(9) = atan2(init_vel(2), init_vel(1));
         else
-            prev_yaw = 0.0; 
+            cfg.drone1_init_states(9) = 0.0; 
         end
     else
-        prev_yaw = cfg.target_yaw;
+        cfg.drone1_init_states(9) = cfg.target_yaw;
     end
+end
 
     %% Simulation Loop
     for i = 1:num_steps
