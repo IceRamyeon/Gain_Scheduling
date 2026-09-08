@@ -1,7 +1,7 @@
 function finalize_and_save_results(log_data, cfg)
     % FINALIZE_AND_SAVE_RESULTS 최종 결과 그래프 출력 및 자동 저장 함수
     
-    disp('으헤~ 이제 최종 결과를 정리해서 보여줄게.');
+    disp('[최종 결과].');
     
     R2D = 180/pi;
     
@@ -11,6 +11,21 @@ function finalize_and_save_results(log_data, cfg)
     pos_des_hist = log_data.pos_des_hist;
     att_des_hist = log_data.att_des_hist;
     u_hist       = log_data.u_hist;
+
+    %% 0. 평가 지표 계산
+    % 3차원 유클리디안 거리 오차 계산 블록
+    dist_error = sqrt(sum((state_hist(1:3, :) - pos_des_hist(1:3, :)).^2, 1));
+    
+    % 평가 지표 계산
+    val_rmse = sqrt(mean(dist_error.^2));
+    val_mae  = mean(dist_error);
+    val_max  = max(dist_error);
+    
+    disp('----------------------------------');
+    fprintf('RMSE: %.4f m\n', val_rmse);
+    fprintf('MAE:  %.4f m\n', val_mae);
+    fprintf('Max:  %.4f m\n', val_max);
+    disp('----------------------------------');
     
     %% 1. [그래프 1] 위치 추종 (Position Tracking)
     h_fig_pos = figure('Name', 'Position Tracking', 'Theme', 'light', 'Position', [10 100 600 600]);
