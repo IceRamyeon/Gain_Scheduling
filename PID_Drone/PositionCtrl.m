@@ -27,16 +27,18 @@ classdef PositionCtrl < handle
             obj.g = 9.81;
             obj.dt = dt;
             
+            % x, y, z PID gains
             obj.kP_x = gains('P_x'); obj.kI_x = gains('I_x'); obj.kD_x = gains('D_x');
             obj.kP_y = gains('P_y'); obj.kI_y = gains('I_y'); obj.kD_y = gains('D_y');
             obj.kP_z = gains('P_z'); obj.kI_z = gains('I_z'); obj.kD_z = gains('D_z');
             
+            % Angle Saturation Limit (rad)
             obj.max_angle = 180 * (pi/180); 
             
             obj.Reset();
         end
         
-        %% Reset, GetState, commandSig (이전과 동일하므로 생략 가능)
+        %% Reset, GetState, commandSig
         function Reset(obj)
             obj.x_err = 0; obj.x_err_prev = 0; obj.x_err_sum = 0;
             obj.y_err = 0; obj.y_err_prev = 0; obj.y_err_sum = 0;

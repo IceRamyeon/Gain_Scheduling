@@ -18,9 +18,9 @@ function [drone1] = init_drone_and_env(cfg)
     waypoints = [wp_x; wp_y; wp_z];
 
     %% 4. 드론 객체 생성 (BIRTH OF A DRONE)
-    % main에서 넘어온 cfg를 사용해서 게인 값과 simTime을 전달
+    % main에서 넘어온 cfg를 사용해서 게인 값과 target_speed을 전달
     drone1 = Drone(drone1_params, drone1_initStates, drone1_initInputs, ...
-        cfg.posGain, cfg.attGain, cfg.simTime, ...
+        cfg.posGain, cfg.attGain, cfg.target_speed, ...
         waypoints); %[cite: 1]
         
 end

@@ -59,7 +59,7 @@ function finalize_and_save_results(log_data, cfg)
     ylabel('Pitch (\theta) [deg]'); title('Pitch: Desired vs Actual'); grid on;
 
     subplot(3,1,3);
-    % Yaw 목표값 (cfg.target_yaw 사용)
+    % Yaw 목표값
     plot(t_hist, att_des_hist(3,:)*R2D, 'r--', 'LineWidth', 1.5); hold on; 
     plot(t_hist, state_hist(9,:)*R2D, 'b', 'LineWidth', 1.2);
     xlabel('Time [s]'); ylabel('Yaw (\psi) [deg]'); title('Yaw: Desired vs Actual'); grid on;
@@ -83,7 +83,24 @@ function finalize_and_save_results(log_data, cfg)
     plot(t_hist, u_hist(4,:), 'b', 'LineWidth', 1.2);
     xlabel('Time [s]'); ylabel('Mz [N\cdotm]'); title('Yawing Moment (U4)'); grid on;
 
-    %% 4. 자동 저장 로직 (데이터 + 이미지)
+    %% 4. [그래프 4] 총 속력 추종 (Total Speed Tracking)
+    % 목표 속력은 cfg.speed 사용
+    if isfield(cfg, 'speed')
+        des_speed = cfg.speed * ones(1, length(t_hist));
+    else
+        des_speed = zeros(1, length(t_hist)); 
+    end
+    
+    % 실제 속력은 상태 변수 4~6번째 행(Vx, Vy, Vz)의 유클리디안 노름
+    act_speed = sqrt(sum(state_hist(4:6, :).^2, 1));
+
+    h_fig_spd = figure('Name', 'Total Speed Tracking', 'Theme', 'light', 'Position', [1410 100 600 300]);
+    plot(t_hist, des_speed, 'r--', 'LineWidth', 1.5); hold on;
+    plot(t_hist, act_speed, 'b', 'LineWidth', 1.2);
+    xlabel('Time [s]'); ylabel('Speed [m/s]'); 
+    title('Total Speed: Desired vs Actual'); grid on; legend('Desired', 'Actual');
+
+    %% 5. 자동 저장 로직 (데이터 + 이미지)
     if isfield(cfg, 'auto_save') && cfg.auto_save
         if ~exist(cfg.save_dir, 'dir')
             mkdir(cfg.save_dir);
@@ -100,6 +117,7 @@ function finalize_and_save_results(log_data, cfg)
         exportgraphics(h_fig_pos, [baseFileName, '_Position.png'], 'Resolution', 300);
         exportgraphics(h_fig_att, [baseFileName, '_Attitude.png'], 'Resolution', 300);
         exportgraphics(h_fig_in, [baseFileName, '_ControlInput.png'], 'Resolution', 300);
+        exportgraphics(h_fig_spd, [baseFileName, '_Speed.png'], 'Resolution', 300); % 속력 그래프 저장
         
         disp(['으헤~ 데이터랑 그래프 이미지들 전부 저장했어: ', cfg.save_dir]);
     else

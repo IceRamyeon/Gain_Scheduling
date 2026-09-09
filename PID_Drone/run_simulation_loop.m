@@ -1,6 +1,7 @@
 function [log_data, valid_len] = run_simulation_loop(drone1, cfg)
+    sim_tf = drone1.tf;
     % 시뮬레이션 스텝 수 계산
-    num_steps = ceil(cfg.simTime / cfg.dt);
+    num_steps = ceil(sim_tf / cfg.dt);
     
     % 로그 데이터 메모리 사전 할당
     log_data.t_hist       = zeros(1, num_steps);

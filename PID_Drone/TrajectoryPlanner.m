@@ -18,10 +18,10 @@ classdef TrajectoryPlanner < handle
     %% METHODS
     methods
         %% Constructor
-        function obj = TrajectoryPlanner(init_pos, waypoints_in, duration)
+        function obj = TrajectoryPlanner(init_pos, waypoints_in, target_speed)
             % 시작점과 웨이포인트 합치기 (총 5개 점)
             pts = [init_pos(:), waypoints_in];
-            obj.tf = duration;
+            obj.speed = target_speed;
             
             % 1. 점들 사이의 직선 거리(현의 길이)를 기준으로 파라미터 u 생성
             num_pts = size(pts, 2);
@@ -52,12 +52,12 @@ classdef TrajectoryPlanner < handle
             obj.arc_lengths = [0, cumsum(segment_lengths)];
             obj.total_length = obj.arc_lengths(end);
             
-            % 4. 등속 비행을 위한 속력 계산 (전체 거리 / 비행 시간)
-            obj.speed = obj.total_length / obj.tf;
+            % 4. [수정됨] 총 거리를 지정된 속력으로 나누어 필요 비행 시간(tf) 계산
+            obj.tf = obj.total_length / obj.speed;
             
-            disp(['으헤~ 스플라인 궤적 총 길이: ', num2str(obj.total_length), 'm, 비행 속력: ', num2str(obj.speed), 'm/s']);
+            disp(['으헤~ 스플라인 궤적 총 길이: ', num2str(obj.total_length), 'm']);
+            disp(['비행 속력: ', num2str(obj.speed), 'm/s, 필요 비행 시간(tf): ', num2str(obj.tf), '초']);
         end
-
         %% Get Position & Velocity
         function [pos_des, vel_des] = get_position(obj, t)
             % 시간 제한 (0 ~ tf)
