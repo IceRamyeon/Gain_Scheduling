@@ -84,9 +84,9 @@ function finalize_and_save_results(log_data, cfg)
     xlabel('Time [s]'); ylabel('Mz [N\cdotm]'); title('Yawing Moment (U4)'); grid on;
 
     %% 4. [그래프 4] 총 속력 추종 (Total Speed Tracking)
-    % 목표 속력은 cfg.speed 사용
-    if isfield(cfg, 'speed')
-        des_speed = cfg.speed * ones(1, length(t_hist));
+    % 목표 속력은 cfg.target_speed 사용
+    if isfield(cfg, 'target_speed')
+        des_speed = cfg.target_speed * ones(1, length(t_hist));
     else
         des_speed = zeros(1, length(t_hist)); 
     end
