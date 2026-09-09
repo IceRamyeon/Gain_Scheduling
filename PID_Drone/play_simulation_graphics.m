@@ -14,7 +14,7 @@ function play_simulation_graphics(drone1, log_data, cfg)
     view(3); axis equal; grid on; hold on;
     fig1.CurrentAxes.ZDir = 'Reverse';
     fig1.CurrentAxes.YDir = 'Reverse';
-    xlim([-6 6]); ylim([-6 6]); zlim([-8 0]);
+    xlim([-5 35]); ylim([-20 20]); zlim([-8 0]);
     xlabel('X[m]'); ylabel('Y[m]'); zlabel('Height[m]');
 
     % 드론 핸들 초기화

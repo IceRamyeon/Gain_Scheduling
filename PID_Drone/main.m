@@ -15,7 +15,7 @@ cfg.start_with_yaw = true;
 % 기본 설정
 cfg.dt = 0.01;                % Time step
 cfg.target_yaw = [];
-cfg.target_speed = 0.5;              % Target speed (m/s)            
+cfg.target_speed = 1;              % Target speed (m/s)            
 
 % 저장 설정 추가
 cfg.auto_save = 0;               % 자동 저장 여부 (true / false)
