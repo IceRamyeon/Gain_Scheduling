@@ -1,4 +1,4 @@
-classdef TrajectoryCtrl < handle
+classdef TrajectoryPlanner < handle
     %% MEMBERS
     properties
         waypoints
@@ -18,7 +18,7 @@ classdef TrajectoryCtrl < handle
     %% METHODS
     methods
         %% Constructor
-        function obj = TrajectoryCtrl(init_pos, waypoints_in, duration)
+        function obj = TrajectoryPlanner(init_pos, waypoints_in, duration)
             % 시작점과 웨이포인트 합치기 (총 5개 점)
             pts = [init_pos(:), waypoints_in];
             obj.tf = duration;
