@@ -158,7 +158,7 @@ end
 
 %% Step 5: 결과 시각화
 fprintf('4. 결과 플롯 생성 중...\n');
-figure('Color', [1 1 1], 'Position', [150 150 900 650]);
+figure('Color', [1 1 1], 'Position', [150 150 900 650], 'theme', 'light');
 
 % 1) 트래킹 성능 비교
 subplot(3, 1, 1);
