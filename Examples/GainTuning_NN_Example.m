@@ -25,10 +25,10 @@ for i = 1:num_samples
     
     % dot_x = sin(x) + u 에서 x0 주위 섭동 해석:
     % \Delta\dot{x} = a * \Delta x + b * \Delta u
-    % a = d(sin(x))/dx |_{x0} = cos(x0), b = 1
-    a = cos(x0);
+    % a = d(tanh(x))/dx |_{x0} = 1-tanh(x0)^2, b = 1
+    a = 1-tanh(x0)^2;
     b = 1;
-    sys_linear = tf(b, [1, -a]); % P(s) = 1 / (s - cos(x0))
+    sys_linear = tf(b, [1, -a]); % P(s) = 1 / (s - tanh(x0))
     
     % PID 튜닝 (원하는 닫힌루프 대역폭 지정: 3 rad/s)
     target_bw = 3.0;
