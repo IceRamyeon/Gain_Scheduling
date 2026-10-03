@@ -52,6 +52,15 @@ classdef PositionCtrl < handle
             cmd = obj.cmd;
         end
         
+        %% Update Gains Online (RL Agent)
+        function setGains(obj, px, dx, py, dy)
+            obj.kP_x = px;
+            obj.kD_x = dx;
+            obj.kP_y = py;
+            obj.kD_y = dy;
+        end
+
+        
         %% Update
         function att_cmd = Update(obj, cmd, state)
             % 1. 목표 및 현재 상태 해석
