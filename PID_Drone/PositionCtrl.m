@@ -76,9 +76,18 @@ classdef PositionCtrl < handle
             accel_fwd =  cos(psi) * accel_x + sin(psi) * accel_y;
             accel_rgt = -sin(psi) * accel_x + cos(psi) * accel_y;
             
-            % 5. 가속도를 목표 각도(Angle)로 변환            
-            theta_des = -accel_fwd / obj.g;  
-            phi_des   =  accel_rgt / obj.g;  
+            % 5. 가속도를 목표 각도(Angle)로 변환 
+            accel_up = obj.g;
+            
+            % Specific Thrust Calculation
+            thrust_sp = sqrt(accel_fwd^2 + accel_rgt^2 + accel_up^2);
+
+            % Pitch and Roll Desired Angles Calculation
+            theta_des = -atan2(accel_fwd, accel_up); 
+
+            % (수치 오차로 1을 넘지 않도록 clamping)
+            sin_phi = max(min(accel_rgt / thrust_sp, 1.0), -1.0);
+            phi_des = asin(sin_phi);
             
             % 6. 각도 제한 (Safety)
             theta_des = max(min(theta_des, obj.max_angle), -obj.max_angle);
