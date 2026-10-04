@@ -14,12 +14,13 @@ cfg.start_with_yaw = true;
 
 % 기본 설정
 cfg.dt = 0.01;                % Time step
-cfg.target_yaw = [];
-cfg.target_speed = 1;              % Target speed (m/s)            
+cfg.target_yaw = 0;
+cfg.target_speed = 4;              % Target speed (m/s)            
 
-% 저장 설정 추가
-cfg.auto_save = 0;               % 자동 저장 여부 (true / false)
-cfg.save_dir  = './sim_results/260831/1';    % 저장할 디렉토리 경로 지정
+% Simulation 환경 및 저장 설정 추가
+cfg.play_animation = false;          % 시뮬레이션 애니메이션 재생 여부
+cfg.auto_save = true;               % 자동 저장 여부 (true / false)
+cfg.save_dir  = './sim_results/261005/1';    % 저장할 디렉토리 경로 지정
 
 % Position Control Gains
 cfg.posGain = containers.Map(...
@@ -50,7 +51,12 @@ disp('Running Simulation Loop.');
 disp('Running Simulation Loop Finished.');
 
 %% 3. Play Animation
-play_simulation_graphics(drone1, log_data, cfg);
+if cfg.play_animation
+     disp('Playing Simulation Animation.');
+     play_simulation_graphics(drone1, log_data, cfg);
+else
+     disp('Animation Playback Skipped.');
+end
 
 %% 4. Final Plot & Auto Save
 finalize_and_save_results(log_data, cfg);

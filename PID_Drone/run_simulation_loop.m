@@ -39,26 +39,32 @@ end
         [traj_pos, traj_vel] = drone1.trajCtrl.get_position(current_time);
 
         % 3. 동적 Yaw 계산 로직 (랩어라운드 방지 포함)
-        speed_xy = norm(traj_vel(1:2));
-        
-        if speed_xy > 1e-3
-            raw_yaw = atan2(traj_vel(2), traj_vel(1));
-            yaw_diff = raw_yaw - prev_yaw;
+        if isfield(cfg, 'target_yaw') && isempty(cfg.target_yaw)
             
-            % 180도 넘어갈 때 갑자기 튀는 현상 방지
-            while yaw_diff > pi
-                raw_yaw = raw_yaw - 2*pi;
-                yaw_diff = raw_yaw - prev_yaw;
-            end
-            while yaw_diff < -pi
-                raw_yaw = raw_yaw + 2*pi;
-                yaw_diff = raw_yaw - prev_yaw;
-            end
+            speed_xy = norm(traj_vel(1:2));
             
-            dynamic_target_yaw = raw_yaw;
-            prev_yaw = dynamic_target_yaw; 
+            if speed_xy > 1e-3
+                raw_yaw = atan2(traj_vel(2), traj_vel(1));
+                yaw_diff = raw_yaw - prev_yaw;
+                
+                % 180도 넘어갈 때 갑자기 튀는 현상 방지
+                while yaw_diff > pi
+                    raw_yaw = raw_yaw - 2*pi;
+                    yaw_diff = raw_yaw - prev_yaw;
+                end
+                while yaw_diff < -pi
+                    raw_yaw = raw_yaw + 2*pi;
+                    yaw_diff = raw_yaw - prev_yaw;
+                end
+                
+                dynamic_target_yaw = raw_yaw;
+                prev_yaw = dynamic_target_yaw; 
+            else
+                dynamic_target_yaw = prev_yaw;
+            end
+
         else
-            dynamic_target_yaw = prev_yaw;
+            dynamic_target_yaw = cfg.target_yaw;
         end
 
         % 예전처럼 위치와 Yaw 각도를 하나의 명령 벡터로 포장

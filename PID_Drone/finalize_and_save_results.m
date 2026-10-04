@@ -100,6 +100,39 @@ function finalize_and_save_results(log_data, cfg)
     xlabel('Time [s]'); ylabel('Speed [m/s]'); 
     title('Total Speed: Desired vs Actual'); grid on; legend('Desired', 'Actual');
 
+    %% 4.5 [그래프 5, 6] 3D & 2D Trajectory (애니메이션 스킵 시에만 출력)
+    if ~cfg.play_animation
+        % [Figure 1] 3D Trajectory
+        h_fig_traj_3d = figure('Name', '3D Trajectory', 'Theme', 'light', 'Position', [10 150 600 600]);
+        view(3); axis equal; grid on; hold on;
+        
+        % Z축과 Y축 방향 뒤집기 (기존 3D 뷰 설정과 동일하게)[cite: 1]
+        set(gca, 'ZDir', 'Reverse', 'YDir', 'Reverse');
+        xlabel('X [m]'); ylabel('Y [m]'); zlabel('Height [m]');
+        title('3D Flight Trajectory');
+
+        % 목표 궤적 (검은선)[cite: 4]
+        plot3(pos_des_hist(1,:), pos_des_hist(2,:), pos_des_hist(3,:), 'k-', 'LineWidth', 1.5, 'DisplayName', 'Desired Trajectory');
+        % 시뮬레이션 궤적 (빨간색 점선)[cite: 4]
+        plot3(state_hist(1,:), state_hist(2,:), state_hist(3,:), 'r:', 'LineWidth', 1.5, 'DisplayName', 'Simulated Trajectory');
+        legend('show', 'Location', 'best');
+
+        % [Figure 2] 2D XY Trajectory (위에서 바라본 Top View)
+        h_fig_traj_2d = figure('Name', '2D XY Trajectory', 'Theme', 'light', 'Position', [620 150 600 600]);
+        axis equal; grid on; hold on;
+        
+        % 3D와 시점을 맞추기 위해 Y축 방향 뒤집기
+        set(gca, 'YDir', 'Reverse');
+        xlabel('X [m]'); ylabel('Y [m]');
+        title('XY Flight Trajectory (Top View)');
+        
+        % XY 목표 궤적 (검은선)[cite: 4]
+        plot(pos_des_hist(1,:), pos_des_hist(2,:), 'k-', 'LineWidth', 1.5, 'DisplayName', 'Desired Trajectory');
+        % XY 시뮬레이션 궤적 (빨간색 점선)[cite: 4]
+        plot(state_hist(1,:), state_hist(2,:), 'r:', 'LineWidth', 1.5, 'DisplayName', 'Simulated Trajectory');
+        legend('show', 'Location', 'best');
+    end
+
     %% 5. 자동 저장 로직 (데이터 + 이미지)
     if isfield(cfg, 'auto_save') && cfg.auto_save
         if ~exist(cfg.save_dir, 'dir')
@@ -109,15 +142,21 @@ function finalize_and_save_results(log_data, cfg)
         currentTimeString = datestr(now, 'yyyymmdd_HHMMSS');
         baseFileName = fullfile(cfg.save_dir, sprintf('DroneSimResult_%s', currentTimeString));
         
-        % 1) 데이터 저장 (.mat)
+        % 1) 데이터 저장 (.mat)[cite: 4]
         matFileName = [baseFileName, '.mat'];
         save(matFileName, 'log_data', 'cfg');
         
-        % 2) 이미지 저장 (.png) - Resolution 300으로 선명하게
+        % 2) 이미지 저장 (.png) - Resolution 300으로 선명하게[cite: 4]
         exportgraphics(h_fig_pos, [baseFileName, '_Position.png'], 'Resolution', 300);
         exportgraphics(h_fig_att, [baseFileName, '_Attitude.png'], 'Resolution', 300);
         exportgraphics(h_fig_in, [baseFileName, '_ControlInput.png'], 'Resolution', 300);
-        exportgraphics(h_fig_spd, [baseFileName, '_Speed.png'], 'Resolution', 300); % 속력 그래프 저장
+        exportgraphics(h_fig_spd, [baseFileName, '_Speed.png'], 'Resolution', 300);
+        
+        % 애니메이션을 껐을 때 그려진 궤적 그래프도 둘 다 저장
+        if ~cfg.play_animation
+            exportgraphics(h_fig_traj_3d, [baseFileName, '_Trajectory_3D.png'], 'Resolution', 300);
+            exportgraphics(h_fig_traj_2d, [baseFileName, '_Trajectory_XY.png'], 'Resolution', 300);
+        end
         
         disp(['으헤~ 데이터랑 그래프 이미지들 전부 저장했어: ', cfg.save_dir]);
     else
