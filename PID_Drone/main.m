@@ -19,7 +19,7 @@ cfg.target_speed = 4;              % Target speed (m/s)
 
 % Simulation 환경 및 저장 설정 추가
 cfg.play_animation = false;          % 시뮬레이션 애니메이션 재생 여부
-cfg.auto_save = true;               % 자동 저장 여부 (true / false)
+cfg.auto_save = false;               % 자동 저장 여부 (true / false)
 cfg.save_dir  = './sim_results/261005/1';    % 저장할 디렉토리 경로 지정
 
 % Position Control Gains
