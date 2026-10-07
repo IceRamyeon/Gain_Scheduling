@@ -45,10 +45,10 @@
                     0, 0, params('Izz')];
 
             obj.x = initStates;
-            obj.r = obj.x(1:3);
-            obj.dr = obj.x(4:6);
-            obj.euler = obj.x(7:9);
-            obj.w = obj.x(10:12);
+            obj.r = obj.x(1:3);         % [X, Y, Z]
+            obj.dr = obj.x(4:6);        % [dX, dY, dZ]
+            obj.euler = obj.x(7:9);     % [phi, theta, psi]
+            obj.w = obj.x(10:12);       % [p, q, r]
             obj.dx = zeros(12,1);
 
             obj.u = initInputs;
@@ -69,7 +69,7 @@
                 bRi = RPY2Rot(obj.euler);
                 R = bRi';
 
-                obj.dx(1:3) = obj.dr; % x(4:6)
+                obj.dx(1:3) = obj.dr;       % dr = x(4:6)
                 
                 obj.dx(4:6) = 1 / obj.m * ([0 ; 0; obj.m * obj.g] ...
                     + R * obj.T * [0 ; 0; -1]);
