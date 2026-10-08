@@ -3,12 +3,15 @@ close all; clc; clear;
 %% 0. Simulation Configuration (CFG)
 cfg = struct();
 
-cfg.start_with_yaw = true;
+cfg.start_with_yaw = true;    % If true, the drone will start with a yaw angle aligned to the initial trajectory direction. If false, it will start with a yaw of 0 rad.
 
 % 기본 설정
 cfg.dt = 0.01;                % Time step
-cfg.target_yaw = 0;
+cfg.target_yaw = [];          % Target yaw angle (rad) - If empty, dynamic yaw will be calculated
 cfg.target_speed = 4;              % Target speed (m/s)            
+
+% PID Table Generation Parameters
+cfg.Calculate_PID_Table = true;  % If true, the PID table will be generated based on the specified speed and curvature ranges.
 
 % Simulation 환경 및 저장 설정 추가
 cfg.play_animation = 1;          % 시뮬레이션 애니메이션 재생 여부
@@ -40,6 +43,14 @@ cfg.attGain = containers.Map(...
      18.10, 0.001, 0.93, ...
      36.51, 0.001, 1.87, ...
      25.0, 0.001, 0.0});
+
+%% 0. Calculate PID Table
+if cfg.Calculate_PID_Table
+     disp('Calculating PID Table...');
+     [Kp_x, Ki_x, Kd_x, ...
+      Kp_y, Ki_y, Kd_y, ...
+      Kp_z, Ki_z, Kd_z] = Build_PID_Table;
+end
 
 %% 1. Initialization
 [drone1] = init_drone_and_env(cfg);
