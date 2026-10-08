@@ -3,13 +3,6 @@ close all; clc; clear;
 %% 0. Simulation Configuration (CFG)
 cfg = struct();
 
-% drone initial position
-% 초기 상태: [x, y, z, dx, dy, dz, phi, theta, psi, p, q, r]'
-cfg.drone1_init_states = [ 0.0, 0.0, -6.0, ...                                      
-                          0, 0, 0, ...                                                                
-                          0, 0, 0, ...                                                                
-                          0, 0, 0]';
-
 cfg.start_with_yaw = true;
 
 % 기본 설정
@@ -18,9 +11,15 @@ cfg.target_yaw = 0;
 cfg.target_speed = 4;              % Target speed (m/s)            
 
 % Simulation 환경 및 저장 설정 추가
-cfg.play_animation = false;          % 시뮬레이션 애니메이션 재생 여부
+cfg.play_animation = 1;          % 시뮬레이션 애니메이션 재생 여부
 cfg.auto_save = false;               % 자동 저장 여부 (true / false)
 cfg.save_dir  = './sim_results/261005/1';    % 저장할 디렉토리 경로 지정
+
+% 초기 상태: [x, y, z, dx, dy, dz, phi, theta, psi, p, q, r]'
+cfg.drone1_init_states = [ 0.0, 0.0, -6.0, ...                                      
+                          cfg.target_speed, 0, 0, ...                                                                
+                          0, 0, 0, ...                                                                
+                          0, 0, 0]';
 
 % Position Control Gains
 cfg.posGain = containers.Map(...
