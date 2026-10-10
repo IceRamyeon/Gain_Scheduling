@@ -58,8 +58,8 @@ classdef TrajectoryPlanner < handle
             disp(['으헤~ 스플라인 궤적 총 길이: ', num2str(obj.total_length), 'm']);
             disp(['비행 속력: ', num2str(obj.speed), 'm/s, 필요 비행 시간(tf): ', num2str(obj.tf), '초']);
         end
-        %% Get Position & Velocity
-        function [pos_des, vel_des] = get_position(obj, t)
+        %% Get Position, Velocity, Acceleration
+        function [pos_des, vel_des, acc_des] = get_position(obj, t)
             % 시간 제한 (0 ~ tf)
             t = max(0, min(t, obj.tf));
             
@@ -76,26 +76,45 @@ classdef TrajectoryPlanner < handle
             z_d = ppval(obj.sp_z, u_target);
             pos_des = [x_d; y_d; z_d];
             
-            % 4. 목표 속도 벡터(접선 방향) 계산 (수치 미분 활용)
-            du = 1e-5;
-            u_eval = min(u_target + du, 1);
+            % 4. 목표 속도 및 가속도 벡터 계산 (수치 미분 활용)
+            du = 1e-4;
+            u_next = min(u_target + du, 1);
             u_prev = max(u_target - du, 0);
             
-            dp_x = ppval(obj.sp_x, u_eval) - ppval(obj.sp_x, u_prev);
-            dp_y = ppval(obj.sp_y, u_eval) - ppval(obj.sp_y, u_prev);
-            dp_z = ppval(obj.sp_z, u_eval) - ppval(obj.sp_z, u_prev);
+            dp_x_next = ppval(obj.sp_x, u_next) - x_d;
+            dp_y_next = ppval(obj.sp_y, u_next) - y_d;
+            dp_z_next = ppval(obj.sp_z, u_next) - z_d;
             
-            tangent = [dp_x; dp_y; dp_z];
+            dp_x_prev = x_d - ppval(obj.sp_x, u_prev);
+            dp_y_prev = y_d - ppval(obj.sp_y, u_prev);
+            dp_z_prev = z_d - ppval(obj.sp_z, u_prev);
+            
+            tangent_next = [dp_x_next; dp_y_next; dp_z_next];
+            tangent_prev = [dp_x_prev; dp_y_prev; dp_z_prev];
+            
+            norm_next = norm(tangent_next);
+            if norm_next > 1e-6, tangent_next = tangent_next / norm_next; else, tangent_next = [1; 0; 0]; end
+            
+            norm_prev = norm(tangent_prev);
+            if norm_prev > 1e-6, tangent_prev = tangent_prev / norm_prev; else, tangent_prev = [1; 0; 0]; end
+            
+            tangent = (tangent_next + tangent_prev) / 2;
             tangent_norm = norm(tangent);
+            if tangent_norm > 1e-6, tangent = tangent / tangent_norm; else, tangent = [1; 0; 0]; end
             
-            if tangent_norm > 1e-6
-                tangent = tangent / tangent_norm;
-            else
-                tangent = [1; 0; 0]; % 혹시 정지해 있을 경우 대비
-            end
-            
-            % 최종 목표 속도 = 방향 벡터 * 지정된 속력
             vel_des = obj.speed * tangent;
+            
+            % 곡률 반경 계산을 위한 가속도 근사 (방향 변화율)
+            % d(tangent)/dt = d(tangent)/du * du/dt 
+            % du/dt = speed / (ds/du)
+            ds_du = (norm_next + norm_prev) / (2 * du); % 대략적인 ds/du
+            if ds_du > 1e-6
+                du_dt = obj.speed / ds_du;
+                d_tangent_du = (tangent_next - tangent_prev) / (u_next - u_prev);
+                acc_des = obj.speed * (d_tangent_du * du_dt);
+            else
+                acc_des = [0; 0; 0];
+            end
         end
         
         %% Get Full Path (애니메이션에서 점선 그리기용)

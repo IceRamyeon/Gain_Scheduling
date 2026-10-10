@@ -1,4 +1,4 @@
-classdef PositionCtrl < handle
+classdef RL_PositionCtrl < handle
     %% MEMBERS
     properties
         g
@@ -23,22 +23,19 @@ classdef PositionCtrl < handle
     %% METHODS
     methods
         %% CONSTRUCTOR
-        function obj = PositionCtrl(gains, dt)
+        function obj = RL_PositionCtrl(gains, dt)
             obj.g = 9.81;
             obj.dt = dt;
             
-            % x, y, z PID gains
             obj.kP_x = gains('P_x'); obj.kI_x = gains('I_x'); obj.kD_x = gains('D_x');
             obj.kP_y = gains('P_y'); obj.kI_y = gains('I_y'); obj.kD_y = gains('D_y');
             obj.kP_z = gains('P_z'); obj.kI_z = gains('I_z'); obj.kD_z = gains('D_z');
             
-            % Angle Saturation Limit (rad)
             obj.max_angle = 180 * (pi/180); 
             
             obj.Reset();
         end
         
-        %% Reset, GetState, commandSig
         function Reset(obj)
             obj.x_err = 0; obj.x_err_prev = 0; obj.x_err_sum = 0;
             obj.y_err = 0; obj.y_err_prev = 0; obj.y_err_sum = 0;
@@ -54,9 +51,12 @@ classdef PositionCtrl < handle
             cmd = obj.cmd;
         end
         
+        %% Update Gains Online (RL Agent)
         function setGains(obj, px, dx, py, dy)
-            obj.kP_x = px; obj.kD_x = dx;
-            obj.kP_y = py; obj.kD_y = dy;
+            obj.kP_x = px;
+            obj.kD_x = dx;
+            obj.kP_y = py;
+            obj.kD_y = dy;
         end
         
         %% Update
@@ -106,8 +106,9 @@ classdef PositionCtrl < handle
             obj.y_err_sum = obj.y_err_sum + obj.y_err * obj.dt; obj.y_err_prev = obj.y_err;
             obj.z_err_sum = obj.z_err_sum + obj.z_err * obj.dt; obj.z_err_prev = obj.z_err;
             
-            % 9. 최종 출력
-            att_cmd = [phi_des; theta_des; obj.psi_des; zdot_des];
+            obj.cmd = [phi_des; theta_des; obj.psi_des; zdot_des];
+            att_cmd = obj.cmd;
+            obj.state = state;
         end
     end
 end

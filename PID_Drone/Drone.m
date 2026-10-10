@@ -54,7 +54,7 @@
             obj.u = initInputs;
             obj.trajCtrl = TrajectoryPlanner(initStates(1:3), waypoints, target_speed);
             obj.tf = obj.trajCtrl.tf;
-            obj.posCtrl = PositionCtrl(posGains, obj.dt);
+            obj.posCtrl = RL_PositionCtrl(posGains, obj.dt);
             obj.attCtrl = AttitudeCtrl(params, attGains, obj.dt);
         end
 
