@@ -52,14 +52,14 @@ classdef TrajectoryPlanner < handle
             obj.arc_lengths = [0, cumsum(segment_lengths)];
             obj.total_length = obj.arc_lengths(end);
             
-            % 4. [수정됨] 총 거리를 지정된 속력으로 나누어 필요 비행 시간(tf) 계산
+            % 4. 총 거리를 지정된 속력으로 나누어 필요 비행 시간(tf) 계산
             obj.tf = obj.total_length / obj.speed;
             
-            disp(['으헤~ 스플라인 궤적 총 길이: ', num2str(obj.total_length), 'm']);
+            disp(['스플라인 궤적 총 길이: ', num2str(obj.total_length), 'm']);
             disp(['비행 속력: ', num2str(obj.speed), 'm/s, 필요 비행 시간(tf): ', num2str(obj.tf), '초']);
         end
         %% Get Position & Velocity
-        function [pos_des, vel_des] = get_position(obj, t)
+        function [pos_des, vel_des, kappa_avg] = get_position(obj, t)
             % 시간 제한 (0 ~ tf)
             t = max(0, min(t, obj.tf));
             
@@ -96,6 +96,35 @@ classdef TrajectoryPlanner < handle
             
             % 최종 목표 속도 = 방향 벡터 * 지정된 속력
             vel_des = obj.speed * tangent;
+
+            % [2] 전방 5초 구간 평균 곡률(kappa) 계산
+            t_lookahead = t:0.1:min(t+5, obj.tf);
+            if isempty(t_lookahead)
+                kappa_avg = 0;
+            else
+                kappa_sum = 0;
+                for i = 1:length(t_lookahead)
+                    d_lk = obj.speed * t_lookahead(i);
+                    u_lk = interp1(obj.arc_lengths, obj.u_samples, d_lk, 'linear', 'extrap');
+                    u_lk = max(0, min(u_lk, 1));
+                    
+                    % 1차, 2차 미분값 계산 (스플라인 미분)
+                    dx1 = ppval(fnder(obj.sp_x, 1), u_lk);
+                    dy1 = ppval(fnder(obj.sp_y, 1), u_lk);
+                    dx2 = ppval(fnder(obj.sp_x, 2), u_lk);
+                    dy2 = ppval(fnder(obj.sp_y, 2), u_lk);
+                    
+                    % 2D 곡률 공식: |x'y'' - y'x''| / (x'^2 + y'^2)^(3/2)
+                    denom = (dx1^2 + dy1^2)^(1.5);
+                    if denom > 1e-6
+                        k = abs(dx1*dy2 - dy1*dx2) / denom;
+                    else
+                        k = 0;
+                    end
+                    kappa_sum = kappa_sum + k;
+                end
+                kappa_avg = kappa_sum / length(t_lookahead);
+            end
         end
         
         %% Get Full Path (애니메이션에서 점선 그리기용)

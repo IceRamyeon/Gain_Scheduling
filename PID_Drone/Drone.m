@@ -33,7 +33,7 @@
     methods
        %% CONSTRUCTOR
        function obj = Drone(params, initStates, initInputs, posGains, ...
-               attGains, target_speed, waypoints)
+               attGains, cfg, waypoints)
            obj.g = 9.81;
            obj.t = 0.0;
            obj.dt = 0.01;
@@ -52,9 +52,11 @@
             obj.dx = zeros(12,1);
 
             obj.u = initInputs;
-            obj.trajCtrl = TrajectoryPlanner(initStates(1:3), waypoints, target_speed);
+            obj.trajCtrl = TrajectoryPlanner(initStates(1:3), waypoints, cfg.target_speed);            
             obj.tf = obj.trajCtrl.tf;
-            obj.posCtrl = PositionCtrl(posGains, obj.dt);
+            
+            obj.posCtrl = PositionCtrl(posGains, params, cfg);
+            
             obj.attCtrl = AttitudeCtrl(params, attGains, obj.dt);
         end
 

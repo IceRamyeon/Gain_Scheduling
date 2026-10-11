@@ -15,7 +15,8 @@ function [log_data, valid_len] = run_simulation_loop(drone1, cfg)
 %% 0. 초기 Yaw 설정
 if cfg.start_with_yaw
     if isempty(cfg.target_yaw)
-        init_vel = drone1.trajCtrl.get_position(0); 
+        % [버그 수정] get_position의 두 번째 출력이 속도(vel)임.
+        [~, init_vel, ~] = drone1.trajCtrl.get_position(0); 
         if norm(init_vel(1:2)) > 1e-3
             cfg.drone1_init_states(9) = atan2(init_vel(2), init_vel(1));
             prev_yaw = atan2(init_vel(2), init_vel(1));
@@ -35,8 +36,8 @@ end
         drone1_state = drone1.GetState();
         current_time = drone1.t;
 
-        % 2. 목표 궤적 (위치와 속도만 받아옴 - 피드포워드 가속도 없음)
-        [traj_pos, traj_vel] = drone1.trajCtrl.get_position(current_time);
+        % 2. [수정] 목표 궤적 (위치, 속도, 그리고 평균 곡률 kappa_avg 추가 수신)
+        [traj_pos, traj_vel, kappa_avg] = drone1.trajCtrl.get_position(current_time);
 
         % 3. 동적 Yaw 계산 로직 (랩어라운드 방지 포함)
         if isfield(cfg, 'target_yaw') && isempty(cfg.target_yaw)
@@ -67,23 +68,23 @@ end
             dynamic_target_yaw = cfg.target_yaw;
         end
 
-        % 예전처럼 위치와 Yaw 각도를 하나의 명령 벡터로 포장
-        current_cmd = [traj_pos; dynamic_target_yaw];
+        % 4. [수정] 제어기에 넘겨줄 cmd 배열에 속도(v)와 곡률(kappa) 추가 패키징
+        % cmd = [x_des, y_des, z_des, psi_des, v, kappa]
+        current_cmd = [traj_pos; dynamic_target_yaw; cfg.target_speed; kappa_avg];
 
-        % 4. 제어기 업데이트 (예전 방식으로 원복)
+        % 5. 제어기 업데이트
         att_cmd = drone1.posCtrl.Update(current_cmd, drone1_state);
         u_motor = drone1.attCtrl.Update(att_cmd, drone1_state);
         
-        % 5. 상태 업데이트 (동역학)
+        % 6. 상태 업데이트 (동역학)
         drone1.UpdateState(u_motor);
         
-        % 6. 데이터 로깅
+        % 7. 데이터 로깅
         log_data.t_hist(i)       = current_time;
         log_data.state_hist(:,i) = drone1_state;
         log_data.pos_des_hist(:,i) = traj_pos;
         log_data.att_des_hist(:,i) = att_cmd;
         log_data.u_hist(:,i)       = u_motor;
         
-        % (필요하다면 기존에 있던 충돌 체크 로직은 이 아래에 유지하면 돼)
     end
 end
