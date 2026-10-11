@@ -3,7 +3,7 @@ function [drone1] = init_drone_and_env(cfg)
     
     %% 1. 드론 초기 파라미터 셋업 (물리량 및 초기 상태)
     drone1_params = containers.Map({'mass','armLength','Ixx','Iyy','Izz'},...
-        {1.25, 0.265, 0.0232, 0.0232, 0.0468}); %[cite: 1]
+        {cfg.m, cfg.armLength, cfg.Ixx, cfg.Iyy, cfg.Izz}); %[cite: 1]
 
     % 초기 상태: [x, y, z, dx, dy, dz, phi, theta, psi, p, q, r]'
     drone1_initStates = cfg.drone1_init_states;
