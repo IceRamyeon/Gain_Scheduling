@@ -62,7 +62,7 @@ classdef TrajectoryPlanner < handle
             % 5. 곡률 관련 변수 초기화
             obj.last_kappa = 0; % 곡률 초기화
             obj.kappa_filtered = 0;
-            obj.lpf_alpha = 0.05;
+            obj.lpf_alpha = 0.1;
             
             disp(['스플라인 궤적 총 길이: ', num2str(obj.total_length), 'm']);
             disp(['비행 속력: ', num2str(obj.speed), 'm/s, 필요 비행 시간(tf): ', num2str(obj.tf), '초']);

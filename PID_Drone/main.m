@@ -18,8 +18,8 @@ cfg.Z_Gain_Scheduling = true; % If 0 : Fixed PID + Feedforward, 1 : LPV Gain Sch
 
 % Simulation 환경 및 저장 설정 추가
 cfg.play_animation = false;          % 시뮬레이션 애니메이션 재생 여부
-cfg.auto_save = false;               % 자동 저장 여부 (true / false)
-cfg.save_dir  = './sim_results/261012/v=4,Feedforward,Scheduling';    % 저장할 디렉토리 경로 지정
+cfg.auto_save = true;               % 자동 저장 여부 (true / false)
+cfg.save_dir  = './sim_results/261012/2/v=4,Feedforward,Scheduling,alpha=0.15';    % 저장할 디렉토리 경로 지정
 
 % 초기 상태: [x, y, z, dx, dy, dz, phi, theta, psi, p, q, r]'
 cfg.drone1_init_states = [ 0.0, 0.0, -6.0, ...                                      
