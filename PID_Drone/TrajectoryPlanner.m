@@ -15,6 +15,8 @@ classdef TrajectoryPlanner < handle
         u_samples   % 샘플링된 파라미터 u
         
         last_kappa  % 마지막 유효 곡률 저장용 프로퍼티 추가
+        kappa_filtered
+        lpf_alpha
     end
     
     %% METHODS
@@ -57,7 +59,10 @@ classdef TrajectoryPlanner < handle
             % 4. 총 거리를 지정된 속력으로 나누어 필요 비행 시간(tf) 계산
             obj.tf = obj.total_length / obj.speed;
             
+            % 5. 곡률 관련 변수 초기화
             obj.last_kappa = 0; % 곡률 초기화
+            obj.kappa_filtered = 0;
+            obj.lpf_alpha = 0.05;
             
             disp(['스플라인 궤적 총 길이: ', num2str(obj.total_length), 'm']);
             disp(['비행 속력: ', num2str(obj.speed), 'm/s, 필요 비행 시간(tf): ', num2str(obj.tf), '초']);
@@ -135,7 +140,10 @@ classdef TrajectoryPlanner < handle
                         end
                         kappa_sum = kappa_sum + k;
                     end
-                    kappa_avg = kappa_sum / length(t_lookahead);
+                    % 곡률 LPF 적용
+                    raw_kappa = kappa_sum / length(t_lookahead);
+                    obj.kappa_filtered = obj.lpf_alpha * raw_kappa + (1 - obj.lpf_alpha) * obj.kappa_filtered;
+                    kappa_avg = obj.kappa_filtered;
                     
                     % 마지막 유효 곡률 갱신
                     obj.last_kappa = kappa_avg;
