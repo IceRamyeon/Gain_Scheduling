@@ -8,16 +8,18 @@ cfg.start_with_yaw = true;    % If true, the drone will start with a yaw angle a
 % 기본 설정
 cfg.dt = 0.01;                % Time step
 cfg.target_yaw = [];          % Target yaw angle (rad) - If empty, dynamic yaw will be calculated
-cfg.target_speed = 6;              % Target speed (m/s)            
+cfg.target_speed = 4;              % Target speed (m/s)            
 
 % PID Table Generation Parameters / Gain Scheduling Initiation
 cfg.Calculate_PID_Table = 0;  % If true, the PID table will be generated based on the specified speed and curvature ranges.
-cfg.LPV_Gain_Scheduling = 1;  % If 1 : LPV Gain Scheduling, 0 : Hovering Fixed Gain
+cfg.Feedforward = true;  % If 1 : Feedforward Path curvature and velocity, 0 : No Feedforward
+cfg.Z_Gain_Scheduling = true; % If 0 : Fixed PID + Feedforward, 1 : LPV Gain Scheduling for z-axis
+
 
 % Simulation 환경 및 저장 설정 추가
 cfg.play_animation = 0;          % 시뮬레이션 애니메이션 재생 여부
 cfg.auto_save = 1;               % 자동 저장 여부 (true / false)
-cfg.save_dir  = './sim_results/261011/v=6,LPV';    % 저장할 디렉토리 경로 지정
+cfg.save_dir  = './sim_results/261012/v=4,Feedforward,Scheduling';    % 저장할 디렉토리 경로 지정
 
 % 초기 상태: [x, y, z, dx, dy, dz, phi, theta, psi, p, q, r]'
 cfg.drone1_init_states = [ 0.0, 0.0, -6.0, ...                                      

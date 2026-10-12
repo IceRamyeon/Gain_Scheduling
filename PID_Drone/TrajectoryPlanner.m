@@ -13,6 +13,8 @@ classdef TrajectoryPlanner < handle
         
         arc_lengths % 누적 곡선 길이
         u_samples   % 샘플링된 파라미터 u
+        
+        last_kappa  % 마지막 유효 곡률 저장용 프로퍼티 추가
     end
     
     %% METHODS
@@ -55,13 +57,19 @@ classdef TrajectoryPlanner < handle
             % 4. 총 거리를 지정된 속력으로 나누어 필요 비행 시간(tf) 계산
             obj.tf = obj.total_length / obj.speed;
             
+            obj.last_kappa = 0; % 곡률 초기화
+            
             disp(['스플라인 궤적 총 길이: ', num2str(obj.total_length), 'm']);
             disp(['비행 속력: ', num2str(obj.speed), 'm/s, 필요 비행 시간(tf): ', num2str(obj.tf), '초']);
         end
+        
         %% Get Position & Velocity
-        function [pos_des, vel_des, kappa_avg] = get_position(obj, t)
+        function [pos_des, vel_des, kappa_avg] = get_position(obj, t_in)
+            % 궤적 종료 여부 판단
+            is_finished = (t_in >= obj.tf);
+            
             % 시간 제한 (0 ~ tf)
-            t = max(0, min(t, obj.tf));
+            t = max(0, min(t_in, obj.tf));
             
             % 1. 현재 시간에 가야 할 목표 이동 거리 (d = v * t)
             d_target = obj.speed * t;
@@ -98,32 +106,40 @@ classdef TrajectoryPlanner < handle
             vel_des = obj.speed * tangent;
 
             % [2] 전방 5초 구간 평균 곡률(kappa) 계산
-            t_lookahead = t:0.1:min(t+5, obj.tf);
-            if isempty(t_lookahead)
-                kappa_avg = 0;
+            if is_finished
+                % 궤적이 끝났으면 저장해둔 마지막 곡률 유지
+                kappa_avg = obj.last_kappa;
             else
-                kappa_sum = 0;
-                for i = 1:length(t_lookahead)
-                    d_lk = obj.speed * t_lookahead(i);
-                    u_lk = interp1(obj.arc_lengths, obj.u_samples, d_lk, 'linear', 'extrap');
-                    u_lk = max(0, min(u_lk, 1));
-                    
-                    % 1차, 2차 미분값 계산 (스플라인 미분)
-                    dx1 = ppval(fnder(obj.sp_x, 1), u_lk);
-                    dy1 = ppval(fnder(obj.sp_y, 1), u_lk);
-                    dx2 = ppval(fnder(obj.sp_x, 2), u_lk);
-                    dy2 = ppval(fnder(obj.sp_y, 2), u_lk);
-                    
-                    % 2D 곡률 공식: |x'y'' - y'x''| / (x'^2 + y'^2)^(3/2)
-                    denom = (dx1^2 + dy1^2)^(1.5);
-                    if denom > 1e-6
-                        k = abs(dx1*dy2 - dy1*dx2) / denom;
-                    else
-                        k = 0;
+                t_lookahead = t:0.1:min(t+5, obj.tf);
+                if isempty(t_lookahead)
+                    kappa_avg = obj.last_kappa;
+                else
+                    kappa_sum = 0;
+                    for i = 1:length(t_lookahead)
+                        d_lk = obj.speed * t_lookahead(i);
+                        u_lk = interp1(obj.arc_lengths, obj.u_samples, d_lk, 'linear', 'extrap');
+                        u_lk = max(0, min(u_lk, 1));
+                        
+                        % 1차, 2차 미분값 계산 (스플라인 미분)
+                        dx1 = ppval(fnder(obj.sp_x, 1), u_lk);
+                        dy1 = ppval(fnder(obj.sp_y, 1), u_lk);
+                        dx2 = ppval(fnder(obj.sp_x, 2), u_lk);
+                        dy2 = ppval(fnder(obj.sp_y, 2), u_lk);
+                        
+                        % 2D 곡률 공식: |x'y'' - y'x''| / (x'^2 + y'^2)^(3/2)
+                        denom = (dx1^2 + dy1^2)^(1.5);
+                        if denom > 1e-6
+                            k = abs(dx1*dy2 - dy1*dx2) / denom;
+                        else
+                            k = 0;
+                        end
+                        kappa_sum = kappa_sum + k;
                     end
-                    kappa_sum = kappa_sum + k;
+                    kappa_avg = kappa_sum / length(t_lookahead);
+                    
+                    % 마지막 유효 곡률 갱신
+                    obj.last_kappa = kappa_avg;
                 end
-                kappa_avg = kappa_sum / length(t_lookahead);
             end
         end
         
@@ -133,7 +149,7 @@ classdef TrajectoryPlanner < handle
             pts = zeros(3, length(time_vec));
             
             for i = 1:length(time_vec)
-                [pts(:, i), ~] = obj.get_position(time_vec(i));
+                [pts(:, i), ~, ~] = obj.get_position(time_vec(i));
             end
             
             X = pts(1, :);

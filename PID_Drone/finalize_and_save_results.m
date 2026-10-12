@@ -5,12 +5,13 @@ function finalize_and_save_results(log_data, cfg)
     
     R2D = 180/pi;
     
-    % 데이터 언패킹 (코드를 짧고 보기 좋게 쓰기 위해)
+    % 데이터 언패킹 
     t_hist       = log_data.t_hist;
     state_hist   = log_data.state_hist;
     pos_des_hist = log_data.pos_des_hist;
     att_des_hist = log_data.att_des_hist;
     u_hist       = log_data.u_hist;
+    pid_hist     = log_data.PID_Pos_hist; % PID 데이터 언패킹 추가
 
     %% 0. 평가 지표 계산
     % 3차원 유클리디안 거리 오차 계산 블록
@@ -59,7 +60,6 @@ function finalize_and_save_results(log_data, cfg)
     ylabel('Pitch (\theta) [deg]'); title('Pitch: Desired vs Actual'); grid on;
 
     subplot(3,1,3);
-    % Yaw 목표값
     plot(t_hist, att_des_hist(3,:)*R2D, 'r--', 'LineWidth', 1.5); hold on; 
     plot(t_hist, state_hist(9,:)*R2D, 'b', 'LineWidth', 1.2);
     xlabel('Time [s]'); ylabel('Yaw (\psi) [deg]'); title('Yaw: Desired vs Actual'); grid on;
@@ -84,14 +84,12 @@ function finalize_and_save_results(log_data, cfg)
     xlabel('Time [s]'); ylabel('Mz [N\cdotm]'); title('Yawing Moment (U4)'); grid on;
 
     %% 4. [그래프 4] 총 속력 추종 (Total Speed Tracking)
-    % 목표 속력은 cfg.target_speed 사용
     if isfield(cfg, 'target_speed')
         des_speed = cfg.target_speed * ones(1, length(t_hist));
     else
         des_speed = zeros(1, length(t_hist)); 
     end
     
-    % 실제 속력은 상태 변수 4~6번째 행(Vx, Vy, Vz)의 유클리디안 노름
     act_speed = sqrt(sum(state_hist(4:6, :).^2, 1));
 
     h_fig_spd = figure('Name', 'Total Speed Tracking', 'Theme', 'light', 'Position', [1410 100 600 300]);
@@ -100,40 +98,39 @@ function finalize_and_save_results(log_data, cfg)
     xlabel('Time [s]'); ylabel('Speed [m/s]'); 
     title('Total Speed: Desired vs Actual'); grid on; legend('Desired', 'Actual');
 
-    %% 4.5 [그래프 5, 6] 3D & 2D Trajectory (애니메이션 스킵 시에만 출력)
+    %% 5. [그래프 5] Z축 스케줄링 PID 게인 로깅
+    h_fig_pid = figure('Name', 'Scheduled PID Gains (Z-axis)', 'Theme', 'light', 'Position', [1410 450 600 250]);
+    plot(t_hist, pid_hist(1,:), 'r', 'LineWidth', 1.5); hold on;
+    plot(t_hist, pid_hist(2,:), 'g', 'LineWidth', 1.5);
+    plot(t_hist, pid_hist(3,:), 'b', 'LineWidth', 1.5);
+    xlabel('Time [s]'); ylabel('Gain Value'); 
+    title('Scheduled PID Gains for Z-axis (Kp, Ki, Kd)'); grid on;
+    legend('K_{P,z}', 'K_{I,z}', 'K_{D,z}', 'Location', 'best');
+
+    %% 5.5 [그래프 6, 7] 3D & 2D Trajectory
     if ~cfg.play_animation
-        % [Figure 1] 3D Trajectory
         h_fig_traj_3d = figure('Name', '3D Trajectory', 'Theme', 'light', 'Position', [10 150 600 600]);
         view(3); axis equal; grid on; hold on;
-        
-        % Z축과 Y축 방향 뒤집기 (기존 3D 뷰 설정과 동일하게)[cite: 1]
         set(gca, 'ZDir', 'Reverse', 'YDir', 'Reverse');
         xlabel('X [m]'); ylabel('Y [m]'); zlabel('Height [m]');
         title('3D Flight Trajectory');
 
-        % 목표 궤적 (검은선)[cite: 4]
         plot3(pos_des_hist(1,:), pos_des_hist(2,:), pos_des_hist(3,:), 'k-', 'LineWidth', 1.5, 'DisplayName', 'Desired Trajectory');
-        % 시뮬레이션 궤적 (빨간색 점선)[cite: 4]
         plot3(state_hist(1,:), state_hist(2,:), state_hist(3,:), 'r:', 'LineWidth', 1.5, 'DisplayName', 'Simulated Trajectory');
         legend('show', 'Location', 'best');
 
-        % [Figure 2] 2D XY Trajectory (위에서 바라본 Top View)
         h_fig_traj_2d = figure('Name', '2D XY Trajectory', 'Theme', 'light', 'Position', [620 150 600 600]);
         axis equal; grid on; hold on;
-        
-        % 3D와 시점을 맞추기 위해 Y축 방향 뒤집기
         set(gca, 'YDir', 'Reverse');
         xlabel('X [m]'); ylabel('Y [m]');
         title('XY Flight Trajectory (Top View)');
         
-        % XY 목표 궤적 (검은선)[cite: 4]
         plot(pos_des_hist(1,:), pos_des_hist(2,:), 'k-', 'LineWidth', 1.5, 'DisplayName', 'Desired Trajectory');
-        % XY 시뮬레이션 궤적 (빨간색 점선)[cite: 4]
         plot(state_hist(1,:), state_hist(2,:), 'r:', 'LineWidth', 1.5, 'DisplayName', 'Simulated Trajectory');
         legend('show', 'Location', 'best');
     end
 
-    %% 5. 자동 저장 로직 (데이터 + 이미지)
+    %% 6. 자동 저장 로직 (데이터 + 이미지)
     if isfield(cfg, 'auto_save') && cfg.auto_save
         if ~exist(cfg.save_dir, 'dir')
             mkdir(cfg.save_dir);
@@ -142,17 +139,19 @@ function finalize_and_save_results(log_data, cfg)
         currentTimeString = datestr(now, 'yyyymmdd_HHMMSS');
         baseFileName = fullfile(cfg.save_dir, sprintf('DroneSimResult_%s', currentTimeString));
         
-        % 1) 데이터 저장 (.mat)[cite: 4]
+        % 1) 데이터 저장 (.mat)
         matFileName = [baseFileName, '.mat'];
         save(matFileName, 'log_data', 'cfg');
         
-        % 2) 이미지 저장 (.png) - Resolution 300으로 선명하게[cite: 4]
+        % 2) 이미지 저장 (.png)
         exportgraphics(h_fig_pos, [baseFileName, '_Position.png'], 'Resolution', 300);
         exportgraphics(h_fig_att, [baseFileName, '_Attitude.png'], 'Resolution', 300);
         exportgraphics(h_fig_in, [baseFileName, '_ControlInput.png'], 'Resolution', 300);
         exportgraphics(h_fig_spd, [baseFileName, '_Speed.png'], 'Resolution', 300);
         
-        % 애니메이션을 껐을 때 그려진 궤적 그래프도 둘 다 저장
+        % PID 히스토리 저장
+        exportgraphics(h_fig_pid, [baseFileName, '_PID_Gains.png'], 'Resolution', 300);
+        
         if ~cfg.play_animation
             exportgraphics(h_fig_traj_3d, [baseFileName, '_Trajectory_3D.png'], 'Resolution', 300);
             exportgraphics(h_fig_traj_2d, [baseFileName, '_Trajectory_XY.png'], 'Resolution', 300);

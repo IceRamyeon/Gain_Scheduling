@@ -9,6 +9,7 @@ function [log_data, valid_len] = run_simulation_loop(drone1, cfg)
     log_data.pos_des_hist = zeros(3, num_steps);
     log_data.att_des_hist = zeros(4, num_steps);
     log_data.u_hist       = zeros(4, num_steps);
+    log_data.PID_Pos_hist = zeros(3, num_steps);
     
     valid_len = num_steps;
 
@@ -36,7 +37,7 @@ end
         drone1_state = drone1.GetState();
         current_time = drone1.t;
 
-        % 2. [수정] 목표 궤적 (위치, 속도, 그리고 평균 곡률 kappa_avg 추가 수신)
+        % 2. 목표 궤적
         [traj_pos, traj_vel, kappa_avg] = drone1.trajCtrl.get_position(current_time);
 
         % 3. 동적 Yaw 계산 로직 (랩어라운드 방지 포함)
@@ -68,8 +69,7 @@ end
             dynamic_target_yaw = cfg.target_yaw;
         end
 
-        % 4. [수정] 제어기에 넘겨줄 cmd 배열에 속도(v)와 곡률(kappa) 추가 패키징
-        % cmd = [x_des, y_des, z_des, psi_des, v, kappa]
+        % 4. 제어기에 넘겨줄 cmd 배열에 속도(v)와 곡률(kappa)
         current_cmd = [traj_pos; dynamic_target_yaw; cfg.target_speed; kappa_avg];
 
         % 5. 제어기 업데이트
@@ -85,6 +85,6 @@ end
         log_data.pos_des_hist(:,i) = traj_pos;
         log_data.att_des_hist(:,i) = att_cmd;
         log_data.u_hist(:,i)       = u_motor;
-        
+        log_data.PID_Pos_hist(:,i) = drone1.posCtrl.GetZ_PID();
     end
 end

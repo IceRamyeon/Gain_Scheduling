@@ -27,6 +27,14 @@ classdef PositionCtrl < handle
         
         is_first_run
         max_angle
+
+        use_feedforward  % Feedforward 사용 여부 플래그 추가
+        use_z_scheduling  % Z축 게인 스케줄링 여부 플래그 추가
+
+        % Logging용 변수
+        current_kP_z
+        current_kI_z
+        current_kD_z
     end
     
     %% METHODS
@@ -38,12 +46,19 @@ classdef PositionCtrl < handle
             obj.m = params('mass');
             
             % LPV 사용 여부
-            if isfield(cfg, 'LPV_Gain_Scheduling')
-                obj.use_lpv = cfg.LPV_Gain_Scheduling;
+            if isfield(cfg, 'Feedforward')
+                obj.use_feedforward = cfg.Feedforward;
             else
-                obj.use_lpv = false;
+                obj.use_feedforward = false;
             end
             
+            % Z축 스케줄링 사용 여부
+            if isfield(cfg, 'Z_Gain_Scheduling')
+                obj.use_z_scheduling = cfg.Z_Gain_Scheduling;
+            else
+                obj.use_z_scheduling = true; % 기본값은 3번 모델
+            end
+
             % 기본 고정 게인 저장
             obj.kP_x_fix = gains('P_x'); obj.kI_x_fix = gains('I_x'); obj.kD_x_fix = gains('D_x');
             obj.kP_y_fix = gains('P_y'); obj.kI_y_fix = gains('I_y'); obj.kD_y_fix = gains('D_y');
@@ -64,6 +79,10 @@ classdef PositionCtrl < handle
             obj.y_err = 0; obj.y_err_prev = 0; obj.y_err_sum = 0;
             obj.z_err = 0; obj.z_err_prev = 0; obj.z_err_sum = 0;
             obj.is_first_run = true;
+        end
+
+        function pid_gains = GetZ_PID(obj)
+            pid_gains = [obj.current_kP_z; obj.current_kI_z; obj.current_kD_z];
         end
         
         %% Update
@@ -107,32 +126,40 @@ classdef PositionCtrl < handle
             dex_body =  cos(psi) * dx_err + sin(psi) * dy_err;
             dey_body = -sin(psi) * dx_err + cos(psi) * dy_err;
             
-            if obj.use_lpv
-                % [LPV 자동 튜닝 기반 평형점 및 제어 산출]
+            if obj.use_feedforward
+                % [피드포워드 계산 (2번, 3번 공통 적용!)]
                 phi_eq = atan(obj.v_des^2 * obj.kappa_des / obj.g);
                 U1_eq = obj.m * sqrt(obj.g^2 + (obj.v_des^2 * obj.kappa_des)^2);
                 
-                % Zero-Pole matching에 의한 PID 게인 자동 산출
-                % X, Y축은 시스템 상수(b)가 'g'로 동일
+                % X, Y축 게인 자동 산출
                 kP_xy = obj.lpv_a1 / obj.g;
                 kI_xy = obj.lpv_a0 / obj.g;
                 kD_xy = obj.lpv_a2 / obj.g;
                 
-                % Z축은 시스템 상수(b)가 cos(phi_eq)/m
-                b_z = cos(phi_eq) / obj.m;
+                % Z축 게인 산출 로직 분리
+                if obj.use_z_scheduling
+                    % 3번 모델: 기울기(phi_eq)에 따른 스케줄링 적용
+                    b_z = cos(phi_eq) / obj.m;
+                else
+                    % 2번 모델: 호버링 기준 고정 게인 (cos(0) = 1)
+                    b_z = 1.0 / obj.m;
+                end
+                
                 kP_z = obj.lpv_a1 / b_z;
                 kI_z = obj.lpv_a0 / b_z;
                 kD_z = obj.lpv_a2 / b_z;
                 
-                % 오차 피드백 제어량 (delta) 계산
-                % x축 전진을 위해서는 theta를 숙여야 하므로 마이너스 부호
-                delta_theta = -(kP_xy * ex_body + kI_xy * ex_body_sum + kD_xy * dex_body);
-                % y축 우측 이동을 위해서는 phi를 기울여야 하므로 플러스 부호
-                delta_phi = (kP_xy * ey_body + kI_xy * ey_body_sum + kD_xy * dey_body);
+                % 로깅을 위해 객체 속성에 저장
+                obj.current_kP_z = kP_z; 
+                obj.current_kI_z = kI_z; 
+                obj.current_kD_z = kD_z;
                 
+                % 오차 피드백 제어량 계산 (부호 주의)
+                delta_theta = -(kP_xy * ex_body + kI_xy * ex_body_sum + kD_xy * dex_body);
+                delta_phi = (kP_xy * ey_body + kI_xy * ey_body_sum + kD_xy * dey_body);
                 delta_U1 = -(kP_z * obj.z_err + kI_z * obj.z_err_sum + kD_z * dz_err);
                 
-                % 최종 지령 = 평형점 + 보상값
+                % 최종 지령 = 평형점(피드포워드) + 보상값
                 theta_des = 0 + delta_theta;
                 phi_des   = phi_eq + delta_phi;
                 U1_des    = U1_eq + delta_U1;
@@ -155,6 +182,11 @@ classdef PositionCtrl < handle
                 % 기존 zdot 제어를 유지하되, 출력을 U1 단위로 변환해 내보냄
                 zdot_des = obj.kP_z_fix * obj.z_err + obj.kI_z_fix * obj.z_err_sum + obj.kD_z_fix * dz_err;
                 U1_des = (obj.m * obj.g) - zdot_des; % 기존 AttitudeCtrl에 있던 공식
+
+                % LPV 꺼졌을 땐 고정 게인 반환
+                obj.current_kP_z = obj.kP_z_fix; 
+                obj.current_kI_z = obj.kI_z_fix; 
+                obj.current_kD_z = obj.kD_z_fix;
             end
             
             % 각도 제한 (Safety)
