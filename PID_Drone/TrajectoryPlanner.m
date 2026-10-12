@@ -129,7 +129,7 @@ classdef TrajectoryPlanner < handle
                         % 2D 곡률 공식: |x'y'' - y'x''| / (x'^2 + y'^2)^(3/2)
                         denom = (dx1^2 + dy1^2)^(1.5);
                         if denom > 1e-6
-                            k = abs(dx1*dy2 - dy1*dx2) / denom;
+                            k = (dx1*dy2 - dy1*dx2) / denom;
                         else
                             k = 0;
                         end

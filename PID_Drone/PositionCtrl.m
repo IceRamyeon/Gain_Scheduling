@@ -127,8 +127,8 @@ classdef PositionCtrl < handle
             dey_body = -sin(psi) * dx_err + cos(psi) * dy_err;
             
             if obj.use_feedforward
-                % [피드포워드 계산 (2번, 3번 공통 적용!)]
-                phi_eq = atan(obj.v_des^2 * obj.kappa_des / obj.g);
+                % 피드포워드 계산 
+                phi_eq = atan(-(obj.v_des^2 * obj.kappa_des) / obj.g);
                 U1_eq = obj.m * sqrt(obj.g^2 + (obj.v_des^2 * obj.kappa_des)^2);
                 
                 % X, Y축 게인 자동 산출
