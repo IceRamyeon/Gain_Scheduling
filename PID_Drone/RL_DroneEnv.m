@@ -25,6 +25,18 @@ classdef RL_DroneEnv < rl.env.MATLABEnvironment
         
         % Loaded PID Table Data
         pid_table
+        
+        % Randomization options for robust training (Domain Randomization)
+        randomize_speed = false;
+        speed_range = [2.0, 10.0];
+        randomize_path = false;
+        max_kappa = 0.35;
+        max_tilt_deg = 75.0;
+        
+        % 2D Curriculum Learning options (Speed & Curvature)
+        use_curriculum = false;
+        episode_count = 0;
+        curriculum_total_episodes = 1200;
     end
     
     methods
@@ -157,8 +169,8 @@ classdef RL_DroneEnv < rl.env.MATLABEnvironment
             rates   = drone_state(10:12); % [p, q, r]
             
             r_pos    = 5.0 * exp(- (err_pos^2) / (2 * 0.1^2)) - 2.0 * err_pos;
-            r_vel    = - 0.2 * (err_vel^2);
-            r_att    = - 0.1 * (phi^2 + theta^2) - 0.05 * norm(rates)^2;
+            r_vel    = max(- 0.2 * (err_vel^2), -50);
+            r_att    = max(- 0.1 * (phi^2 + theta^2) - 0.05 * norm(rates)^2, -50);
             r_smooth = - 0.005 * sum(Action.^2) - 0.02 * sum((Action - this.prev_action).^2);
             r_alive  = 0.1;
 
@@ -168,15 +180,18 @@ classdef RL_DroneEnv < rl.env.MATLABEnvironment
             % --- 6. Check Termination ---
             IsDone = false;
             
-            % Terminate if episode is over
-            if this.current_step >= this.max_steps
+            % Terminate if trajectory completed or max steps reached
+            if this.drone1.t >= this.drone1.tf || this.current_step >= this.max_steps
                 IsDone = true;
+                Reward = Reward + 30.0; % 완주 성공 보너스
             end
             
             % Terminate and penalize heavily if out of bounds (Crash)
-            if err_pos > 5.0 || abs(phi) > deg2rad(60) || abs(theta) > deg2rad(60)
+            % 고속 선회 시 뱅크각(Roll/Pitch)이 60도를 넘길 수 있으므로 max_tilt_deg(기본 75도)로 안정성 확보
+            tilt_limit = deg2rad(this.max_tilt_deg);
+            if err_pos > 5.0 || abs(phi) > tilt_limit || abs(theta) > tilt_limit
                 IsDone = true;
-                remaining_steps = this.max_steps - this.current_step;
+                remaining_steps = max(0, this.max_steps - this.current_step);
                 Reward = Reward - (500 + 0.5 * remaining_steps); 
             end
             
@@ -184,12 +199,54 @@ classdef RL_DroneEnv < rl.env.MATLABEnvironment
         end
         
         function InitialObservation = reset(this)
-            % Initialize Drone and Environment
-            % It assumes cfg is passed or drone is already initialized in main.
-            % However, the previous script had: this.drone1 = init_drone_and_env(this.cfg);
-            % Let's keep it robust. If cfg is empty, just create a dummy one or use default drone
-            this.drone1 = init_drone_and_env(this.cfg);
+            this.episode_count = this.episode_count + 1;
             
+            % 2D 커리큘럼 스케줄링 (속력 및 곡률 난이도 단계적 상향, 총 5000회 기준)
+            if this.use_curriculum
+                ep = this.episode_count;
+                if ep <= 1000
+                    % Stage 1: 입문 단계 (저속 + 완만한 곡률, 1~1000회)
+                    cur_v_min = 2.0; cur_v_max = 5.0;
+                    cur_k_max = 0.10;
+                    stage_str = 'Stage 1 [입문]: 저속(2~5 m/s) 및 완만한 곡률(k<=0.10)';
+                elseif ep <= 2500
+                    % Stage 2: 중급 단계 (중속 + 중간 곡률, 1001~2500회)
+                    cur_v_min = 2.0; cur_v_max = 7.5;
+                    cur_k_max = 0.22;
+                    stage_str = 'Stage 2 [중급]: 중속(2~7.5 m/s) 및 일반 곡률(k<=0.22)';
+                else
+                    % Stage 3: 고급 단계 (전 속도 및 급격한 곡률 마스터, 2501~5000회)
+                    cur_v_min = 2.0; cur_v_max = 10.0;
+                    cur_k_max = 0.35;
+                    stage_str = 'Stage 3 [고급]: 고속(2~10 m/s) 및 급격한 곡률(k<=0.35)';
+                end
+                
+                if ismember(ep, [1, 1001, 2501])
+                    fprintf('\n>>> [Curriculum Update] %s 시작 (Episode %d / 5000) <<<\n', stage_str, ep);
+                end
+                
+                this.speed_range = [cur_v_min, cur_v_max];
+                this.max_kappa = cur_k_max;
+            end
+            
+            % 1. 속도 무작위화 (Domain Randomization)
+            if this.randomize_speed
+                v_rand = this.speed_range(1) + (this.speed_range(2) - this.speed_range(1)) * rand();
+                this.cfg.target_speed = v_rand;
+                this.cfg.drone1_init_states(4) = v_rand;
+            end
+            
+            % 2. 궤적 곡률 무작위화 (Path Randomization)
+            if this.randomize_path
+                this.cfg.random_path = true;
+                this.cfg.max_kappa = this.max_kappa;
+            else
+                this.cfg.random_path = false;
+            end
+            
+            % Initialize Drone and Environment
+            this.drone1 = init_drone_and_env(this.cfg);
+            this.max_steps = ceil(this.drone1.tf / (this.cfg.dt * 10)) + 30;
             this.current_step = 0;
             this.prev_action = zeros(4,1);
             

@@ -14,7 +14,10 @@ function [drone1] = init_drone_and_env(cfg)
 
     %% 2. Command Signals (웨이포인트)
     % pathGen 함수에서 x, y, z를 받아와서 행렬로 합치기
-    [wp_x, wp_y, wp_z] = pathGen();
+    is_rand = isfield(cfg, 'random_path') && cfg.random_path;
+    max_k = 0.35;
+    if isfield(cfg, 'max_kappa'), max_k = cfg.max_kappa; end
+    [wp_x, wp_y, wp_z] = pathGen(is_rand, max_k);
     waypoints = [wp_x; wp_y; wp_z];
 
     %% 4. 드론 객체 생성 (BIRTH OF A DRONE)
