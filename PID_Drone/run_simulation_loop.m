@@ -10,6 +10,7 @@ function [log_data, valid_len] = run_simulation_loop(drone1, cfg)
     log_data.att_des_hist = zeros(4, num_steps);
     log_data.u_hist       = zeros(4, num_steps);
     log_data.PID_Pos_hist = zeros(3, num_steps);
+    log_data.kappa_hist   = zeros(1, num_steps);
     
     valid_len = num_steps;
 
@@ -86,5 +87,6 @@ end
         log_data.att_des_hist(:,i) = att_cmd;
         log_data.u_hist(:,i)       = u_motor;
         log_data.PID_Pos_hist(:,i) = drone1.posCtrl.GetZ_PID();
+        log_data.kappa_hist(i)   = kappa_avg;
     end
 end

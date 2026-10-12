@@ -11,7 +11,8 @@ function finalize_and_save_results(log_data, cfg)
     pos_des_hist = log_data.pos_des_hist;
     att_des_hist = log_data.att_des_hist;
     u_hist       = log_data.u_hist;
-    pid_hist     = log_data.PID_Pos_hist; % PID 데이터 언패킹 추가
+    pid_hist     = log_data.PID_Pos_hist;
+    kappa_hist   = log_data.kappa_hist;
 
     %% 0. 평가 지표 계산
     % 3차원 유클리디안 거리 오차 계산 블록
@@ -107,7 +108,13 @@ function finalize_and_save_results(log_data, cfg)
     title('Scheduled PID Gains for Z-axis (Kp, Ki, Kd)'); grid on;
     legend('K_{P,z}', 'K_{I,z}', 'K_{D,z}', 'Location', 'best');
 
-    %% 5.5 [그래프 6, 7] 3D & 2D Trajectory
+    %% 6. [그래프 6] 곡률 추종 (Curvature Tracking)
+    h_fig_kappa = figure('Name', 'Curvature Tracking', 'Theme', 'light', 'Position', [1410 750 600 250]);
+    plot(t_hist, kappa_hist, 'k', 'LineWidth', 1.2);
+    xlabel('Time [s]'); ylabel('Curvature \kappa'); 
+    title('Trajectory Average Curvature (\kappa_{avg})'); grid on;
+    
+    %% 7 [그래프 7, 8] 3D & 2D Trajectory
     if ~cfg.play_animation
         h_fig_traj_3d = figure('Name', '3D Trajectory', 'Theme', 'light', 'Position', [10 150 600 600]);
         view(3); axis equal; grid on; hold on;
@@ -148,9 +155,8 @@ function finalize_and_save_results(log_data, cfg)
         exportgraphics(h_fig_att, [baseFileName, '_Attitude.png'], 'Resolution', 300);
         exportgraphics(h_fig_in, [baseFileName, '_ControlInput.png'], 'Resolution', 300);
         exportgraphics(h_fig_spd, [baseFileName, '_Speed.png'], 'Resolution', 300);
-        
-        % PID 히스토리 저장
         exportgraphics(h_fig_pid, [baseFileName, '_PID_Gains.png'], 'Resolution', 300);
+        exportgraphics(h_fig_kappa, [baseFileName, '_Curvature.png'], 'Resolution', 300);
         
         if ~cfg.play_animation
             exportgraphics(h_fig_traj_3d, [baseFileName, '_Trajectory_3D.png'], 'Resolution', 300);
