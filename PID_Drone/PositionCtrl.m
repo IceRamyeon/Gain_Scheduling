@@ -64,10 +64,11 @@ classdef PositionCtrl < handle
             obj.kP_y_fix = gains('P_y'); obj.kI_y_fix = gains('I_y'); obj.kD_y_fix = gains('D_y');
             obj.kP_z_fix = gains('P_z'); obj.kI_z_fix = gains('I_z'); obj.kD_z_fix = gains('D_z');
             
-            % 극점 역산 계수 (Overshoot <= 4%, t_ss <= 3s, Ess = 0)
-            obj.lpv_a2 = 8.0;
-            obj.lpv_a1 = 18.69;
-            obj.lpv_a0 = 18.45;
+            % 극점 역산 계수 (Overshoot ~4.3%, t_ss ~4s)
+            % Poles: [-1.0+1.0i, -1.0-1.0i, -0.5] => a2=2.5, a1=3.0, a0=1.0
+            obj.lpv_a2 = 2.5;
+            obj.lpv_a1 = 3.0;
+            obj.lpv_a0 = 1.0;
             
             obj.max_angle = 30 * (pi/180); 
             obj.Reset();
