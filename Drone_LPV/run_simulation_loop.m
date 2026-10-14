@@ -1,0 +1,92 @@
+function [log_data, valid_len] = run_simulation_loop(drone1, cfg)
+    sim_tf = drone1.tf;
+    % 시뮬레이션 스텝 수 계산
+    num_steps = ceil(sim_tf / cfg.dt);
+    
+    % 로그 데이터 메모리 사전 할당
+    log_data.t_hist       = zeros(1, num_steps);
+    log_data.state_hist   = zeros(12, num_steps);
+    log_data.pos_des_hist = zeros(3, num_steps);
+    log_data.att_des_hist = zeros(4, num_steps);
+    log_data.u_hist       = zeros(4, num_steps);
+    log_data.PID_Pos_hist = zeros(3, num_steps);
+    log_data.kappa_hist   = zeros(1, num_steps);
+    
+    valid_len = num_steps;
+
+%% 0. 초기 Yaw 설정
+if cfg.start_with_yaw
+    if isempty(cfg.target_yaw)
+        % [버그 수정] get_position의 두 번째 출력이 속도(vel)임.
+        [~, init_vel, ~] = drone1.trajCtrl.get_position(0); 
+        if norm(init_vel(1:2)) > 1e-3
+            cfg.drone1_init_states(9) = atan2(init_vel(2), init_vel(1));
+            prev_yaw = atan2(init_vel(2), init_vel(1));
+        else
+            cfg.drone1_init_states(9) = 0.0;
+            prev_yaw = 0.0; 
+        end
+    else
+        cfg.drone1_init_states(9) = cfg.target_yaw;
+        prev_yaw = cfg.target_yaw;
+    end
+end
+
+    %% Simulation Loop
+    for i = 1:num_steps
+        % 1. 현재 상태 및 시간 가져오기
+        drone1_state = drone1.GetState();
+        current_time = drone1.t;
+
+        % 2. 목표 궤적
+        [traj_pos, traj_vel, kappa_avg] = drone1.trajCtrl.get_position(current_time);
+
+        % 3. 동적 Yaw 계산 로직 (랩어라운드 방지 포함)
+        if isfield(cfg, 'target_yaw') && isempty(cfg.target_yaw)
+            
+            speed_xy = norm(traj_vel(1:2));
+            
+            if speed_xy > 1e-3
+                raw_yaw = atan2(traj_vel(2), traj_vel(1));
+                yaw_diff = raw_yaw - prev_yaw;
+                
+                % 180도 넘어갈 때 갑자기 튀는 현상 방지
+                while yaw_diff > pi
+                    raw_yaw = raw_yaw - 2*pi;
+                    yaw_diff = raw_yaw - prev_yaw;
+                end
+                while yaw_diff < -pi
+                    raw_yaw = raw_yaw + 2*pi;
+                    yaw_diff = raw_yaw - prev_yaw;
+                end
+                
+                dynamic_target_yaw = raw_yaw;
+                prev_yaw = dynamic_target_yaw; 
+            else
+                dynamic_target_yaw = prev_yaw;
+            end
+
+        else
+            dynamic_target_yaw = cfg.target_yaw;
+        end
+
+        % 4. 제어기에 넘겨줄 cmd 배열에 속도(v)와 곡률(kappa)
+        current_cmd = [traj_pos; dynamic_target_yaw; cfg.target_speed; kappa_avg];
+
+        % 5. 제어기 업데이트
+        att_cmd = drone1.posCtrl.Update(current_cmd, drone1_state);
+        u_motor = drone1.attCtrl.Update(att_cmd, drone1_state);
+        
+        % 6. 상태 업데이트 (동역학)
+        drone1.UpdateState(u_motor);
+        
+        % 7. 데이터 로깅
+        log_data.t_hist(i)       = current_time;
+        log_data.state_hist(:,i) = drone1_state;
+        log_data.pos_des_hist(:,i) = traj_pos;
+        log_data.att_des_hist(:,i) = att_cmd;
+        log_data.u_hist(:,i)       = u_motor;
+        log_data.PID_Pos_hist(:,i) = drone1.posCtrl.GetZ_PID();
+        log_data.kappa_hist(i)   = kappa_avg;
+    end
+end
