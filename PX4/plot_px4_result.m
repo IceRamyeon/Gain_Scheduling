@@ -74,8 +74,3 @@ function f = find_matching_ulog(root, metaFile)
         warning('가장 가까운 ULog 도 비행 기록과 %.0f 분 차이가 납니다. 같은 비행인지 확인하세요.', g);
     end
 end
-
-if cfg.auto_save
-    if ~exist(cfg.save_dir, 'dir'), mkdir(cfg.save_dir); end
-    fprintf('그래프 저장: %s\n', cfg.save_dir);
-end
