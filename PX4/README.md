@@ -26,8 +26,10 @@
 1. PX4 SITL을 실행한다: `make px4_sitl gz_x500`
 2. QGroundControl을 켠다 (모니터링용, UDP 14550).
 3. MATLAB에서 `px4_main.m`을 실행한다. 단계 ①~⑤가 자동으로 진행되고, `PX4/results/px4_run_*.mat`이 저장된다.
-4. 같은 비행의 ULog를 찾는다: `PX4-Autopilot/build/px4_sitl_default/rootfs/log/<날짜>/<시간>.ulg`
-5. `plot_px4_result.m`을 실행하고, 위의 두 파일을 선택한다.
+4. `plot_px4_result.m`을 실행한다. 가장 최근 비행 기록과, 저장 시각이 가장 가까운 ULog를 자동으로 찾는다.
+   - ULog 폴더: `~/PX4-Autopilot/build/px4_sitl_default/rootfs/fs/log/<날짜>/<시간>.ulg`
+   - PX4-Autopilot 위치가 다르면 `plot_px4_result.m` 위쪽의 `ulogRoot`를 고친다.
+   - 특정 비행을 고르려면 `metaFile`, `ulgFile`에 경로를 직접 적는다.
 
 필요한 MATLAB 툴박스: **UAV Toolbox** (`mavlinkio`, `ulogreader`), **Curve Fitting Toolbox** (`TrajectoryPlanner`의 `fnder`).
 

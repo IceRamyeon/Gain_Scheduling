@@ -72,5 +72,5 @@ if ~exist(cfg.px4.result_dir, 'dir'), mkdir(cfg.px4.result_dir); end
 metaFile = fullfile(cfg.px4.result_dir, sprintf('px4_run_%s.mat', datestr(now, 'yyyymmdd_HHMMSS')));
 save(metaFile, 'meta');
 fprintf('비행 기록 저장: %s\n', metaFile);
-disp('ULog 위치(SITL): PX4-Autopilot/build/px4_sitl_default/rootfs/log/<날짜>/<시간>.ulg');
-disp('다음 단계: plot_px4_result.m 에서 metaFile 과 ULog 경로를 지정해 실행');
+disp('ULog 위치(SITL): ~/PX4-Autopilot/build/px4_sitl_default/rootfs/fs/log/<날짜>/<시간>.ulg');
+disp('다음 단계: plot_px4_result.m 실행 (가장 최근 비행 기록과 그 비행의 ULog 를 자동으로 찾음)');
