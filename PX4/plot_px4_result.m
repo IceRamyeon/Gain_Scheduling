@@ -37,7 +37,7 @@ log_data = ulog_to_log_data(ulgFile, meta, 0.01);
 cfg = meta.cfg;
 cfg.play_animation = false;
 cfg.auto_save = true;
-cfg.save_dir  = fullfile(here, 'results', 'plots');
+cfg.save_dir  = fullfile(here, 'results', 'plots', datestr(now, 'yyyymmdd_HHMM'));
 
 disp('※ Control Inputs 그래프의 U2~U4 는 PX4 정규화 토크(-1 ~ 1)이고, U1 은 정규화 추력을 N 으로 근사 변환한 값입니다.');
 finalize_and_save_results(log_data, cfg);
@@ -70,4 +70,9 @@ function f = find_matching_ulog(root, metaFile)
     if g > 10
         warning('가장 가까운 ULog 도 비행 기록과 %.0f 분 차이가 납니다. 같은 비행인지 확인하세요.', g);
     end
+end
+
+if cfg.auto_save
+    if ~exist(cfg.save_dir, 'dir'), mkdir(cfg.save_dir); end
+    fprintf('그래프 저장: %s\n', cfg.save_dir);
 end
