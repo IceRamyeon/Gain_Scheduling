@@ -36,7 +36,7 @@ log_data = ulog_to_log_data(ulgFile, meta, 0.01);
 %% 시뮬레이션과 같은 플롯 (자동 저장 원하면 아래 두 줄 수정)
 cfg = meta.cfg;
 cfg.play_animation = false;
-cfg.auto_save = false;
+cfg.auto_save = true;
 cfg.save_dir  = fullfile(here, 'results', 'plots');
 
 disp('※ Control Inputs 그래프의 U2~U4 는 PX4 정규화 토크(-1 ~ 1)이고, U1 은 정규화 추력을 N 으로 근사 변환한 값입니다.');
