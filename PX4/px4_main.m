@@ -21,7 +21,7 @@ cfg = struct();
 cfg.start_with_yaw = true;
 cfg.dt = 0.01;                    % 기준값 표 계산 간격 (시뮬레이션 dt 와 동일하게)
 cfg.target_yaw = [];
-cfg.target_speed = 4;             % [m/s]
+cfg.target_speed = 3;             % [m/s]
 
 cfg.Feedforward = true;
 cfg.Z_Gain_Scheduling = true;
