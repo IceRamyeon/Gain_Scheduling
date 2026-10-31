@@ -37,7 +37,10 @@ log_data = ulog_to_log_data(ulgFile, meta, 0.01);
 cfg = meta.cfg;
 cfg.play_animation = false;
 cfg.auto_save = true;
-cfg.save_dir  = fullfile(here, 'results', 'plots');
+% 저장 위치: results/plots/<오늘 날짜>/<현재 시간>  (예: results/plots/2026-10-31/19_14_05)
+run_time = datetime('now');
+cfg.save_dir  = fullfile(here, 'results', 'plots', ...
+    char(datetime(run_time, 'Format', 'yyyy-MM-dd')), char(datetime(run_time, 'Format', 'HH_mm_ss')));
 
 disp('※ Control Inputs 그래프의 U2~U4 는 PX4 정규화 토크(-1 ~ 1)이고, U1 은 정규화 추력을 N 으로 근사 변환한 값입니다.');
 finalize_and_save_results(log_data, cfg);
