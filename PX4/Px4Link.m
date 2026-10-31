@@ -60,7 +60,9 @@ classdef Px4Link < handle
         %% 상태 수신
         function [x, t_boot_s, ok] = getState(obj)
             % x        : [x y z vx vy vz phi theta psi p q r]' (NED, rad, rad/s)
-            % t_boot_s : PX4 부팅 후 시간 [s] (ULog 타임스탬프와 같은 기준)
+            % t_boot_s : 위치 샘플(LOCAL_POSITION_NED)의 PX4 부팅 후 시간 [s] (ULog 타임스탬프와 같은 기준)
+            %            -> 위치가 새로 들어왔을 때만 값이 바뀐다. PositionCtrl 의 dt·미분은 이 시간으로 계산해야
+            %               위치가 갱신되지 않은 스텝에서 미분이 0/큰 값으로 번갈아 튀지 않는다.
             x = nan(12, 1); t_boot_s = NaN; ok = false;
             mp = latestmsgs(obj.subPos, 1);
             ma = latestmsgs(obj.subAtt, 1);
@@ -68,7 +70,7 @@ classdef Px4Link < handle
             P = mp.Payload; A = ma.Payload;
             x = double([P.x; P.y; P.z; P.vx; P.vy; P.vz; ...
                         A.roll; A.pitch; A.yaw; A.rollspeed; A.pitchspeed; A.yawspeed]);
-            t_boot_s = double(max(P.time_boot_ms, A.time_boot_ms)) * 1e-3;
+            t_boot_s = double(P.time_boot_ms) * 1e-3;
             ok = true;
         end
 
@@ -120,6 +122,8 @@ classdef Px4Link < handle
         function setLand(obj),     obj.command(176, [1 4 6 0 0 0 0]); end   % AUTO.LAND
         % MAV_CMD_COMPONENT_ARM_DISARM(400)
         function arm(obj),         obj.command(400, [1 0 0 0 0 0 0]); end
+        % MAV_CMD_SET_MESSAGE_INTERVAL(511): 메시지 송신 주기 요청 (예: LOCAL_POSITION_NED=32, ATTITUDE=30)
+        function setMessageRate(obj, msgId, hz), obj.command(511, [msgId, 1e6 / hz, 0, 0, 0, 0, 0]); end
 
         %% 파라미터 읽기 (예: MPC_THR_HOVER)
         function val = readParam(obj, name, timeout_s)

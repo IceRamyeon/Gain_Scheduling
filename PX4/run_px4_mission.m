@@ -56,7 +56,10 @@ function meta = run_px4_mission(link, cfg, ref, posCtrl)
     meta.thr_hover = thr_hover; meta.preroll_L = L;
     meta.t4_start = NaN; meta.t4_end = NaN;
 
-    %% 0) 첫 상태 수신
+    %% 0) 상태 메시지 주기 요청 (제어 루프 주기와 맞춤) + 첫 상태 수신
+    link.setMessageRate(32, px.rate_hz);               % LOCAL_POSITION_NED
+    link.setMessageRate(30, px.rate_hz);               % ATTITUDE
+    pause(0.5);
     [x_ned, ~, ok] = link.getState();
     t0 = tic;
     while ~ok
