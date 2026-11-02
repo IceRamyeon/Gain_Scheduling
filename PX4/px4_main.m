@@ -26,7 +26,6 @@ cfg.target_speed = 3;             % [m/s]
 cfg.Feedforward = true;
 cfg.Z_Gain_Scheduling = true;
 
-cfg.play_animation = false;
 cfg.auto_save = false;
 cfg.save_dir = '';
 
