@@ -35,8 +35,6 @@ log_data = ulog_to_log_data(ulgFile, meta, 0.01);
 
 %% 시뮬레이션과 같은 플롯 (자동 저장 원하면 아래 두 줄 수정)
 cfg = meta.cfg;
-cfg.play_animation = false;
-cfg.auto_save = true;
 % 저장 위치: results/plots/<오늘 날짜>/<현재 시간>  (예: results/plots/2026-10-31/19_14_05)
 run_time = datetime('now');
 cfg.save_dir  = fullfile(here, 'results', 'plots', ...
