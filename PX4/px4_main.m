@@ -27,6 +27,7 @@ cfg.Feedforward = true;
 cfg.Z_Gain_Scheduling = true;
 
 cfg.auto_save = false;
+cfg.play_animation = false;
 cfg.save_dir = '';
 
 % 경로 시작점 = 시뮬레이션 초기 위치 (경로 좌표계)
