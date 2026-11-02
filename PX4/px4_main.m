@@ -31,7 +31,10 @@ cfg.auto_save = false;
 cfg.save_dir = '';
 
 % 경로 시작점 = 시뮬레이션 초기 위치 (경로 좌표계)
-cfg.drone1_init_states = [0.0, 0.0, -6.0, cfg.target_speed, 0, 0, 0, 0, 0, 0, 0, 0]';
+cfg.drone1_init_states = [0.0, 0.0, -6.0, ...           % x, y, z [m]
+                        cfg.target_speed, 0, 0, ...     % vx, vy, vz [m/s]
+                        0, 0, 0, ...                    % roll, pitch, yaw [rad]
+                        0, 0, 0]';                      % p, q, r [rad/s]
 
 % 기체 파라미터: Gazebo x500 모델(PX4-gazebo-models x500_base/model.sdf) 기준
 %  - 질량: base_link 2.0 kg + 로터 0.016077 kg x 4 = 2.064 kg
@@ -39,7 +42,11 @@ cfg.drone1_init_states = [0.0, 0.0, -6.0, cfg.target_speed, 0, 0, 0, 0, 0, 0, 0,
 %  - 팔 길이: 로터 위치 (±0.174, ±0.174) m -> sqrt(2) x 0.174 = 0.246 m
 %  (정규화 추력 변환에서는 m 이 상쇄됨. U1[N] 로그 값과 PositionCtrl 의 U1_eq 크기에만 반영)
 %  (MATLAB 시뮬레이션 값: m 1.25, armLength 0.265, Ixx = Iyy 0.0232, Izz 0.0468)
-cfg.m = 2.064; cfg.armLength = 0.246; cfg.Ixx = 0.021667; cfg.Iyy = 0.021667; cfg.Izz = 0.040;
+cfg.m = 2.064; 
+cfg.armLength = 0.246; 
+cfg.Ixx = 0.021667; 
+cfg.Iyy = 0.021667; 
+cfg.Izz = 0.040;
 
 cfg.posGain = containers.Map( ...
     {'P_x','I_x','D_x', 'P_y','I_y','D_y', 'P_z','I_z','D_z'}, ...
