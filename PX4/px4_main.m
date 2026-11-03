@@ -49,8 +49,12 @@ cfg.Iyy = 0.021667;
 cfg.Izz = 0.040;
 
 cfg.posGain = containers.Map( ...
-    {'P_x','I_x','D_x', 'P_y','I_y','D_y', 'P_z','I_z','D_z'}, ...
-    {3.17, 0, 0.81,  3.17, 0, 0.81,  4.0, 0, 0.0});
+    {'P_x','I_x','D_x', ...
+     'P_y','I_y','D_y', ...
+     'P_z','I_z','D_z'}, ...
+    {0.1, 0, 0.1, ...
+     0.1, 0, 0.1, ...
+     1.0, 0, 0.0});
 
 %% 1. PX4 연결·실행 설정
 cfg.px4.local_port     = 14540;   % SITL offboard 포트 (실기체는 텔레메트리/컴패니언 연결에 맞게)
@@ -81,7 +85,7 @@ meta = run_px4_mission(link, cfg, ref, posCtrl);
 
 %% 5. 비행 기록 저장 (ULog 와 합칠 때 사용)
 if ~exist(cfg.px4.result_dir, 'dir'), mkdir(cfg.px4.result_dir); end
-metaFile = fullfile(cfg.px4.result_dir, sprintf('px4_run_%s.mat', datestr(now, 'yyyymmdd_HHMMSS')));
+metaFile = fullfile(cfg.px4.result_dir, sprintf('px4_run_%s.mat', datetime("now", 'yyyymmdd_HHMMSS')));
 save(metaFile, 'meta');
 fprintf('비행 기록 저장: %s\n', metaFile);
 disp('ULog 위치(SITL): ~/PX4-Autopilot/build/px4_sitl_default/rootfs/fs/log/<날짜>/<시간>.ulg');
