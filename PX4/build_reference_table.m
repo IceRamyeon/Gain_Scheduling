@@ -9,6 +9,7 @@ function ref = build_reference_table(cfg)
 %   ref.t      : 1xN [s]  (0 ~ tf)
 %   ref.pos    : 3xN [m]  목표 위치 (경로 좌표계)
 %   ref.vel    : 3xN [m/s] 목표 속도
+%   ref.acc    : 3xN [m/s^2] 목표 가속도 (ref.vel 의 수치 미분, PX4 모드 feedforward 용)
 %   ref.kappa  : 1xN      전방 5초 평균 곡률 (LPF 후)
 %   ref.yaw    : 1xN [rad] 목표 yaw (run_simulation_loop 과 같은 랩어라운드 처리, 연속값)
 
@@ -50,6 +51,8 @@ function ref = build_reference_table(cfg)
         pos(:, i) = p; vel(:, i) = v; kappa(i) = k;
     end
 
-    ref = struct('t', t, 'pos', pos, 'vel', vel, 'kappa', kappa, 'yaw', yaw, ...
+    acc = [gradient(vel(1, :), cfg.dt); gradient(vel(2, :), cfg.dt); gradient(vel(3, :), cfg.dt)];
+
+    ref = struct('t', t, 'pos', pos, 'vel', vel, 'acc', acc, 'kappa', kappa, 'yaw', yaw, ...
                  'tf', t(end), 'traj', traj);
 end

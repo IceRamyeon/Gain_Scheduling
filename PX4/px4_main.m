@@ -18,6 +18,12 @@ addpath(fullfile(here, '..', 'PID_Drone'));
 
 %% 0. 시뮬레이션과 같은 설정 (PID_Drone/main.m 과 맞춰 둘 것)
 cfg = struct();
+
+% 제어 모드 (③ 프리롤 + ④ 경로 추종 구간)
+%  'MATLAB' : PID_Drone/PositionCtrl 이 자세+추력 명령 (A 방식, 제안 제어기)
+%  'PX4'    : PX4 기본 위치제어기(mc_pos_control)에 위치·속도·가속도 셋포인트만 전달 (비교군)
+%             -> 게인은 PX4 파라미터(MPC_XY_P, MPC_XY_VEL_*, MPC_Z_*)를 그대로 사용
+cfg.mode = 'MATLAB';
 cfg.start_with_yaw = true;
 cfg.dt = 0.01;                    % 기준값 표 계산 간격 (시뮬레이션 dt 와 동일하게)
 cfg.target_yaw = [];
@@ -85,7 +91,8 @@ meta = run_px4_mission(link, cfg, ref, posCtrl);
 
 %% 5. 비행 기록 저장 (ULog 와 합칠 때 사용)
 if ~exist(cfg.px4.result_dir, 'dir'), mkdir(cfg.px4.result_dir); end
-metaFile = fullfile(cfg.px4.result_dir, sprintf('px4_run_%s.mat', datetime("now", 'yyyymmdd_HHMMSS')));
+metaFile = fullfile(cfg.px4.result_dir, sprintf('px4_run_%s_%s.mat', ...
+    char(datetime('now', 'Format', 'yyyyMMdd_HHmmss')), cfg.mode));
 save(metaFile, 'meta');
 fprintf('비행 기록 저장: %s\n', metaFile);
 disp('ULog 위치(SITL): ~/PX4-Autopilot/build/px4_sitl_default/rootfs/fs/log/<날짜>/<시간>.ulg');

@@ -58,7 +58,16 @@ function log_data = ulog_to_log_data(ulgFile, meta, dt_grid)
     pick = @(names) interp1(tl, C(:, cellfun(col, names)), tg, 'linear', 'extrap')';
 
     pos_des_hist = pick({'x_des', 'y_des', 'z_des'});
-    att_des_hist = pick({'phi_cmd', 'theta_cmd', 'psi_cmd', 'U1_cmd'});
+    if isfield(cfg, 'mode') && strcmpi(cfg.mode, 'PX4')
+        % PX4 모드: 자세 명령은 PX4 위치제어기가 만든 vehicle_attitude_setpoint 에서 가져온다
+        asp = local_topic(ulog, 'vehicle_attitude_setpoint');
+        eul_d = local_quat2eul(double(asp.q_d));
+        eul_d(:, 3) = unwrap(eul_d(:, 3)) - deg2rad(cfg.px4.path_rot_deg);
+        U1_d = -double(asp.thrust_body(:, 3)) / meta.thr_hover * cfg.m * 9.81;   % 정규화 추력 -> N 근사
+        att_des_hist = interp1(local_time(asp), [eul_d, U1_d], tg, 'linear', 'extrap')';
+    else
+        att_des_hist = pick({'phi_cmd', 'theta_cmd', 'psi_cmd', 'U1_cmd'});
+    end
     pid_hist     = pick({'kP_z', 'kI_z', 'kD_z'});
     kappa_hist   = pick({'kappa'});
 

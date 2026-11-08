@@ -9,6 +9,17 @@
 
 > 이 코드는 MATLAB/PX4 환경에서 아직 실행해 보지 않았다. 처음에는 SITL에서만 돌려 볼 것.
 
+## 제어 모드 (`cfg.mode`, `px4_main.m`)
+
+| 값 | ③ 프리롤·④ 경로 추종에서 하는 일 | 용도 |
+| --- | --- | --- |
+| `'MATLAB'` | `PID_Drone/PositionCtrl` 출력(자세 + 추력)을 `SET_ATTITUDE_TARGET`으로 전송 | 제안 제어기 (A 방식) |
+| `'PX4'` | 같은 경로의 위치·속도·가속도 셋포인트를 `SET_POSITION_TARGET_LOCAL_NED`로 전송, PX4 `mc_pos_control`이 제어 | 비교군 (PX4 기본 위치제어기, 게인은 PX4 파라미터) |
+
+- ①②⑤, 경로, 프리롤, 평가 구간, ULog 처리는 두 모드가 같다.
+- `'PX4'` 모드의 자세 명령 그래프는 ULog `vehicle_attitude_setpoint`에서 가져오고, Z 게인 그래프는 비어 있다.
+- 비행 기록 파일 이름에 모드가 붙는다: `px4_run_<날짜>_<시간>_<mode>.mat`
+
 ## 파일
 
 | 파일 | 역할 |

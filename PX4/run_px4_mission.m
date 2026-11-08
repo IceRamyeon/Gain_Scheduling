@@ -14,6 +14,9 @@ function meta = run_px4_mission(link, cfg, ref, posCtrl)
 %   meta.log                    : 루프마다 기록한 행렬 (열 정의는 meta.log_cols)
 
     px  = cfg.px4;
+    if ~isfield(cfg, 'mode'), cfg.mode = 'MATLAB'; end
+    usePX4 = strcmpi(cfg.mode, 'PX4');                % true: ③④ 를 PX4 위치제어기가 수행 (비교군)
+    fprintf('제어 모드: %s\n', cfg.mode);
     Ts  = 1 / px.rate_hz;
     g   = 9.81;
     rot = deg2rad(px.path_rot_deg);
@@ -84,7 +87,7 @@ function meta = run_px4_mission(link, cfg, ref, posCtrl)
     p_pre_ned = path_to_ned(p_pre, cfg);
     hold_until(p_pre_ned, yaw0 + rot, 0.3, 2.0, 60);
 
-    %% ③ 프리롤 가속 + ④ 경로 추종 (MATLAB PositionCtrl)
+    %% ③ 프리롤 가속 + ④ 경로 추종 (MATLAB PositionCtrl 또는 PX4 위치제어기)
     disp('③ 프리롤 가속');
     posCtrl.Reset();
     phase = 3;
@@ -105,8 +108,8 @@ function meta = run_px4_mission(link, cfg, ref, posCtrl)
                 phase = 4; meta.t4_start = t_boot;
                 disp('④ 경로 추종 (평가 구간)');
             else
-                if tau < t_acc, s = -L + 0.5 * a * tau^2;
-                else,           s = -L + s_acc + v * (tau - t_acc);
+                if tau < t_acc, s = -L + 0.5 * a * tau^2;       v_des = a * tau * d; a_des = a * d;
+                else,           s = -L + s_acc + v * (tau - t_acc); v_des = v * d;     a_des = [0; 0; 0];
                 end
                 cmd = [p_start + s * d; yaw0; v; 0];
             end
@@ -118,6 +121,8 @@ function meta = run_px4_mission(link, cfg, ref, posCtrl)
                 break;
             end
             p_des = interp1(ref.t, ref.pos', tau)';
+            v_des = interp1(ref.t, ref.vel', tau)';
+            a_des = interp1(ref.t, ref.acc', tau)';
             cmd = [p_des; interp1(ref.t, ref.yaw, tau); v; interp1(ref.t, ref.kappa, tau)];
         end
 
@@ -131,20 +136,28 @@ function meta = run_px4_mission(link, cfg, ref, posCtrl)
             break;
         end
 
-        % PositionCtrl (실제 dt 반영: 적분·미분이 루프 주기와 무관하게 시뮬레이션과 같은 의미가 되도록)
-        dt = t_boot - t_prev;
-        if dt > 1e-4
-            posCtrl.dt = min(dt, 0.1);
-            att = posCtrl.Update(cmd, x);              % [phi; theta; psi; U1]
-            last_att = att(:)';
-            t_prev = t_boot;
+        if usePX4
+            % 비교군: PX4 위치제어기에 위치·속도·가속도 셋포인트 전달 (자세·추력은 PX4 가 계산)
+            link.sendPosition(path_to_ned(cmd(1:3), cfg), cmd(4) + rot, ...
+                              path_to_ned(v_des, cfg, false), path_to_ned(a_des, cfg, false));
+            last_att = nan(1, 4); thr = NaN; kz = nan(1, 3);
+        else
+            % PositionCtrl (실제 dt 반영: 적분·미분이 루프 주기와 무관하게 시뮬레이션과 같은 의미가 되도록)
+            dt = t_boot - t_prev;
+            if dt > 1e-4
+                posCtrl.dt = min(dt, 0.1);
+                att = posCtrl.Update(cmd, x);          % [phi; theta; psi; U1]
+                last_att = att(:)';
+                t_prev = t_boot;
+            end
+            thr = U1_to_thr(last_att(4));
+            link.sendAttitude(last_att(1), last_att(2), last_att(3) + rot, thr);
+            kz = posCtrl.GetZ_PID()';
         end
-        thr = U1_to_thr(last_att(4));
-        link.sendAttitude(last_att(1), last_att(2), last_att(3) + rot, thr);
 
-        % 로그
+        % 로그 (PX4 모드에서는 자세 명령·추력·Z 게인 열이 NaN -> ULog 의 PX4 자세 셋포인트로 대체)
         nlog = nlog + 1;
-        LOG(nlog, :) = [t_boot, phase, x', cmd', last_att, thr, posCtrl.GetZ_PID()'];
+        LOG(nlog, :) = [t_boot, phase, x', cmd', last_att, thr, kz];
         wait_tick();
     end
 

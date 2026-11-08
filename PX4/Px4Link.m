@@ -75,17 +75,23 @@ classdef Px4Link < handle
         end
 
         %% 위치 명령 (PX4 기본 위치제어기)
-        function sendPosition(obj, p_ned, yaw, v_ned)
+        function sendPosition(obj, p_ned, yaw, v_ned, a_ned)
             m = obj.msgPosT;
             m.Payload.target_system(:)    = obj.target_sys;
             m.Payload.target_component(:) = obj.target_comp;
             m.Payload.coordinate_frame(:) = 1;                 % MAV_FRAME_LOCAL_NED
-            if nargin < 4 || isempty(v_ned)
-                m.Payload.type_mask(:) = 56 + 448 + 2048;      % 위치 + yaw
-                v_ned = [0; 0; 0];
+            if nargin < 5 || isempty(a_ned)
+                a_ned = [0; 0; 0];
+                if nargin < 4 || isempty(v_ned)
+                    m.Payload.type_mask(:) = 56 + 448 + 2048;  % 위치 + yaw
+                    v_ned = [0; 0; 0];
+                else
+                    m.Payload.type_mask(:) = 448 + 2048;       % 위치 + 속도 + yaw
+                end
             else
-                m.Payload.type_mask(:) = 448 + 2048;           % 위치 + 속도 + yaw
+                m.Payload.type_mask(:) = 2048;                 % 위치 + 속도 + 가속도(feedforward) + yaw
             end
+            m.Payload.afx(:) = a_ned(1); m.Payload.afy(:) = a_ned(2); m.Payload.afz(:) = a_ned(3);
             m.Payload.x(:)  = p_ned(1); m.Payload.y(:)  = p_ned(2); m.Payload.z(:)  = p_ned(3);
             m.Payload.vx(:) = v_ned(1); m.Payload.vy(:) = v_ned(2); m.Payload.vz(:) = v_ned(3);
             m.Payload.yaw(:) = yaw;
