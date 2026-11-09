@@ -5,7 +5,6 @@
 %   - 비행 기록: PX4/results 에서 가장 최근 px4_run_*.mat
 %   - ULog     : ulogRoot 아래(날짜 폴더 포함)에서 그 비행 기록과 저장 시각이 가장 가까운 .ulg
 
-close all; clc; clear;
 here = fileparts(mfilename('fullpath'));
 addpath(here);
 addpath(fullfile(here, '..', 'PID_Drone'));
