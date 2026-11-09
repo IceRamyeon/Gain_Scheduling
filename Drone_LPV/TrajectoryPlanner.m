@@ -1,165 +1,180 @@
 classdef TrajectoryPlanner < handle
-    %% MEMBERS
-    properties
-        waypoints
-        tf
-        total_length
-        speed
-        
-        % 스플라인 구조체 (x, y, z 각각)
-        sp_x
-        sp_y
-        sp_z
-        
-        arc_lengths % 누적 곡선 길이
-        u_samples   % 샘플링된 파라미터 u
-        
-        last_kappa  % 마지막 유효 곡률 저장용 프로퍼티 추가
-        kappa_filtered
-        lpf_alpha
-    end
-    
-    %% METHODS
-    methods
-        %% Constructor
-        function obj = TrajectoryPlanner(init_pos, waypoints_in, target_speed)
-            % 시작점과 웨이포인트 합치기 (총 5개 점)
-            pts = [init_pos(:), waypoints_in];
-            obj.speed = target_speed;
-            
-            % 1. 점들 사이의 직선 거리(현의 길이)를 기준으로 파라미터 u 생성
-            num_pts = size(pts, 2);
-            u = zeros(1, num_pts);
-            for i = 2:num_pts
-                u(i) = u(i-1) + norm(pts(:,i) - pts(:,i-1));
-            end
-            u = u / u(end); % 0 ~ 1 사이로 정규화
-            
-            % 2. 3차 스플라인 곡선 생성
-            obj.sp_x = spline(u, pts(1,:));
-            obj.sp_y = spline(u, pts(2,:));
-            obj.sp_z = spline(u, pts(3,:));
-            
-            % 3. 곡선의 실제 '호의 길이(Arc length)' 계산 (잘게 쪼개서 더하기)
-            N_sample = 1000;
-            obj.u_samples = linspace(0, 1, N_sample);
-            
-            px = ppval(obj.sp_x, obj.u_samples);
-            py = ppval(obj.sp_y, obj.u_samples);
-            pz = ppval(obj.sp_z, obj.u_samples);
-            
-            % 점과 점 사이 거리 계산
-            dx = diff(px); dy = diff(py); dz = diff(pz);
-            segment_lengths = sqrt(dx.^2 + dy.^2 + dz.^2);
-            
-            % 누적 거리 저장 및 총 길이 계산
-            obj.arc_lengths = [0, cumsum(segment_lengths)];
-            obj.total_length = obj.arc_lengths(end);
-            
-            % 4. 총 거리를 지정된 속력으로 나누어 필요 비행 시간(tf) 계산
-            obj.tf = obj.total_length / obj.speed;
-            
-            % 5. 곡률 관련 변수 초기화
-            obj.last_kappa = 0; % 곡률 초기화
-            obj.kappa_filtered = 0;
-            obj.lpf_alpha = 0.1;
-            
-            disp(['스플라인 궤적 총 길이: ', num2str(obj.total_length), 'm']);
-            disp(['비행 속력: ', num2str(obj.speed), 'm/s, 필요 비행 시간(tf): ', num2str(obj.tf), '초']);
-        end
-        
-        %% Get Position & Velocity
-        function [pos_des, vel_des, kappa_avg] = get_position(obj, t_in)
-            % 궤적 종료 여부 판단
-            is_finished = (t_in >= obj.tf);
-            
-            % 시간 제한 (0 ~ tf)
-            t = max(0, min(t_in, obj.tf));
-            
-            % 1. 현재 시간에 가야 할 목표 이동 거리 (d = v * t)
-            d_target = obj.speed * t;
-            
-            % 2. 목표 거리에 해당하는 파라미터 u 찾기 (보간법)
-            u_target = interp1(obj.arc_lengths, obj.u_samples, d_target, 'linear', 'extrap');
-            u_target = max(0, min(u_target, 1));
-            
-            % 3. 목표 위치 계산
-            x_d = ppval(obj.sp_x, u_target);
-            y_d = ppval(obj.sp_y, u_target);
-            z_d = ppval(obj.sp_z, u_target);
-            pos_des = [x_d; y_d; z_d];
-            
-            % 4. 목표 속도 벡터(접선 방향) 계산 (수치 미분 활용)
-            du = 1e-5;
-            u_eval = min(u_target + du, 1);
-            u_prev = max(u_target - du, 0);
-            
-            dp_x = ppval(obj.sp_x, u_eval) - ppval(obj.sp_x, u_prev);
-            dp_y = ppval(obj.sp_y, u_eval) - ppval(obj.sp_y, u_prev);
-            dp_z = ppval(obj.sp_z, u_eval) - ppval(obj.sp_z, u_prev);
-            
-            tangent = [dp_x; dp_y; dp_z];
-            tangent_norm = norm(tangent);
-            
-            if tangent_norm > 1e-6
-                tangent = tangent / tangent_norm;
-            else
-                tangent = [1; 0; 0]; % 혹시 정지해 있을 경우 대비
-            end
-            
-            % 최종 목표 속도 = 방향 벡터 * 지정된 속력
-            vel_des = obj.speed * tangent;
+    % TRAJECTORYPLANNER 직선(Straight Line, kappa = 0)과 고정 곡률 원호(Circular Arc: r, theta, kappa = ±1/r)
+    % 조합으로 구성된 G1 연속 등속 궤적 생성기
+    % - 각 구간 내부에서 곡률 kappa가 완벽하게 상수로 고정됨 (스플라인 진동 및 평균 왜곡 제거)
+    % - 현재 곡률 kappa_now 및 dt_lookahead 이후의 미래 곡률 kappa_future를 정확히 반환
 
-            % [2] 전방 5초 구간 평균 곡률(kappa) 계산
-            if is_finished
-                % 궤적이 끝났으면 저장해둔 마지막 곡률 유지
-                kappa_avg = obj.last_kappa;
-            else
-                t_lookahead = t:0.1:min(t+5, obj.tf);
-                if isempty(t_lookahead)
-                    kappa_avg = obj.last_kappa;
-                else
-                    kappa_sum = 0;
-                    for i = 1:length(t_lookahead)
-                        d_lk = obj.speed * t_lookahead(i);
-                        u_lk = interp1(obj.arc_lengths, obj.u_samples, d_lk, 'linear', 'extrap');
-                        u_lk = max(0, min(u_lk, 1));
-                        
-                        % 1차, 2차 미분값 계산 (스플라인 미분)
-                        dx1 = ppval(fnder(obj.sp_x, 1), u_lk);
-                        dy1 = ppval(fnder(obj.sp_y, 1), u_lk);
-                        dx2 = ppval(fnder(obj.sp_x, 2), u_lk);
-                        dy2 = ppval(fnder(obj.sp_y, 2), u_lk);
-                        
-                        % 2D 곡률 공식: |x'y'' - y'x''| / (x'^2 + y'^2)^(3/2)
-                        denom = (dx1^2 + dy1^2)^(1.5);
-                        if denom > 1e-6
-                            k = (dx1*dy2 - dy1*dx2) / denom;
-                        else
-                            k = 0;
-                        end
-                        kappa_sum = kappa_sum + k;
-                    end
-                    % 곡률 LPF 적용
-                    raw_kappa = kappa_sum / length(t_lookahead);
-                    obj.kappa_filtered = obj.lpf_alpha * raw_kappa + (1 - obj.lpf_alpha) * obj.kappa_filtered;
-                    kappa_avg = obj.kappa_filtered;
-                    
-                    % 마지막 유효 곡률 갱신
-                    obj.last_kappa = kappa_avg;
-                end
+    properties
+        waypoints       % 입력받은 세그먼트 정의 행렬 [seg_r; seg_theta; seg_z]
+        segments        % 계산된 구간별 기하학 구조체 배열
+        num_segments
+        cum_lengths     % 구간 누적 호 길이 [0, s1, s1+s2, ...]
+        total_length    % 전체 경로 총 길이 [m]
+        speed           % 목표 등속 비행 속력 [m/s]
+        tf              % 총 필요 비행 시간 [s]
+
+        lookahead_dt    % 미래 곡률 조회용 기본 예견 시간 [s] (기본 0.5 s)
+        last_kappa
+    end
+
+    methods
+        function obj = TrajectoryPlanner(init_pos, seg_spec_in, target_speed, lookahead_dt)
+            if nargin < 4 || isempty(lookahead_dt)
+                lookahead_dt = 0.5; % 기본 0.5초 후의 곡률 예견
             end
+            obj.lookahead_dt = lookahead_dt;
+            obj.waypoints    = seg_spec_in;
+            obj.speed        = target_speed;
+
+            % 시작 위치 및 초기 헤딩 (+x축 방향: psi = 0)
+            curr_x   = init_pos(1);
+            curr_y   = init_pos(2);
+            curr_z   = init_pos(3);
+            curr_psi = 0.0;
+
+            num_segs = size(seg_spec_in, 2);
+            obj.num_segments = num_segs;
+            obj.cum_lengths  = zeros(1, num_segs + 1);
+
+            segs = struct('type', {}, 'x0', {}, 'y0', {}, 'z0', {}, 'psi0', {}, ...
+                          'r', {}, 'theta', {}, 'dir', {}, 'L', {}, 'kappa', {});
+
+            for k = 1:num_segs
+                r_val  = seg_spec_in(1, k);
+                th_val = seg_spec_in(2, k);
+                if size(seg_spec_in, 1) >= 3
+                    z_val = seg_spec_in(3, k);
+                else
+                    z_val = curr_z;
+                end
+
+                seg = struct();
+                seg.x0   = curr_x;
+                seg.y0   = curr_y;
+                seg.z0   = z_val;
+                seg.psi0 = curr_psi;
+
+                if abs(r_val) < 1e-6 || isinf(r_val)
+                    % [직선 구간] kappa = 0, 길이 L = th_val
+                    seg.type  = 'line';
+                    seg.r     = Inf;
+                    seg.theta = 0.0;
+                    seg.dir   = 0;
+                    seg.L     = max(0.0, th_val);
+                    seg.kappa = 0.0;
+
+                    % 구간 끝점 갱신
+                    curr_x = curr_x + seg.L * cos(curr_psi);
+                    curr_y = curr_y + seg.L * sin(curr_psi);
+                else
+                    % [고정 곡률 원호 구간] 반경 r = |r_val|, 회전각 theta = th_val, 고정 곡률 kappa = 1 / r_val
+                    seg.type  = 'arc';
+                    seg.r     = abs(r_val);
+                    seg.theta = abs(th_val);
+                    seg.dir   = sign(r_val);        % +1: 양(+)의 곡률 선회, -1: 음(-)의 곡률 선회
+                    seg.L     = seg.r * seg.theta;  % 호의 길이 s = r * theta
+                    seg.kappa = 1.0 / r_val;        % 구간 내 완전 고정된 곡률 kappa
+
+                    % 로컬 원호 끝점 변위 -> 글로벌 회전 변환
+                    dx_loc = seg.r * sin(seg.theta);
+                    dy_loc = seg.dir * seg.r * (1.0 - cos(seg.theta));
+
+                    curr_x   = curr_x + cos(curr_psi) * dx_loc - sin(curr_psi) * dy_loc;
+                    curr_y   = curr_y + sin(curr_psi) * dx_loc + cos(curr_psi) * dy_loc;
+                    curr_psi = curr_psi + seg.dir * seg.theta;
+                end
+                curr_z = z_val;
+
+                segs(k) = seg;
+                obj.cum_lengths(k + 1) = obj.cum_lengths(k) + seg.L;
+            end
+
+            obj.segments     = segs;
+            obj.total_length = obj.cum_lengths(end);
+            obj.tf           = obj.total_length / max(obj.speed, 1e-3);
+            obj.last_kappa   = 0.0;
+
+            disp(['직선+원호(Arc) 궤적 총 길이: ', num2str(obj.total_length, '%.2f'), 'm']);
+            disp(['비행 속력: ', num2str(obj.speed, '%.2f'), 'm/s, 필요 비행 시간(tf): ', num2str(obj.tf, '%.2f'), '초']);
         end
-        
-        %% Get Full Path (애니메이션에서 점선 그리기용)
+
+        function [pos_des, vel_des, kappa_now, kappa_future, acc_des] = get_position(obj, t_in, dt_lookahead)
+            if nargin < 3 || isempty(dt_lookahead)
+                dt_lookahead = obj.lookahead_dt;
+            end
+
+            is_finished = (t_in >= obj.tf);
+            t = max(0.0, min(t_in, obj.tf));
+            s_now = obj.speed * t;
+
+            % 현재 거리 s_now에서의 위치, 접선 방향, 고정 곡률 산출
+            [pos_des, psi_now, kappa_now] = obj.eval_at_arclength(s_now);
+
+            if is_finished
+                vel_des      = [0; 0; 0];
+                acc_des      = [0; 0; 0];
+                kappa_now    = 0.0;
+                kappa_future = 0.0;
+            else
+                vel_des = [obj.speed * cos(psi_now); obj.speed * sin(psi_now); 0.0];
+                % 구심 가속도 벡터: a_c = v^2 * kappa * [-sin(psi); cos(psi); 0]
+                acc_des = (obj.speed^2 * kappa_now) * [-sin(psi_now); cos(psi_now); 0.0];
+
+                % t + dt_lookahead 이후의 미래 곡률 조회
+                t_fut = min(t_in + dt_lookahead, obj.tf);
+                s_fut = obj.speed * max(0.0, t_fut);
+                [~, ~, kappa_future] = obj.eval_at_arclength(s_fut);
+            end
+
+            obj.last_kappa = kappa_now;
+        end
+
+        function kappa_val = get_curvature_at_time(obj, t_query)
+            if t_query >= obj.tf
+                kappa_val = 0.0;
+                return;
+            end
+            s_q = obj.speed * max(0.0, min(t_query, obj.tf));
+            [~, ~, kappa_val] = obj.eval_at_arclength(s_q);
+        end
+
+        function [pos, psi, kappa] = eval_at_arclength(obj, s_in)
+            s = max(0.0, min(s_in, obj.total_length));
+
+            % 해당 호 길이 s가 속한 구간 탐색
+            seg_idx = find(s <= obj.cum_lengths(2:end), 1, 'first');
+            if isempty(seg_idx)
+                seg_idx = obj.num_segments;
+            end
+
+            seg = obj.segments(seg_idx);
+            ds  = max(0.0, s - obj.cum_lengths(seg_idx));
+
+            if strcmp(seg.type, 'line')
+                px    = seg.x0 + ds * cos(seg.psi0);
+                py    = seg.y0 + ds * sin(seg.psi0);
+                psi   = seg.psi0;
+                kappa = 0.0;
+            else
+                alpha_loc = ds / seg.r; % 원호 상의 진행 각도 [rad]
+                dx_loc    = seg.r * sin(alpha_loc);
+                dy_loc    = seg.dir * seg.r * (1.0 - cos(alpha_loc));
+
+                px    = seg.x0 + cos(seg.psi0) * dx_loc - sin(seg.psi0) * dy_loc;
+                py    = seg.y0 + sin(seg.psi0) * dx_loc + cos(seg.psi0) * dy_loc;
+                psi   = seg.psi0 + seg.dir * alpha_loc;
+                kappa = seg.kappa; % 원호 구간 내 완벽히 고정된 상수 곡률 (±1/r)
+            end
+
+            pos = [px; py; seg.z0];
+        end
+
         function [X, Y, Z] = get_full_path(obj, dt_sample)
             time_vec = 0:dt_sample:obj.tf;
             pts = zeros(3, length(time_vec));
-            
             for i = 1:length(time_vec)
                 [pts(:, i), ~, ~] = obj.get_position(time_vec(i));
             end
-            
             X = pts(1, :);
             Y = pts(2, :);
             Z = pts(3, :);
