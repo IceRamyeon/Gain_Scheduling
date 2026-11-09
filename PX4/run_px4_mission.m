@@ -1,4 +1,4 @@
-function meta = run_px4_mission(link, cfg, ref, posCtrl)
+function meta = run_px4_mission(link, cfg, ref, posCtrl, agent)
 % RUN_PX4_MISSION  PX4(SITL/실기체)에서 단계 ①~⑤를 실행한다 (A 방식).
 %
 %   ① 이륙·상승      : PX4 기본 위치제어기   z = 0 -> 경로 시작 고도
@@ -16,6 +16,9 @@ function meta = run_px4_mission(link, cfg, ref, posCtrl)
     px  = cfg.px4;
     if ~isfield(cfg, 'mode'), cfg.mode = 'MATLAB'; end
     usePX4 = strcmpi(cfg.mode, 'PX4');                % true: ③④ 를 PX4 위치제어기가 수행 (비교군)
+    usePPO = strcmpi(cfg.mode, 'PPO');                % true: ④ 에서 PPO 잔차 게인 오프셋 적용 (10 Hz)
+    if nargin < 5, agent = []; end
+    if usePPO && isempty(agent), error('PPO 모드인데 에이전트가 없습니다.'); end
     fprintf('제어 모드: %s\n', cfg.mode);
     Ts  = 1 / px.rate_hz;
     g   = 9.81;
@@ -54,7 +57,8 @@ function meta = run_px4_mission(link, cfg, ref, posCtrl)
         'x','y','z','vx','vy','vz','phi','theta','psi','p','q','r', ...          % 경로 좌표계 상태
         'x_des','y_des','z_des','psi_des','v_des','kappa', ...                    % PositionCtrl 입력
         'phi_cmd','theta_cmd','psi_cmd','U1_cmd', 'thr_norm', ...                 % PositionCtrl 출력
-        'kP_z','kI_z','kD_z'};
+        'kP_z','kI_z','kD_z', ...
+        'a_P_xy','a_D_xy','a_P_z','a_D_z'};                                      % PPO 액션 (다른 모드는 NaN)
     LOG = nan(50000, numel(meta.log_cols)); nlog = 0;
     meta.aborted = false; meta.abort_reason = '';
     meta.thr_hover = thr_hover; meta.preroll_L = L;
@@ -115,6 +119,7 @@ function meta = run_px4_mission(link, cfg, ref, posCtrl)
     %% ③ 프리롤 가속 + ④ 경로 추종 (MATLAB PositionCtrl 또는 PX4 위치제어기)
     disp('③ 프리롤 가속');
     posCtrl.Reset();
+    act = nan(1, 4); t_ppo = -Inf; k_fut = 0;
     phase = 3;
     [~, t3_start] = link.getState();
     t_prev = t3_start - Ts;                            % 첫 루프에서 바로 PositionCtrl 이 계산되도록
@@ -149,6 +154,7 @@ function meta = run_px4_mission(link, cfg, ref, posCtrl)
             v_des = interp1(ref.t, ref.vel', tau)';
             a_des = interp1(ref.t, ref.acc', tau)';
             cmd = [p_des; interp1(ref.t, ref.yaw, tau); v; interp1(ref.t, ref.kappa, tau)];
+            if isfield(ref, 'kappa_future'), k_fut = interp1(ref.t, ref.kappa_future, tau); end
         end
 
         % 안전 감시
@@ -167,6 +173,19 @@ function meta = run_px4_mission(link, cfg, ref, posCtrl)
                               path_to_ned(v_des, cfg, false), path_to_ned(a_des, cfg, false));
             last_att = nan(1, 4); thr = NaN; kz = nan(1, 3);
         else
+            % PPO 잔차 게인 오프셋 (④ 구간, 10 Hz). 관측은 Drone_LPV 학습과 같은 11차원:
+            % [e_x; e_y; e_z; v_x; v_y; v_z; phi; theta; v_des; kappa_now; kappa_future]
+            if usePPO && phase == 4 && t_boot - t_ppo >= 1 / cfg.ppo.rate_hz - 1e-6
+                obs = [cmd(1:3) - x(1:3); x(4:8); v; cmd(6); k_fut];
+                obs = obs(1:agent.ObservationInfo.Dimension(1));
+                a_out = getAction(agent, obs);
+                if iscell(a_out), a_out = a_out{1}; end
+                act = double(a_out(:))';
+                posCtrl.setResidualOffsets(cfg.ppo.range_P_xy * act(1), max(0, cfg.ppo.range_D_xy * act(2)), ...
+                                           cfg.ppo.range_P_z  * act(3), max(0, cfg.ppo.range_D_z  * act(4)));
+                t_ppo = t_boot;
+            end
+
             % PositionCtrl (실제 dt 반영: 적분·미분이 루프 주기와 무관하게 시뮬레이션과 같은 의미가 되도록)
             dt = t_boot - t_prev;
             if dt > 1e-4
@@ -182,7 +201,7 @@ function meta = run_px4_mission(link, cfg, ref, posCtrl)
 
         % 로그 (PX4 모드에서는 자세 명령·추력·Z 게인 열이 NaN -> ULog 의 PX4 자세 셋포인트로 대체)
         nlog = nlog + 1;
-        LOG(nlog, :) = [t_boot, phase, x', cmd', last_att, thr, kz];
+        LOG(nlog, :) = [t_boot, phase, x', cmd', last_att, thr, kz, act];
         wait_tick();
     end
 

@@ -15,10 +15,20 @@
 | --- | --- | --- |
 | `'MATLAB'` | `PID_Drone/PositionCtrl` 출력(자세 + 추력)을 `SET_ATTITUDE_TARGET`으로 전송 | 제안 제어기 (A 방식) |
 | `'PX4'` | 같은 경로의 위치·속도·가속도 셋포인트를 `SET_POSITION_TARGET_LOCAL_NED`로 전송, PX4 `mc_pos_control`이 제어 | 비교군 (PX4 기본 위치제어기, 게인은 PX4 파라미터) |
+| `'PPO'` | Sehyun 브랜치 `Drone_LPV`의 LPV 위치제어기(`PositionCtrl_LPV`) + PPO 잔차 게인 보정(10 Hz) → `SET_ATTITUDE_TARGET` | LPV + Residual PPO (Gazebo/실기체 검증) |
 
 - ①②⑤, 경로, 프리롤, 평가 구간, ULog 처리는 두 모드가 같다.
 - `'PX4'` 모드의 자세 명령 그래프는 ULog `vehicle_attitude_setpoint`에서 가져오고, Z 게인 그래프는 비어 있다.
 - 비행 기록 파일 이름에 모드가 붙는다: `px4_run_<날짜>_<시간>_<mode>.mat`
+
+### PPO 모드 (`PX4/ppo/`)
+
+- Sehyun 브랜치 `Drone_LPV`의 `pathGen`, `TrajectoryPlanner`, `PositionCtrl`을 이름만 바꿔(`*_LPV`) 가져왔다. PID_Drone의 같은 이름 파일과 충돌하지 않게 하기 위함이며, 내용은 그대로다.
+- 경로·planner·위치제어기 기준 게인(13.5 / 5.0 / 5.5, z 16.88 / 6.25 / 6.88)은 PPO 학습 조건과 같다. 설정은 `px4_main.m`의 `cfg.ppo`.
+- 관측(11차원): `[e_x; e_y; e_z; v_x; v_y; v_z; phi; theta; v_des; kappa_now; kappa_future]`, 액션은 `[dP_xy; dD_xy; dP_z; dD_z]` 스케일 (1.0, 1.2, 1.5, 1.0), D 오프셋은 0 이상.
+- PPO는 ④ 경로 추종 구간에서만 켜진다(③ 프리롤은 오프셋 0인 순수 LPV).
+- 에이전트: `PX4/ppo/Agent3000.mat` (`.gitignore`의 `*.mat` 예외로 강제 추가). 필요: Reinforcement Learning Toolbox.
+- 주의: 에이전트는 MATLAB 시뮬레이션(빠른 자세 루프, m = 1.25 kg)에서 학습됐다. PX4 자세 루프에서는 학습 분포 밖이라 같은 성능이 보장되지 않는다. 고정 벤치마크 경로에는 r = 1.25 m(κ = 0.8) 헤어핀이 있어, 실행 전 명령창의 필요 기울기 출력(45° 이하)을 확인할 것.
 
 ## 파일
 

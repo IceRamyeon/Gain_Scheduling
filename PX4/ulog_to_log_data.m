@@ -70,6 +70,11 @@ function log_data = ulog_to_log_data(ulgFile, meta, dt_grid)
     end
     pid_hist     = pick({'kP_z', 'kI_z', 'kD_z'});
     kappa_hist   = pick({'kappa'});
+    if any(strcmp(meta.log_cols, 'a_P_xy'))
+        action_hist = pick({'a_P_xy', 'a_D_xy', 'a_P_z', 'a_D_z'});   % PPO 액션 (PPO 모드 외에는 NaN)
+    else
+        action_hist = nan(4, N);
+    end
 
     %% 제어 입력 (PX4 출력)
     u_hist = nan(4, N);
@@ -95,6 +100,7 @@ function log_data = ulog_to_log_data(ulgFile, meta, dt_grid)
     log_data.u_hist       = u_hist;
     log_data.PID_Pos_hist = pid_hist;
     log_data.kappa_hist   = kappa_hist;
+    log_data.action_hist  = action_hist;
 end
 
 %% ---- local functions ----

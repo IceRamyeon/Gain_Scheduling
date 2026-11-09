@@ -23,6 +23,8 @@ cfg = struct();
 %  'MATLAB' : PID_Drone/PositionCtrl 이 자세+추력 명령 (A 방식, 제안 제어기)
 %  'PX4'    : PX4 기본 위치제어기(mc_pos_control)에 위치·속도·가속도 셋포인트만 전달 (비교군)
 %             -> 게인은 PX4 파라미터(MPC_XY_P, MPC_XY_VEL_*, MPC_Z_*)를 그대로 사용
+%  'PPO'    : Sehyun 브랜치 Drone_LPV 의 LPV 위치제어기 + PPO 잔차 게인 보정 (PX4/ppo)
+%             -> 경로·planner·위치제어기·게인은 PPO 학습 조건(Drone_LPV)과 같게, 설정은 아래 cfg.ppo
 cfg.mode = 'PX4';
 cfg.start_with_yaw = true;
 cfg.dt = 0.01;                    % 기준값 표 계산 간격 (시뮬레이션 dt 와 동일하게)
@@ -75,19 +77,49 @@ cfg.px4.abort_err      = 8.0;     % 위치 오차가 이보다 크면 중단 -> 
 cfg.px4.abort_tilt_deg = 60;      % 기울기가 이보다 크면 중단 [deg]
 cfg.px4.result_dir     = fullfile(here, 'results');
 
+%% 1-1. PPO 모드 설정 (Sehyun 브랜치 Drone_LPV/RL_DroneEnv_LPV, run_simulation_loop 과 같은 값)
+cfg.ppo.agent_file     = fullfile(here, 'ppo', 'Agent3000.mat');  % 학습된 에이전트 (saved_agent 또는 agent)
+cfg.ppo.rate_hz        = 10;      % PPO 개입 주기 (학습: 0.1 s)
+cfg.ppo.lookahead_dt   = 0.5;     % 미래 곡률 예견 시간 [s]
+cfg.ppo.range_P_xy     = 1.0;     % 잔차 게인 스케일 (action [-1, 1] -> 오프셋)
+cfg.ppo.range_D_xy     = 1.2;
+cfg.ppo.range_P_z      = 1.5;
+cfg.ppo.range_D_z      = 1.0;
+cfg.ppo.path_random    = false;   % false: Drone_LPV 고정 벤치마크 경로, true: 랜덤 경로
+cfg.ppo.path_max_kappa = 0.30;    % 랜덤 경로 최대 곡률 (학습 환경 max_kappa)
+cfg.ppo.path_seed      = 1;       % 랜덤 시드 ([] 이면 매번 다름)
+cfg.ppo.posGain = containers.Map( ...                 % 학습에 쓰인 LPV 기준 게인 (극점 계수 a2 = D, a1 = P, a0 = I)
+    {'P_x','I_x','D_x', 'P_y','I_y','D_y', 'P_z','I_z','D_z'}, ...
+    {13.5, 5.0, 5.5,  13.5, 5.0, 5.5,  16.88, 6.25, 6.88});
+
+isPPO = strcmpi(cfg.mode, 'PPO');
+if isPPO, addpath(fullfile(here, 'ppo')); end
+
 %% 2. 기준값 표 (시뮬레이션과 같은 순서·dt 로 TrajectoryPlanner 호출)
-ref = build_reference_table(cfg);
+if isPPO
+    ref = build_reference_table_lpv(cfg);              % Drone_LPV 경로 + planner (kappa_now, kappa_future)
+else
+    ref = build_reference_table(cfg);
+end
 fprintf('경로 길이 %.1f m, 추종 시간 %.1f s\n', ref.traj.total_length, ref.tf);
 
 %% 3. 제어기 (PID_Drone/PositionCtrl 그대로)
 params = containers.Map({'mass','armLength','Ixx','Iyy','Izz'}, ...
     {cfg.m, cfg.armLength, cfg.Ixx, cfg.Iyy, cfg.Izz});
-posCtrl = PositionCtrl(cfg.posGain, params, cfg);
+agent = [];
+if isPPO
+    posCtrl = PositionCtrl_LPV(cfg.ppo.posGain, params, cfg);   % Drone_LPV 위치제어기 (잔차 오프셋 입력 가능)
+    S = load(cfg.ppo.agent_file);
+    if isfield(S, 'agent'), agent = S.agent; else, agent = S.saved_agent; end
+    fprintf('PPO 에이전트: %s (관측 %d차원)\n', cfg.ppo.agent_file, agent.ObservationInfo.Dimension(1));
+else
+    posCtrl = PositionCtrl(cfg.posGain, params, cfg);
+end
 
 %% 4. PX4 연결 후 ①~⑤ 실행
 link = Px4Link(cfg.px4.local_port);
 cleanupObj = onCleanup(@() delete(link));
-meta = run_px4_mission(link, cfg, ref, posCtrl);
+meta = run_px4_mission(link, cfg, ref, posCtrl, agent);
 
 %% 5. 비행 기록 저장 (ULog 와 합칠 때 사용)
 if ~exist(cfg.px4.result_dir, 'dir'), mkdir(cfg.px4.result_dir); end
