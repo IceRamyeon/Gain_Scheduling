@@ -22,14 +22,15 @@ function meta = run_px4_mission(link, cfg, ref, posCtrl)
     rot = deg2rad(px.path_rot_deg);
 
     %% 호버 추력 (U1[N] -> 정규화 추력 변환에 사용)
+    %  - cfg.px4.thr_hover 에 값이 있으면 그 값을 쓴다.
+    %  - NaN 이면 ② 호버 중 PX4 가 실제로 쓰는 추력(ATTITUDE_TARGET.thrust)을 측정해서 쓴다.
+    %    (MPC_THR_HOVER 파라미터는 초기값일 뿐이고, 실제 호버 추력과 다르면 ③ 진입 후 고도가 떨어진다)
+    %  - 측정에 실패하면 MPC_THR_HOVER 파라미터로 대체한다.
     thr_hover = px.thr_hover;
-    if isnan(thr_hover)
-        thr_hover = link.readParam('MPC_THR_HOVER');
-        if isnan(thr_hover)
-            error('MPC_THR_HOVER 를 읽지 못했습니다. cfg.px4.thr_hover 에 값을 직접 넣어 주세요.');
-        end
-    end
-    fprintf('MPC_THR_HOVER = %.3f\n', thr_hover);
+    thr_param = link.readParam('MPC_THR_HOVER');
+    fprintf('MPC_THR_HOVER (파라미터) = %.3f\n', thr_param);
+    if isnan(thr_hover), thr_hover = thr_param; end
+    if isnan(thr_hover), thr_hover = 0.5; end          % 임시값: ② 이후 측정값으로 교체됨
     % 정규화 추력 = thr_hover * U1 / (m g)
     %  -> PositionCtrl 의 U1 은 질량 m 에 비례(U1_eq, Z 게인 모두 m 포함)하므로 비율로 바꾸면 m 이 상쇄된다.
     %  -> 단, 실제 추력은 명령에 선형이 아니라서(THR_MDL_FAC) 호버 근처에서만 정확한 근사다.
@@ -62,6 +63,7 @@ function meta = run_px4_mission(link, cfg, ref, posCtrl)
     %% 0) 상태 메시지 주기 요청 (제어 루프 주기와 맞춤) + 첫 상태 수신
     link.setMessageRate(32, px.rate_hz);               % LOCAL_POSITION_NED
     link.setMessageRate(30, px.rate_hz);               % ATTITUDE
+    link.setMessageRate(83, px.rate_hz);               % ATTITUDE_TARGET (호버 추력 측정용)
     pause(0.5);
     [x_ned, ~, ok] = link.getState();
     t0 = tic;
@@ -86,6 +88,29 @@ function meta = run_px4_mission(link, cfg, ref, posCtrl)
     disp('② 프리롤 시작점 이동');
     p_pre_ned = path_to_ned(p_pre, cfg);
     hold_until(p_pre_ned, yaw0 + rot, 0.3, 2.0, 60);
+
+    %% 호버 추력 측정 (② 호버 상태에서 1초 동안 PX4 추력 명령의 중앙값)
+    if isnan(px.thr_hover)
+        thr_s = nan(1, px.rate_hz);
+        for kk = 1:px.rate_hz
+            link.sendPosition(p_pre_ned, yaw0 + rot);
+            thr_s(kk) = link.getThrustSetpoint();
+            pause(Ts);
+        end
+        thr_meas = median(thr_s, 'omitnan');
+        if ~isnan(thr_meas) && thr_meas > 0.05 && thr_meas < 0.95
+            thr_hover = thr_meas;
+            fprintf('호버 추력 (측정) = %.3f  -> 사용\n', thr_hover);
+        else
+            if isnan(thr_param)
+                error('호버 추력을 측정·읽지 못했습니다. cfg.px4.thr_hover 에 값을 직접 넣어 주세요.');
+            end
+            thr_hover = thr_param;
+            warning('호버 추력 측정 실패 -> MPC_THR_HOVER = %.3f 사용', thr_hover);
+        end
+    end
+    meta.thr_hover = thr_hover;
+    U1_to_thr = @(U1) min(max(thr_hover * U1 / (cfg.m * g), px.thr_limits(1)), px.thr_limits(2));
 
     %% ③ 프리롤 가속 + ④ 경로 추종 (MATLAB PositionCtrl 또는 PX4 위치제어기)
     disp('③ 프리롤 가속');

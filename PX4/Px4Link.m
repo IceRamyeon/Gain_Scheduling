@@ -11,6 +11,7 @@ classdef Px4Link < handle
         client
         subPos
         subAtt
+        subAttT
         target_sys  = 1
         target_comp = 1
         msgPosT
@@ -44,6 +45,7 @@ classdef Px4Link < handle
             obj.client = mavlinkclient(obj.mav, obj.target_sys, obj.target_comp);
             obj.subPos = mavlinksub(obj.mav, obj.client, "LOCAL_POSITION_NED", "BufferSize", 1);
             obj.subAtt = mavlinksub(obj.mav, obj.client, "ATTITUDE", "BufferSize", 1);
+            obj.subAttT = mavlinksub(obj.mav, obj.client, "ATTITUDE_TARGET", "BufferSize", 1);
 
             obj.msgPosT = createmsg(obj.dialect, "SET_POSITION_TARGET_LOCAL_NED");
             obj.msgAttT = createmsg(obj.dialect, "SET_ATTITUDE_TARGET");
@@ -72,6 +74,13 @@ classdef Px4Link < handle
                         A.roll; A.pitch; A.yaw; A.rollspeed; A.pitchspeed; A.yawspeed]);
             t_boot_s = double(P.time_boot_ms) * 1e-3;
             ok = true;
+        end
+
+        %% PX4 가 현재 쓰고 있는 정규화 추력 명령 (ATTITUDE_TARGET.thrust, 0 ~ 1)
+        function thr = getThrustSetpoint(obj)
+            thr = NaN;
+            m = latestmsgs(obj.subAttT, 1);
+            if ~isempty(m), thr = double(m.Payload.thrust); end
         end
 
         %% 위치 명령 (PX4 기본 위치제어기)
