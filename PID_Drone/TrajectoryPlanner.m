@@ -17,12 +17,18 @@ classdef TrajectoryPlanner < handle
         last_kappa  % 마지막 유효 곡률 저장용 프로퍼티 추가
         kappa_filtered
         lpf_alpha
+        
+        lookahead_dist % 전방 곡률 예견 거리 [m] (비어 있으면 기존 전방 5초 평균 곡률 사용)
     end
     
     %% METHODS
     methods
         %% Constructor
-        function obj = TrajectoryPlanner(init_pos, waypoints_in, target_speed)
+        function obj = TrajectoryPlanner(init_pos, waypoints_in, target_speed, lookahead_dist)
+            % lookahead_dist (선택): 현재 목표점에서 경로를 따라 이 거리[m]만큼 앞 지점의
+            %                       순간 곡률을 kappa 출력으로 사용 (평균·LPF 없음)
+            if nargin < 4, lookahead_dist = []; end
+            obj.lookahead_dist = lookahead_dist;
             % 시작점과 웨이포인트 합치기 (총 5개 점)
             pts = [init_pos(:), waypoints_in];
             obj.speed = target_speed;
@@ -110,6 +116,18 @@ classdef TrajectoryPlanner < handle
             % 최종 목표 속도 = 방향 벡터 * 지정된 속력
             vel_des = obj.speed * tangent;
 
+            % [1] 전방 특정 지점 곡률 (lookahead_dist 가 지정된 경우)
+            if ~isempty(obj.lookahead_dist)
+                if is_finished
+                    kappa_avg = obj.last_kappa;
+                else
+                    d_lk = min(d_target + obj.lookahead_dist, obj.total_length);
+                    kappa_avg = obj.curvature_at(d_lk);
+                    obj.last_kappa = kappa_avg;
+                end
+                return;
+            end
+
             % [2] 전방 5초 구간 평균 곡률(kappa) 계산
             if is_finished
                 % 궤적이 끝났으면 저장해둔 마지막 곡률 유지
@@ -151,6 +169,22 @@ classdef TrajectoryPlanner < handle
             end
         end
         
+        %% 호 길이 d [m] 지점의 순간 곡률 (부호 포함, 2D)
+        function k = curvature_at(obj, d)
+            u_lk = interp1(obj.arc_lengths, obj.u_samples, d, 'linear', 'extrap');
+            u_lk = max(0, min(u_lk, 1));
+            dx1 = ppval(fnder(obj.sp_x, 1), u_lk);
+            dy1 = ppval(fnder(obj.sp_y, 1), u_lk);
+            dx2 = ppval(fnder(obj.sp_x, 2), u_lk);
+            dy2 = ppval(fnder(obj.sp_y, 2), u_lk);
+            denom = (dx1^2 + dy1^2)^(1.5);
+            if denom > 1e-6
+                k = (dx1*dy2 - dy1*dx2) / denom;
+            else
+                k = 0;
+            end
+        end
+
         %% Get Full Path (애니메이션에서 점선 그리기용)
         function [X, Y, Z] = get_full_path(obj, dt_sample)
             time_vec = 0:dt_sample:obj.tf;

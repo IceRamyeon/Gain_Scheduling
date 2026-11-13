@@ -52,7 +52,8 @@
             obj.dx = zeros(12,1);
 
             obj.u = initInputs;
-            obj.trajCtrl = TrajectoryPlanner(initStates(1:3), waypoints, cfg.target_speed);            
+            if isfield(cfg, 'kappa_lookahead'), kappa_lk = cfg.kappa_lookahead; else, kappa_lk = []; end
+            obj.trajCtrl = TrajectoryPlanner(initStates(1:3), waypoints, cfg.target_speed, kappa_lk);            
             obj.tf = obj.trajCtrl.tf;
             
             obj.posCtrl = PositionCtrl(posGains, params, cfg);

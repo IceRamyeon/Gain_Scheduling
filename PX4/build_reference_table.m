@@ -14,7 +14,8 @@ function ref = build_reference_table(cfg)
 %   ref.yaw    : 1xN [rad] 목표 yaw (run_simulation_loop 과 같은 랩어라운드 처리, 연속값)
 
     [wp_x, wp_y, wp_z] = pathGen();
-    traj = TrajectoryPlanner(cfg.drone1_init_states(1:3), [wp_x; wp_y; wp_z], cfg.target_speed);
+    if isfield(cfg, 'kappa_lookahead'), kappa_lk = cfg.kappa_lookahead; else, kappa_lk = []; end
+    traj = TrajectoryPlanner(cfg.drone1_init_states(1:3), [wp_x; wp_y; wp_z], cfg.target_speed, kappa_lk);
 
     num_steps = ceil(traj.tf / cfg.dt);
     t = (0:num_steps-1) * cfg.dt;
