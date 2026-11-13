@@ -10,12 +10,14 @@ function ref = build_reference_table(cfg)
 %   ref.pos    : 3xN [m]  목표 위치 (경로 좌표계)
 %   ref.vel    : 3xN [m/s] 목표 속도
 %   ref.acc    : 3xN [m/s^2] 목표 가속도 (ref.vel 의 수치 미분, PX4 모드 feedforward 용)
-%   ref.kappa  : 1xN      전방 5초 평균 곡률 (LPF 후)
+%   ref.kappa  : 1xN      Feedforward 곡률 (cfg.kappa_lookahead 지정 시: 전방 지점 곡률 + 댐핑, 아니면 전방 5초 평균)
+%   ref.kappa_raw : 1xN   댐핑 전 전방 곡률 (기록용)
 %   ref.yaw    : 1xN [rad] 목표 yaw (run_simulation_loop 과 같은 랩어라운드 처리, 연속값)
 
     [wp_x, wp_y, wp_z] = pathGen();
     if isfield(cfg, 'kappa_lookahead'), kappa_lk = cfg.kappa_lookahead; else, kappa_lk = []; end
-    traj = TrajectoryPlanner(cfg.drone1_init_states(1:3), [wp_x; wp_y; wp_z], cfg.target_speed, kappa_lk);
+    if isfield(cfg, 'kappa_tau'), kappa_tau = cfg.kappa_tau; else, kappa_tau = 0; end
+    traj = TrajectoryPlanner(cfg.drone1_init_states(1:3), [wp_x; wp_y; wp_z], cfg.target_speed, kappa_lk, kappa_tau);
 
     num_steps = ceil(traj.tf / cfg.dt);
     t = (0:num_steps-1) * cfg.dt;
@@ -32,10 +34,11 @@ function ref = build_reference_table(cfg)
     end
 
     pos = zeros(3, num_steps); vel = zeros(3, num_steps);
-    kappa = zeros(1, num_steps); yaw = zeros(1, num_steps);
+    kappa = zeros(1, num_steps); kappa_raw = zeros(1, num_steps); yaw = zeros(1, num_steps);
 
     for i = 1:num_steps
-        [p, v, k] = traj.get_position(t(i));
+        [p, v, k, k_raw] = traj.get_position(t(i));
+        kappa_raw(i) = k_raw;
 
         if isempty(cfg.target_yaw)
             if norm(v(1:2)) > 1e-3
@@ -54,6 +57,6 @@ function ref = build_reference_table(cfg)
 
     acc = [gradient(vel(1, :), cfg.dt); gradient(vel(2, :), cfg.dt); gradient(vel(3, :), cfg.dt)];
 
-    ref = struct('t', t, 'pos', pos, 'vel', vel, 'acc', acc, 'kappa', kappa, 'yaw', yaw, ...
+    ref = struct('t', t, 'pos', pos, 'vel', vel, 'acc', acc, 'kappa', kappa, 'kappa_raw', kappa_raw, 'yaw', yaw, ...
                  'tf', t(end), 'traj', traj);
 end

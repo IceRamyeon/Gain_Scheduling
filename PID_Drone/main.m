@@ -9,6 +9,7 @@ cfg.start_with_yaw = true;    % If true, the drone will start with a yaw angle a
 cfg.dt = 0.01;                % Time step
 cfg.target_yaw = [];          % Target yaw angle (rad) - If empty, dynamic yaw will be calculated
 cfg.kappa_lookahead = 5.0;         % Feedforward 곡률 예견 거리 [m] (전방 이 지점의 순간 곡률 사용, [] 이면 전방 5초 평균)
+cfg.kappa_tau = 0.2;               % 전방 곡률 댐핑 시정수 [s] (1차 지연, 0 이면 댐핑 없음)
 cfg.target_speed = 4;              % Target speed (m/s)            
 
 % PID Table Generation Parameters / Gain Scheduling Initiation

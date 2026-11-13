@@ -110,9 +110,20 @@ function finalize_and_save_results(log_data, cfg)
 
     %% 6. [그래프 6] 곡률 추종 (Curvature Tracking)
     h_fig_kappa = figure('Name', 'Curvature Tracking', 'Theme', 'light', 'Position', [1410 750 600 250]);
-    plot(t_hist, kappa_hist, 'k', 'LineWidth', 1.2);
-    xlabel('Time [s]'); ylabel('Curvature \kappa'); 
-    title('Trajectory Average Curvature (\kappa_{avg})'); grid on;
+    use_lk = isfield(cfg, 'kappa_lookahead') && ~isempty(cfg.kappa_lookahead);
+    if use_lk && isfield(log_data, 'kappa_raw_hist')
+        % 전방 곡률 모드: 원값(댐핑 전)과 Feedforward 입력(댐핑 후)을 같이 기록
+        plot(t_hist, log_data.kappa_raw_hist, 'Color', [0.6 0.6 0.6], 'LineWidth', 1.0); hold on;
+        plot(t_hist, kappa_hist, 'k', 'LineWidth', 1.4);
+        tau_txt = '';
+        if isfield(cfg, 'kappa_tau'), tau_txt = sprintf(', \\tau = %.2g s', cfg.kappa_tau); end
+        title(sprintf('Feedforward Curvature (lookahead %.2g m%s)', cfg.kappa_lookahead, tau_txt));
+        legend('\kappa raw (lookahead)', '\kappa_{ff} (damped)', 'Location', 'best');
+    else
+        plot(t_hist, kappa_hist, 'k', 'LineWidth', 1.2);
+        title('Trajectory Average Curvature (\kappa_{avg})');
+    end
+    xlabel('Time [s]'); ylabel('Curvature \kappa [1/m]'); grid on;
     
     %% 7 [그래프 7, 8] 3D & 2D Trajectory
     if ~cfg.play_animation

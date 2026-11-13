@@ -19,16 +19,25 @@ classdef TrajectoryPlanner < handle
         lpf_alpha
         
         lookahead_dist % 전방 곡률 예견 거리 [m] (비어 있으면 기존 전방 5초 평균 곡률 사용)
+        kappa_tau      % 전방 곡률 댐핑 시정수 [s] (1차 지연, 0 이면 댐핑 없음)
+        kappa_raw      % 마지막 전방 곡률 원값 (댐핑 전, 기록용)
+        kappa_ff       % 댐핑 후 전방 곡률 (Feedforward 입력)
+        t_kappa_prev   % 직전 댐핑 갱신 시각 [s]
     end
     
     %% METHODS
     methods
         %% Constructor
-        function obj = TrajectoryPlanner(init_pos, waypoints_in, target_speed, lookahead_dist)
+        function obj = TrajectoryPlanner(init_pos, waypoints_in, target_speed, lookahead_dist, kappa_tau)
             % lookahead_dist (선택): 현재 목표점에서 경로를 따라 이 거리[m]만큼 앞 지점의
-            %                       순간 곡률을 kappa 출력으로 사용 (평균·LPF 없음)
+            %                       순간 곡률을 kappa 출력으로 사용
+            % kappa_tau      (선택): 그 곡률에 거는 1차 댐핑 시정수 [s] (노이즈·급변 완화, 0 이면 없음)
+            %                       alpha = dt / (tau + dt) 로 호출 간격 dt 에 맞춰 계산 -> 호출 주기와 무관
             if nargin < 4, lookahead_dist = []; end
+            if nargin < 5 || isempty(kappa_tau), kappa_tau = 0; end
             obj.lookahead_dist = lookahead_dist;
+            obj.kappa_tau = kappa_tau;
+            obj.kappa_raw = 0; obj.kappa_ff = []; obj.t_kappa_prev = [];
             % 시작점과 웨이포인트 합치기 (총 5개 점)
             pts = [init_pos(:), waypoints_in];
             obj.speed = target_speed;
@@ -75,7 +84,9 @@ classdef TrajectoryPlanner < handle
         end
         
         %% Get Position & Velocity
-        function [pos_des, vel_des, kappa_avg] = get_position(obj, t_in)
+        function [pos_des, vel_des, kappa_avg, kappa_raw] = get_position(obj, t_in)
+            % kappa_avg : Feedforward 에 쓰는 곡률 (lookahead 모드: 댐핑 후 전방 곡률, 기본: 전방 5초 평균)
+            % kappa_raw : lookahead 모드의 댐핑 전 전방 곡률 (기본 모드에서는 kappa_avg 와 같음)
             % 궤적 종료 여부 판단
             is_finished = (t_in >= obj.tf);
             
@@ -120,15 +131,29 @@ classdef TrajectoryPlanner < handle
             if ~isempty(obj.lookahead_dist)
                 if is_finished
                     kappa_avg = obj.last_kappa;
+                    kappa_raw = obj.kappa_raw;
                 else
                     d_lk = min(d_target + obj.lookahead_dist, obj.total_length);
-                    kappa_avg = obj.curvature_at(d_lk);
+                    kappa_raw = obj.curvature_at(d_lk);
+                    obj.kappa_raw = kappa_raw;
+                    if isempty(obj.kappa_ff) || obj.kappa_tau <= 0
+                        obj.kappa_ff = kappa_raw;              % 첫 호출 또는 댐핑 없음
+                    else
+                        dt_k = t_in - obj.t_kappa_prev;
+                        if dt_k > 0                            % 같은 시각 재호출이면 갱신하지 않음
+                            alpha = dt_k / (obj.kappa_tau + dt_k);
+                            obj.kappa_ff = obj.kappa_ff + alpha * (kappa_raw - obj.kappa_ff);
+                        end
+                    end
+                    obj.t_kappa_prev = t_in;
+                    kappa_avg = obj.kappa_ff;
                     obj.last_kappa = kappa_avg;
                 end
                 return;
             end
 
             % [2] 전방 5초 구간 평균 곡률(kappa) 계산
+            kappa_raw = obj.last_kappa;
             if is_finished
                 % 궤적이 끝났으면 저장해둔 마지막 곡률 유지
                 kappa_avg = obj.last_kappa;
@@ -165,6 +190,7 @@ classdef TrajectoryPlanner < handle
                     
                     % 마지막 유효 곡률 갱신
                     obj.last_kappa = kappa_avg;
+                    kappa_raw = kappa_avg;
                 end
             end
         end
@@ -190,9 +216,12 @@ classdef TrajectoryPlanner < handle
             time_vec = 0:dt_sample:obj.tf;
             pts = zeros(3, length(time_vec));
             
+            % 경로 그리기 호출이 곡률 필터·댐핑 상태를 바꾸지 않도록 저장 후 복원
+            saved = {obj.kappa_ff, obj.t_kappa_prev, obj.kappa_raw, obj.last_kappa, obj.kappa_filtered};
             for i = 1:length(time_vec)
                 [pts(:, i), ~, ~] = obj.get_position(time_vec(i));
             end
+            [obj.kappa_ff, obj.t_kappa_prev, obj.kappa_raw, obj.last_kappa, obj.kappa_filtered] = saved{:};
             
             X = pts(1, :);
             Y = pts(2, :);

@@ -31,6 +31,7 @@ cfg.dt = 0.01;                    % 기준값 표 계산 간격 (시뮬레이션
 cfg.target_yaw = [];
 cfg.target_speed = 3;             % [m/s]
 cfg.kappa_lookahead = 5.0;        % Feedforward 곡률 예견 거리 [m] (전방 이 지점의 순간 곡률 사용, [] 이면 전방 5초 평균)
+cfg.kappa_tau = 0.2;               % 전방 곡률 댐핑 시정수 [s] (1차 지연, 0 이면 댐핑 없음)
 
 cfg.Feedforward = true;
 cfg.Z_Gain_Scheduling = true;

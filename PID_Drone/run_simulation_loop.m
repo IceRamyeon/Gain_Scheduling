@@ -11,6 +11,7 @@ function [log_data, valid_len] = run_simulation_loop(drone1, cfg)
     log_data.u_hist       = zeros(4, num_steps);
     log_data.PID_Pos_hist = zeros(3, num_steps);
     log_data.kappa_hist   = zeros(1, num_steps);
+    log_data.kappa_raw_hist = zeros(1, num_steps);   % 전방 곡률 원값 (댐핑 전)
     
     valid_len = num_steps;
 
@@ -39,7 +40,7 @@ end
         current_time = drone1.t;
 
         % 2. 목표 궤적
-        [traj_pos, traj_vel, kappa_avg] = drone1.trajCtrl.get_position(current_time);
+        [traj_pos, traj_vel, kappa_avg, kappa_raw] = drone1.trajCtrl.get_position(current_time);
 
         % 3. 동적 Yaw 계산 로직 (랩어라운드 방지 포함)
         if isfield(cfg, 'target_yaw') && isempty(cfg.target_yaw)
@@ -88,5 +89,6 @@ end
         log_data.u_hist(:,i)       = u_motor;
         log_data.PID_Pos_hist(:,i) = drone1.posCtrl.GetZ_PID();
         log_data.kappa_hist(i)   = kappa_avg;
+        log_data.kappa_raw_hist(i) = kappa_raw;
     end
 end

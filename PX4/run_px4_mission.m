@@ -58,7 +58,8 @@ function meta = run_px4_mission(link, cfg, ref, posCtrl, agent)
         'x_des','y_des','z_des','psi_des','v_des','kappa', ...                    % PositionCtrl 입력
         'phi_cmd','theta_cmd','psi_cmd','U1_cmd', 'thr_norm', ...                 % PositionCtrl 출력
         'kP_z','kI_z','kD_z', ...
-        'a_P_xy','a_D_xy','a_P_z','a_D_z'};                                      % PPO 액션 (다른 모드는 NaN)
+        'a_P_xy','a_D_xy','a_P_z','a_D_z', ...                                    % PPO 액션 (다른 모드는 NaN)
+        'kappa_raw'};                                                             % 댐핑 전 전방 곡률
     LOG = nan(50000, numel(meta.log_cols)); nlog = 0;
     meta.aborted = false; meta.abort_reason = '';
     meta.thr_hover = thr_hover; meta.preroll_L = L;
@@ -119,7 +120,7 @@ function meta = run_px4_mission(link, cfg, ref, posCtrl, agent)
     %% ③ 프리롤 가속 + ④ 경로 추종 (MATLAB PositionCtrl 또는 PX4 위치제어기)
     disp('③ 프리롤 가속');
     posCtrl.Reset();
-    act = nan(1, 4); t_ppo = -Inf; k_fut = 0;
+    act = nan(1, 4); t_ppo = -Inf; k_fut = 0; k_raw = 0;
     phase = 3;
     [~, t3_start] = link.getState();
     t_prev = t3_start - Ts;                            % 첫 루프에서 바로 PositionCtrl 이 계산되도록
@@ -155,6 +156,7 @@ function meta = run_px4_mission(link, cfg, ref, posCtrl, agent)
             a_des = interp1(ref.t, ref.acc', tau)';
             cmd = [p_des; interp1(ref.t, ref.yaw, tau); v; interp1(ref.t, ref.kappa, tau)];
             if isfield(ref, 'kappa_future'), k_fut = interp1(ref.t, ref.kappa_future, tau); end
+            if isfield(ref, 'kappa_raw'), k_raw = interp1(ref.t, ref.kappa_raw, tau); else, k_raw = cmd(6); end
         end
 
         % 안전 감시
@@ -201,7 +203,7 @@ function meta = run_px4_mission(link, cfg, ref, posCtrl, agent)
 
         % 로그 (PX4 모드에서는 자세 명령·추력·Z 게인 열이 NaN -> ULog 의 PX4 자세 셋포인트로 대체)
         nlog = nlog + 1;
-        LOG(nlog, :) = [t_boot, phase, x', cmd', last_att, thr, kz, act];
+        LOG(nlog, :) = [t_boot, phase, x', cmd', last_att, thr, kz, act, k_raw];
         wait_tick();
     end
 
