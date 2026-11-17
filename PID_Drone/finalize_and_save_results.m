@@ -23,10 +23,21 @@ function finalize_and_save_results(log_data, cfg)
     val_mae  = mean(dist_error);
     val_max  = max(dist_error);
     
+    % Z축(고도)만의 오차
+    z_error = abs(state_hist(3, :) - pos_des_hist(3, :));
+    val_rmse_z = sqrt(mean(z_error.^2));
+    val_mae_z  = mean(z_error);
+    val_max_z  = max(z_error);
+    
     disp('----------------------------------');
+    disp('[3D 위치 오차]');
     fprintf('RMSE: %.4f m\n', val_rmse);
     fprintf('MAE:  %.4f m\n', val_mae);
     fprintf('Max:  %.4f m\n', val_max);
+    disp('[Z축 오차]');
+    fprintf('RMSE: %.4f m\n', val_rmse_z);
+    fprintf('MAE:  %.4f m\n', val_mae_z);
+    fprintf('Max:  %.4f m\n', val_max_z);
     disp('----------------------------------');
     
     %% 1. [그래프 1] 위치 추종 (Position Tracking)
