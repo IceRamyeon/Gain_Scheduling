@@ -30,11 +30,13 @@ cfg.drone1_init_states = [ 0.0, 0.0, -6.0, ...
                           0, 0, 0]';
 
 % Drone Parameters
-cfg.m = 1.25;                 % Drone mass (kg)
-cfg.armLength = 0.265;        % Arm length (m)
-cfg.Ixx = 0.0232;             % Moment of inertia around x-axis (kg*m^2)
-cfg.Iyy = 0.0232;             % Moment of inertia around y-axis (kg*m^2)
-cfg.Izz = 0.0468;             % Moment of inertia around z-axis (kg*m^2)
+% F450 실측값 (2026-11, 배터리 포함, 프롭 4개 기준. 계산 근거는 PX4/px4_main.m 참고)
+% (이전 값: m 1.25, armLength 0.265, Ixx = Iyy 0.0232, Izz 0.0468)
+cfg.m = 0.95896;              % Drone mass (kg)
+cfg.armLength = 0.225;        % Arm length (m), 대각 450 mm / 2
+cfg.Ixx = 0.01187;            % Moment of inertia around x-axis (kg*m^2)
+cfg.Iyy = 0.01272;            % Moment of inertia around y-axis (kg*m^2)
+cfg.Izz = 0.02440;            % Moment of inertia around z-axis (kg*m^2)
 
 % Position Control Gains
 cfg.posGain = containers.Map(...
@@ -61,7 +63,7 @@ if cfg.Calculate_PID_Table
      disp('Calculating PID Table...');
      [Kp_x, Ki_x, Kd_x, ...
       Kp_y, Ki_y, Kd_y, ...
-      Kp_z, Ki_z, Kd_z] = Build_PID_Table;
+      Kp_z, Ki_z, Kd_z] = Build_PID_Table(cfg.m);
 end
 
 %% 1. Initialization

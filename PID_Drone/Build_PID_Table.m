@@ -1,6 +1,10 @@
-function [Kp_x, Ki_x, Kd_x, Kp_y, Ki_y, Kd_y, Kp_z, Ki_z, Kd_z] = Build_PID_Table()
-    % 드론 물리 파라미터 (실제 기체 제원에 맞게 수정 필요)
-    m = 1.25; 
+function [Kp_x, Ki_x, Kd_x, Kp_y, Ki_y, Kd_y, Kp_z, Ki_z, Kd_z] = Build_PID_Table(m)
+    % 드론 물리 파라미터
+    %  m: 기체 질량 [kg]. main.m 에서 cfg.m 을 넘겨받는다.
+    %     인자 없이 호출하면 F450 실측값(배터리·프롭 4개 포함 958.96 g)을 쓴다.
+    if nargin < 1 || isempty(m)
+        m = 0.95896;
+    end
     g = 9.81;
 
     % 1. 스케줄링 격자(Grid) 정의

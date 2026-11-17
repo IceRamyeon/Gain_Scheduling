@@ -46,17 +46,41 @@ cfg.drone1_init_states = [0.0, 0.0, -6.0, ...           % x, y, z [m]
                         0, 0, 0, ...                    % roll, pitch, yaw [rad]
                         0, 0, 0]';                      % p, q, r [rad/s]
 
-% 기체 파라미터: Gazebo x500 모델(PX4-gazebo-models x500_base/model.sdf) 기준
-%  - 질량: base_link 2.0 kg + 로터 0.016077 kg x 4 = 2.064 kg
-%  - 관성: base_link ixx = iyy = 0.021667, izz = 0.040 [kg m^2]
-%  - 팔 길이: 로터 위치 (±0.174, ±0.174) m -> sqrt(2) x 0.174 = 0.246 m
+% 기체 파라미터 선택: 'F450' (실기체 측정값) | 'x500' (Gazebo 기본 x500 모델)
 %  (정규화 추력 변환에서는 m 이 상쇄됨. U1[N] 로그 값과 PositionCtrl 의 U1_eq 크기에만 반영)
 %  (MATLAB 시뮬레이션 값: m 1.25, armLength 0.265, Ixx = Iyy 0.0232, Izz 0.0468)
-cfg.m = 2.064; 
-cfg.armLength = 0.246; 
-cfg.Ixx = 0.021667; 
-cfg.Iyy = 0.021667; 
-cfg.Izz = 0.040;
+cfg.vehicle = 'F450';
+
+switch cfg.vehicle
+    case 'F450'
+        % 실기체 F450 측정값 (2026-11, 배터리 포함, 프롭 4개 기준)
+        %  - 질량: 측정 925.45 g (배터리 포함, 프롭 1개만 장착) + 프롭 11.17 g x 3 = 958.96 g
+        %  - 관성: 낙하추 회전스탠드 측정값 (측정 당시 프롭 3개 미장착)
+        %      측정값      Ixx 0.01143, Iyy 0.01228, Izz 0.02270
+        %      높이 보정   Ixx, Iyy 에서 m d^2 = 0.92545 x 0.021^2 = 0.00041 차감
+        %                  (회전축 높이 6.3 cm, 무게중심 높이 4.2 cm 가정)
+        %      프롭 3개    점질량 11.17 g, 축간 대각 450 mm 기준
+        %                  Ixx, Iyy: + 3 x 0.01117 x 0.1591^2 = +0.00085
+        %                  Izz     : + 3 x 0.01117 x 0.225^2  = +0.00170
+        %  - 팔 길이: 대각 450 mm / 2 = 0.225 m
+        cfg.m = 0.95896;
+        cfg.armLength = 0.225;
+        cfg.Ixx = 0.01187;
+        cfg.Iyy = 0.01272;
+        cfg.Izz = 0.02440;
+    case 'x500'
+        % Gazebo x500 모델(PX4-gazebo-models x500_base/model.sdf) 기준
+        %  - 질량: base_link 2.0 kg + 로터 0.016077 kg x 4 = 2.064 kg
+        %  - 관성: base_link ixx = iyy = 0.021667, izz = 0.040 [kg m^2]
+        %  - 팔 길이: 로터 위치 (±0.174, ±0.174) m -> sqrt(2) x 0.174 = 0.246 m
+        cfg.m = 2.064;
+        cfg.armLength = 0.246;
+        cfg.Ixx = 0.021667;
+        cfg.Iyy = 0.021667;
+        cfg.Izz = 0.040;
+    otherwise
+        error('cfg.vehicle 은 ''F450'' 또는 ''x500'' 이어야 합니다.');
+end
 
 % xy 위치 PID: PX4 자세 루프(1차 극점 a = 4 rad/s)를 넣은 4차 특성방정식으로 설계
 %   s^4 + a s^3 + g a KD s^2 + g a KP s + g a KI = 0,  극점 -1, -1, -0.5, -1.5 (합 = -a)
