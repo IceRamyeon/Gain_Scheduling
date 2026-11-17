@@ -82,21 +82,30 @@ switch cfg.vehicle
         error('cfg.vehicle 은 ''F450'' 또는 ''x500'' 이어야 합니다.');
 end
 
-% xy 위치 PID: PX4 자세 루프(1차 극점 a = 4 rad/s)를 넣은 4차 특성방정식으로 설계
-%   s^4 + a s^3 + g a KD s^2 + g a KP s + g a KI = 0,  극점 -1, -1, -0.5, -1.5 (합 = -a)
-%   -> KP = 3.5/(g a) = 0.089 [rad/m], KI = 0.75/(g a) = 0.019 [rad/(m s)], KD = 5.75/(g a) = 0.147 [rad s/m]
-%   교차주파수 약 1.4 rad/s, 위상 여유 46 deg (각속도 루프 0.04 s + 지연 0.04 s 가정 시 39 deg)
-%   (이전 값: P 3.17, I 0.001, D 0.81)
-%   주의: Feedforward 모드의 PositionCtrl 은 z 게인도 같은 계수(P_x, I_x, D_x)에서 만든다
-%         (kP_z = P_x * g * m / cos(phi_eq) 등) -> 이 값이면 z 루프도 느려진다 (극점 약 -0.5 +- 0.43i, -0.42)
+% 위치 PID 게인: Gazebo SITL(x500)에서 PX4 가 쓰는 위치 제어기 게인을 등가 단일 루프 PID 로 환산
+%   PX4 main 기본값 (x500 airframe 4001_gz_x500 은 아래 값을 바꾸지 않음):
+%     xy: MPC_XY_P 0.95, MPC_XY_VEL_P_ACC 1.8, MPC_XY_VEL_I_ACC 0.4, MPC_XY_VEL_D_ACC 0.2
+%     z : MPC_Z_P  1.0,  MPC_Z_VEL_P_ACC  4.0, MPC_Z_VEL_I_ACC  2.0, MPC_Z_VEL_D_ACC  0.0
+%   환산 (PX4: 위치 P -> 속도 PID, 속도 오차 = Kp*e + de/dt 로 보면)
+%     a = (Kvp*Kp + Kvi)*e + (Kvi*Kp)*int(e) + (Kvp + Kvd*Kp)*de/dt   [m/s^2]  (Kvd 의 d2e/dt2 항은 생략)
+%     xy: KP = 1.8*0.95 + 0.4 = 2.11, KI = 0.4*0.95 = 0.38, KD = 1.8 + 0.2*0.95 = 1.99   [m/s^2 단위]
+%         -> Feedforward 모드 PositionCtrl 은 각도 단위(rad)라서 g 로 나눔: 0.215, 0.0387, 0.203
+%     z : KP = 4*1 + 2 = 6, KI = 2*1 = 2, KD = 4 [m/s^2 단위] -> NDI 모드의 U1 [N] 단위로 m 을 곱함
+%   주의: Feedforward 모드의 PositionCtrl 은 z 게인을 xy 와 같은 계수(P_x, I_x, D_x)에서 만든다
+%         (kP_z = P_x * g * m / cos(phi_eq)) -> z 는 가속도 단위 2.11 / 0.38 / 1.99 가 되어 PX4 z(6 / 2 / 4)보다 느리다
 %   P_z, I_z, D_z 는 Feedforward = false (NDI) 일 때만 쓰임
+%
+%   [이전 값 1] 4차 특성방정식 설계 (PX4 자세 루프 a = 4 rad/s, 극점 -1, -1, -0.5, -1.5)
+%     xy: P 0.089, I 0.019, D 0.147 [rad 단위],  z: P 4.0, I 0.001, D 0.0
+%   [이전 값 2] 최초 값
+%     xy: P 3.17,  I 0.001, D 0.81,              z: P 4.0, I 0.001, D 0.0
 cfg.posGain = containers.Map( ...
     {'P_x','I_x','D_x', ...
      'P_y','I_y','D_y', ...
      'P_z','I_z','D_z'}, ...
-    {0.089, 0.019, 0.147, ...
-     0.089, 0.019, 0.147, ...
-     4.0, 0.001, 0.0});
+    {0.215, 0.0387, 0.203, ...
+     0.215, 0.0387, 0.203, ...
+     6.0*cfg.m, 2.0*cfg.m, 4.0*cfg.m});
 
 %% 1. PX4 연결·실행 설정
 cfg.px4.local_port     = 14540;   % SITL offboard 포트 (실기체는 텔레메트리/컴패니언 연결에 맞게)
