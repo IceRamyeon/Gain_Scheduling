@@ -1,7 +1,8 @@
 %% PX4(Gazebo SITL / 실기체) + MATLAB PositionCtrl 실행 (A 방식)
 %  - 위치 제어: PID_Drone/PositionCtrl (Trim Feedforward + Z 게인 스케줄링) 을 MATLAB 에서 실행
 %  - 자세 제어: PX4 (mc_att_control / mc_rate_control)
-%  - 경로:      PID_Drone/pathGen + TrajectoryPlanner (시뮬레이션과 동일)
+%  - 경로:      cfg.path_type = 'circle' -> PID_Drone/CircleTrajectory (정지 -> 직선 가속 -> 원 n바퀴)
+%               cfg.path_type = 'spline' -> PID_Drone/pathGen + TrajectoryPlanner (시뮬레이션과 동일)
 %  - 결과:      비행 후 plot_px4_result.m 으로 ULog + 이 스크립트의 기록을 합쳐서 플롯
 %
 %  실행 순서
@@ -33,6 +34,12 @@ cfg.target_speed = 3;             % [m/s]
 cfg.kappa_lookahead = 5.0;        % Feedforward 곡률 예견 거리 [m] (전방 이 지점의 순간 곡률 사용, [] 이면 전방 5초 평균)
 cfg.kappa_tau = 0.2;               % 전방 곡률 댐핑 시정수 [s] (1차 지연, 0 이면 댐핑 없음)
 
+% 경로 종류 (PID_Drone/main.m 과 동일)
+cfg.path_type = 'circle';          % 'circle' : 정지 -> 직선 가속 -> 원 궤적,  'spline' : 기존 pathGen 경유점 궤적
+cfg.curvature = 0.2;               % 원 곡률 [1/m] (반지름 = 1/|kappa|, 부호: + 는 +y 쪽 선회, - 는 -y 쪽)
+cfg.n_laps = 5;                    % 원 바퀴 수 (다 돌면 비행 종료)
+cfg.accel_dist_per_speed = 3.0;    % 가속 구간 길이 = 이 값 x target_speed [m]  (가속도 = v/(2*이 값), 가속 시간 = 2*이 값 [s])
+
 cfg.Feedforward = true;
 cfg.Z_Gain_Scheduling = true;
 
@@ -41,8 +48,9 @@ cfg.play_animation = false;
 cfg.save_dir = '';
 
 % 경로 시작점 = 시뮬레이션 초기 위치 (경로 좌표계)
+if strcmpi(cfg.path_type, 'circle'), v0 = 0; else, v0 = cfg.target_speed; end   % 원 궤적: 정지에서 출발
 cfg.drone1_init_states = [0.0, 0.0, -6.0, ...           % x, y, z [m]
-                        cfg.target_speed, 0, 0, ...     % vx, vy, vz [m/s]
+                        v0, 0, 0, ...                   % vx, vy, vz [m/s]
                         0, 0, 0, ...                    % roll, pitch, yaw [rad]
                         0, 0, 0]';                      % p, q, r [rad/s]
 
@@ -133,7 +141,7 @@ cfg.ppo.posGain = containers.Map( ...                 % 학습에 쓰인 LPV 기
 isPPO = strcmpi(cfg.mode, 'PPO');
 if isPPO, addpath(fullfile(here, 'ppo')); end
 
-%% 2. 기준값 표 (시뮬레이션과 같은 순서·dt 로 TrajectoryPlanner 호출)
+%% 2. 기준값 표 (시뮬레이션과 같은 순서·dt 로 CircleTrajectory / TrajectoryPlanner 호출)
 if isPPO
     ref = build_reference_table_lpv(cfg);              % Drone_LPV 경로 + planner (kappa_now, kappa_future)
 else

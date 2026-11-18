@@ -14,10 +14,16 @@ function ref = build_reference_table(cfg)
 %   ref.kappa_raw : 1xN   댐핑 전 전방 곡률 (기록용)
 %   ref.yaw    : 1xN [rad] 목표 yaw (run_simulation_loop 과 같은 랩어라운드 처리, 연속값)
 
-    [wp_x, wp_y, wp_z] = pathGen();
     if isfield(cfg, 'kappa_lookahead'), kappa_lk = cfg.kappa_lookahead; else, kappa_lk = []; end
     if isfield(cfg, 'kappa_tau'), kappa_tau = cfg.kappa_tau; else, kappa_tau = 0; end
-    traj = TrajectoryPlanner(cfg.drone1_init_states(1:3), [wp_x; wp_y; wp_z], cfg.target_speed, kappa_lk, kappa_tau);
+    if isfield(cfg, 'path_type') && strcmpi(cfg.path_type, 'circle')
+        % 정지 -> 직선 가속 -> 원 궤적 (PID_Drone/Drone.m 과 같은 분기)
+        traj = CircleTrajectory(cfg.drone1_init_states(1:3), cfg.target_speed, cfg.curvature, ...
+                                cfg.accel_dist_per_speed, cfg.n_laps, kappa_lk, kappa_tau);
+    else
+        [wp_x, wp_y, wp_z] = pathGen();
+        traj = TrajectoryPlanner(cfg.drone1_init_states(1:3), [wp_x; wp_y; wp_z], cfg.target_speed, kappa_lk, kappa_tau);
+    end
 
     num_steps = ceil(traj.tf / cfg.dt);
     t = (0:num_steps-1) * cfg.dt;

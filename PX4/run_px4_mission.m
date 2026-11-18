@@ -40,17 +40,28 @@ function meta = run_px4_mission(link, cfg, ref, posCtrl, agent)
     U1_to_thr = @(U1) min(max(thr_hover * U1 / (cfg.m * g), px.thr_limits(1)), px.thr_limits(2));
 
     %% 경로 시작점·접선과 프리롤 기하
+    isCircle = isfield(cfg, 'path_type') && strcmpi(cfg.path_type, 'circle') ...
+               && ~(isfield(cfg, 'mode') && strcmpi(cfg.mode, 'PPO'));   % PPO 모드는 자체 경로(Drone_LPV) 사용
     p_start = ref.pos(:, 1);
-    d = ref.vel(:, 1) / norm(ref.vel(:, 1));          % 경로 시작 접선 방향 (경로 좌표계)
+    iv = find(vecnorm(ref.vel, 2, 1) > 1e-6, 1);      % 정지 출발 경로(원 궤적)는 첫 샘플 속도가 0
+    if isempty(iv), d = [1; 0; 0]; else, d = ref.vel(:, iv) / norm(ref.vel(:, iv)); end   % 경로 시작 접선 방향 (경로 좌표계)
     yaw0 = ref.yaw(1);
     v = cfg.target_speed;
     a = px.preroll_acc;
-    t_acc = v / a;                                     % 가속 시간
-    s_acc = v^2 / (2*a);                               % 가속 거리
-    L = s_acc + px.preroll_margin;                     % 프리롤 길이
-    t_pre = t_acc + px.preroll_margin / v;             % 프리롤 총 시간
-    p_pre = p_start - L * d;                           % 프리롤 시작점
-    fprintf('프리롤: L = %.1f m, 가속 %.1f s + 등속 %.1f s\n', L, t_acc, t_pre - t_acc);
+    if isCircle
+        % 원 궤적: 경로 자체가 정지 -> 직선 가속을 포함하므로 프리롤 없음
+        %  -> ② 에서 경로 시작점에 호버, ③ 은 바로 끝나고 ④ 가 정지 상태에서 시작 (main.m 시뮬레이션과 같은 조건)
+        t_acc = 0; s_acc = 0; L = 0; t_pre = 0;
+        p_pre = p_start;
+        fprintf('프리롤 없음 (원 궤적: 경로 시작점 호버 후 정지 상태에서 ④ 시작)\n');
+    else
+        t_acc = v / a;                                     % 가속 시간
+        s_acc = v^2 / (2*a);                               % 가속 거리
+        L = s_acc + px.preroll_margin;                     % 프리롤 길이
+        t_pre = t_acc + px.preroll_margin / v;             % 프리롤 총 시간
+        p_pre = p_start - L * d;                           % 프리롤 시작점
+        fprintf('프리롤: L = %.1f m, 가속 %.1f s + 등속 %.1f s\n', L, t_acc, t_pre - t_acc);
+    end
 
     %% 로그
     meta.log_cols = {'t_boot', 'phase', ...
