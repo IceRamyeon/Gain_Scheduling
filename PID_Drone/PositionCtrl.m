@@ -127,8 +127,9 @@ classdef PositionCtrl < handle
             dey_body = -sin(psi) * dx_err + cos(psi) * dy_err;
             
             if obj.use_feedforward
-                % 피드포워드 계산 
-                phi_eq = atan(-(obj.v_des^2 * obj.kappa_des) / obj.g);
+                % 피드포워드 계산 (NED: +phi -> +y(오른쪽) 가속, kappa > 0 -> +y 쪽 선회)
+                %  -> 구심 가속도 v^2 kappa 를 롤로 만들려면 tan(phi_eq) = +v^2 kappa / g
+                phi_eq = atan((obj.v_des^2 * obj.kappa_des) / obj.g);
                 U1_eq = obj.m * sqrt(obj.g^2 + (obj.v_des^2 * obj.kappa_des)^2);
                 
                 % X, Y축 게인 자동 산출

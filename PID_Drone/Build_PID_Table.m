@@ -34,7 +34,8 @@ function [Kp_x, Ki_x, Kd_x, Kp_y, Ki_y, Kd_y, Kp_z, Ki_z, Kd_z] = Build_PID_Tabl
             v = v_vec(i);
             kappa = kappa_vec(j);
 
-            % [1] 파라미터 종속 평형점 (Trim Condition)
+            % [1] 파라미터 종속 평형점 (Trim Condition), NED 좌표계
+            %  kappa > 0 -> +y 쪽 선회, 구심 가속도 +v^2 kappa 를 +phi 로 만든다 (PositionCtrl 과 같은 식)
             phi_eq = atan(v^2 * kappa / g);
             U1_eq = m * sqrt(g^2 + (v^2 * kappa)^2);
 
@@ -42,9 +43,14 @@ function [Kp_x, Ki_x, Kd_x, Kp_y, Ki_y, Kd_y, Kp_z, Ki_z, Kd_z] = Build_PID_Tabl
             A = [zeros(3,3), eye(3);
                  zeros(3,3), zeros(3,3)];
 
-            B_acc = [ 0,                           (U1_eq/m)*cos(phi_eq),  0;
-                     -(U1_eq/m)*cos(phi_eq), 0,                           -(1/m)*sin(phi_eq);
-                     -(U1_eq/m)*sin(phi_eq), 0,                            (1/m)*cos(phi_eq)];
+            % Drone.m 운동방정식 (NED, 추력은 기체 -z 방향, psi = 0):
+            %   ddx = -(U1/m) sin(theta) cos(phi)
+            %   ddy =  (U1/m) sin(phi)
+            %   ddz =  g - (U1/m) cos(theta) cos(phi)
+            % 평형점 (phi_eq, theta = 0, U1_eq) 에서 입력 [dphi, dtheta, dU1] 에 대해 선형화:
+            B_acc = [ 0,                       -(U1_eq/m)*cos(phi_eq),  0;
+                      (U1_eq/m)*cos(phi_eq),    0,                      (1/m)*sin(phi_eq);
+                      (U1_eq/m)*sin(phi_eq),    0,                     -(1/m)*cos(phi_eq)];
             
             B = [zeros(3,3); 
                  B_acc];
@@ -84,6 +90,9 @@ function [Kp_x, Ki_x, Kd_x, Kp_y, Ki_y, Kd_y, Kp_z, Ki_z, Kd_z] = Build_PID_Tabl
             % 3x9 크기의 상태 피드백 게인 행렬 K_aug 산출
             K_aug = place(A_aug, B_aug, desired_poles);
             
+            % u = -K x (x = 상태, 오차 e = x_des - x 이면 u = K e 와 같은 꼴)
+            % NED 부호: Kp_x, Kd_x, Ki_x 와 Kp_z, Kd_z, Ki_z 는 음수, Kp_y 등은 양수로 나온다
+            %  -> PositionCtrl 의 delta_theta = -(kP e_x), delta_phi = +(kP e_y), delta_U1 = -(kP_z e_z) 와 같은 방향
             % X축 제어는 Pitch(theta, 입력 2번)가 담당
             Kp_x(i,j) = K_aug(2, 1);
             Kd_x(i,j) = K_aug(2, 4);

@@ -134,7 +134,9 @@ classdef PositionCtrl_LPV < handle
 
             if obj.use_feedforward
                 % 피드포워드 평형점 계산
-                phi_eq = atan(-(obj.v_des^2 * obj.kappa_des) / obj.g);
+                % NED: +phi -> +y(오른쪽) 가속, kappa > 0 -> +y 쪽 선회 -> tan(phi_eq) = +v^2 kappa / g
+                %  (주의: 기존 PPO 에이전트는 부호가 반대인 phi_eq 로 학습되었을 수 있음)
+                phi_eq = atan((obj.v_des^2 * obj.kappa_des) / obj.g);
                 U1_eq  = obj.m * sqrt(obj.g^2 + (obj.v_des^2 * obj.kappa_des)^2);
 
                 % LPV 기본 게인 및 Z축 스케줄링

@@ -63,7 +63,7 @@ function finalize_and_save_results(log_data, cfg)
     g_trim = 9.81;
     v_trim = cfg.target_speed;
     a_cen  = v_trim^2 .* kappa_hist;                      % 구심 가속도 v^2 kappa
-    phi_eq_hist = atan(-a_cen ./ g_trim);                 % PositionCtrl: phi_eq = atan(-(v^2 kappa)/g)
+    phi_eq_hist = atan(a_cen ./ g_trim);                  % PositionCtrl: phi_eq = atan(+(v^2 kappa)/g) (NED, kappa > 0 -> +phi)
     U1_eq_hist  = cfg.m .* sqrt(g_trim^2 + a_cen.^2);     % PositionCtrl: U1_eq  = m sqrt(g^2 + (v^2 kappa)^2)
     turn_idx = abs(kappa_hist) > 1e-4;                    % 곡선(선회) 구간
     disp('[평형점 (Trim)]');
