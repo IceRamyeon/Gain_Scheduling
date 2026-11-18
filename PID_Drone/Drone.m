@@ -54,7 +54,13 @@
             obj.u = initInputs;
             if isfield(cfg, 'kappa_lookahead'), kappa_lk = cfg.kappa_lookahead; else, kappa_lk = []; end
             if isfield(cfg, 'kappa_tau'), kappa_tau = cfg.kappa_tau; else, kappa_tau = 0; end
-            obj.trajCtrl = TrajectoryPlanner(initStates(1:3), waypoints, cfg.target_speed, kappa_lk, kappa_tau);            
+            if isfield(cfg, 'path_type') && strcmpi(cfg.path_type, 'circle')
+                % 정지 -> 직선 가속 -> 원 궤적 (cfg.curvature, cfg.n_laps 바퀴)
+                obj.trajCtrl = CircleTrajectory(initStates(1:3), cfg.target_speed, cfg.curvature, ...
+                                                cfg.accel_dist_per_speed, cfg.n_laps, kappa_lk, kappa_tau);
+            else
+                obj.trajCtrl = TrajectoryPlanner(initStates(1:3), waypoints, cfg.target_speed, kappa_lk, kappa_tau);
+            end            
             obj.tf = obj.trajCtrl.tf;
             
             obj.posCtrl = PositionCtrl(posGains, params, cfg);

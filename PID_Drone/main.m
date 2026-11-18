@@ -12,6 +12,12 @@ cfg.kappa_lookahead = 5.0;         % Feedforward 곡률 예견 거리 [m] (전�
 cfg.kappa_tau = 0.2;               % 전방 곡률 댐핑 시정수 [s] (1차 지연, 0 이면 댐핑 없음)
 cfg.target_speed = 4;              % Target speed (m/s)            
 
+% 경로 종류
+cfg.path_type = 'circle';          % 'circle' : 정지 -> 직선 가속 -> 원 궤적,  'spline' : 기존 pathGen 경유점 궤적
+cfg.curvature = 0.2;               % 원 곡률 [1/m] (반지름 = 1/|kappa|, 부호: + 는 +y 쪽 선회, - 는 -y 쪽)
+cfg.n_laps = 5;                    % 원 바퀴 수 (다 돌면 시뮬레이션 종료)
+cfg.accel_dist_per_speed = 3.0;    % 가속 구간 길이 = 이 값 x target_speed [m]  (가속도 = v/(2*이 값), 가속 시간 = 2*이 값 [s])
+
 % PID Table Generation Parameters / Gain Scheduling Initiation
 cfg.Calculate_PID_Table = 0;  % If true, the PID table will be generated based on the specified speed and curvature ranges.
 cfg.Feedforward = true;  % If 1 : Feedforward Path curvature and velocity, 0 : No Feedforward
@@ -24,19 +30,26 @@ cfg.auto_save = false;               % 자동 저장 여부 (true / false)
 cfg.save_dir  = './sim_results/261012/2/v=4,Feedforward,Scheduling,alpha=0.15';    % 저장할 디렉토리 경로 지정
 
 % 초기 상태: [x, y, z, dx, dy, dz, phi, theta, psi, p, q, r]'
+if strcmpi(cfg.path_type, 'circle'), v0 = 0; else, v0 = cfg.target_speed; end   % 원 궤적: 정지에서 출발
 cfg.drone1_init_states = [ 0.0, 0.0, -6.0, ...                                      
-                          cfg.target_speed, 0, 0, ...                                                                
+                          v0, 0, 0, ...                                                                
                           0, 0, 0, ...                                                                
                           0, 0, 0]';
 
 % Drone Parameters
-% F450 실측값 (2026-11, 배터리 포함, 프롭 4개 기준. 계산 근거는 PX4/px4_main.m 참고)
+% Gazebo x500 모델 값으로 고정 (PX4-gazebo-models x500_base/model.sdf, 근거는 PX4/px4_main.m 참고)
 % (이전 값: m 1.25, armLength 0.265, Ixx = Iyy 0.0232, Izz 0.0468)
-cfg.m = 0.95896;              % Drone mass (kg)
-cfg.armLength = 0.225;        % Arm length (m), 대각 450 mm / 2
-cfg.Ixx = 0.01187;            % Moment of inertia around x-axis (kg*m^2)
-cfg.Iyy = 0.01272;            % Moment of inertia around y-axis (kg*m^2)
-cfg.Izz = 0.02440;            % Moment of inertia around z-axis (kg*m^2)
+cfg.m = 2.064;                % Drone mass (kg)
+cfg.armLength = 0.246;        % Arm length (m), 로터 위치 (±0.174, ±0.174) m
+cfg.Ixx = 0.021667;           % Moment of inertia around x-axis (kg*m^2)
+cfg.Iyy = 0.021667;           % Moment of inertia around y-axis (kg*m^2)
+cfg.Izz = 0.040;              % Moment of inertia around z-axis (kg*m^2)
+% [사용 안 함] F450 실측값 (2026-11, 배터리 포함, 프롭 4개 기준)
+% cfg.m = 0.95896;            % Drone mass (kg)
+% cfg.armLength = 0.225;      % Arm length (m), 대각 450 mm / 2
+% cfg.Ixx = 0.01187;          % Moment of inertia around x-axis (kg*m^2)
+% cfg.Iyy = 0.01272;          % Moment of inertia around y-axis (kg*m^2)
+% cfg.Izz = 0.02440;          % Moment of inertia around z-axis (kg*m^2)
 
 % Position Control Gains
 cfg.posGain = containers.Map(...

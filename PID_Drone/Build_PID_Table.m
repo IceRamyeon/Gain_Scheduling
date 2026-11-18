@@ -1,9 +1,10 @@
 function [Kp_x, Ki_x, Kd_x, Kp_y, Ki_y, Kd_y, Kp_z, Ki_z, Kd_z] = Build_PID_Table(m)
     % 드론 물리 파라미터
     %  m: 기체 질량 [kg]. main.m 에서 cfg.m 을 넘겨받는다.
-    %     인자 없이 호출하면 F450 실측값(배터리·프롭 4개 포함 958.96 g)을 쓴다.
+    %     인자 없이 호출하면 Gazebo x500 질량(2.064 kg)을 쓴다.
     if nargin < 1 || isempty(m)
-        m = 0.95896;
+        m = 2.064;
+        % m = 0.95896;   % [사용 안 함] F450 실측값 (배터리·프롭 4개 포함 958.96 g)
     end
     g = 9.81;
 
