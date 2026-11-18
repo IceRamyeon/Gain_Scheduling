@@ -15,21 +15,41 @@ function finalize_and_save_results(log_data, cfg)
     kappa_hist   = log_data.kappa_hist;
 
     %% 0. 평가 지표 계산
+    % 평가 구간: 원 궤적(path_type = 'circle')이면 정지 -> 직선 가속 구간을 빼고 원 구간만 평가
+    %  -> 가속 시간 t_acc = 2 * accel_dist_per_speed [s] (CircleTrajectory 와 같은 식), t_hist 는 0 에서 시작
+    is_circle = isfield(cfg, 'path_type') && strcmpi(cfg.path_type, 'circle');
+    if is_circle
+        t_eval0  = 2 * cfg.accel_dist_per_speed;
+        eval_idx = t_hist >= t_eval0;
+        if ~any(eval_idx)
+            warning('원 구간(t >= %.2f s) 데이터가 없어 전체 구간으로 평가합니다.', t_eval0);
+            eval_idx = true(size(t_hist)); t_eval0 = t_hist(1);
+        end
+    else
+        t_eval0  = t_hist(1);
+        eval_idx = true(size(t_hist));
+    end
+
     % 3차원 유클리디안 거리 오차 계산 블록
     dist_error = sqrt(sum((state_hist(1:3, :) - pos_des_hist(1:3, :)).^2, 1));
     
-    % 평가 지표 계산
-    val_rmse = sqrt(mean(dist_error.^2));
-    val_mae  = mean(dist_error);
-    val_max  = max(dist_error);
+    % 평가 지표 계산 (평가 구간만)
+    val_rmse = sqrt(mean(dist_error(eval_idx).^2));
+    val_mae  = mean(dist_error(eval_idx));
+    val_max  = max(dist_error(eval_idx));
     
     % Z축(고도)만의 오차
     z_error = abs(state_hist(3, :) - pos_des_hist(3, :));
-    val_rmse_z = sqrt(mean(z_error.^2));
-    val_mae_z  = mean(z_error);
-    val_max_z  = max(z_error);
+    val_rmse_z = sqrt(mean(z_error(eval_idx).^2));
+    val_mae_z  = mean(z_error(eval_idx));
+    val_max_z  = max(z_error(eval_idx));
     
     disp('----------------------------------');
+    if is_circle
+        fprintf('[평가 구간] 원 구간만: t = %.2f ~ %.2f s (가속 구간 %.2f s 제외)\n', t_eval0, t_hist(end), t_eval0);
+    else
+        fprintf('[평가 구간] 전체: t = %.2f ~ %.2f s\n', t_hist(1), t_hist(end));
+    end
     disp('[3D 위치 오차]');
     fprintf('RMSE: %.4f m\n', val_rmse);
     fprintf('MAE:  %.4f m\n', val_mae);
@@ -48,12 +68,18 @@ function finalize_and_save_results(log_data, cfg)
     turn_idx = abs(kappa_hist) > 1e-4;                    % 곡선(선회) 구간
     disp('[평형점 (Trim)]');
     fprintf('v = %.2f m/s, m = %.4f kg\n', v_trim, cfg.m);
-    fprintf('phi_eq 평균: %.3f deg', mean(phi_eq_hist) * R2D);
-    if any(turn_idx), fprintf('  (선회 구간 평균: %.3f deg)', mean(phi_eq_hist(turn_idx)) * R2D); end
-    fprintf('\n');
-    fprintf('U1_eq  평균: %.4f N', mean(U1_eq_hist));
-    if any(turn_idx), fprintf('  (선회 구간 평균: %.4f N)', mean(U1_eq_hist(turn_idx))); end
-    fprintf('\n');
+    if is_circle
+        % 원 궤적: 평가 구간(원 구간) 평균
+        fprintf('phi_eq 원 구간 평균: %.3f deg\n', mean(phi_eq_hist(eval_idx)) * R2D);
+        fprintf('U1_eq  원 구간 평균: %.4f N\n',   mean(U1_eq_hist(eval_idx)));
+    else
+        fprintf('phi_eq 평균: %.3f deg', mean(phi_eq_hist) * R2D);
+        if any(turn_idx), fprintf('  (선회 구간 평균: %.3f deg)', mean(phi_eq_hist(turn_idx)) * R2D); end
+        fprintf('\n');
+        fprintf('U1_eq  평균: %.4f N', mean(U1_eq_hist));
+        if any(turn_idx), fprintf('  (선회 구간 평균: %.4f N)', mean(U1_eq_hist(turn_idx))); end
+        fprintf('\n');
+    end
     disp('----------------------------------');
     
     %% 1. [그래프 1] 위치 추종 (Position Tracking)
