@@ -38,6 +38,22 @@ function finalize_and_save_results(log_data, cfg)
     fprintf('RMSE: %.4f m\n', val_rmse_z);
     fprintf('MAE:  %.4f m\n', val_mae_z);
     fprintf('Max:  %.4f m\n', val_max_z);
+
+    % 평형점(Trim): PositionCtrl 과 같은 식, v = cfg.target_speed, kappa = Feedforward 입력 곡률(kappa_hist)
+    g_trim = 9.81;
+    v_trim = cfg.target_speed;
+    a_cen  = v_trim^2 .* kappa_hist;                      % 구심 가속도 v^2 kappa
+    phi_eq_hist = atan(-a_cen ./ g_trim);                 % PositionCtrl: phi_eq = atan(-(v^2 kappa)/g)
+    U1_eq_hist  = cfg.m .* sqrt(g_trim^2 + a_cen.^2);     % PositionCtrl: U1_eq  = m sqrt(g^2 + (v^2 kappa)^2)
+    turn_idx = abs(kappa_hist) > 1e-4;                    % 곡선(선회) 구간
+    disp('[평형점 (Trim)]');
+    fprintf('v = %.2f m/s, m = %.4f kg\n', v_trim, cfg.m);
+    fprintf('phi_eq 평균: %.3f deg', mean(phi_eq_hist) * R2D);
+    if any(turn_idx), fprintf('  (선회 구간 평균: %.3f deg)', mean(phi_eq_hist(turn_idx)) * R2D); end
+    fprintf('\n');
+    fprintf('U1_eq  평균: %.4f N', mean(U1_eq_hist));
+    if any(turn_idx), fprintf('  (선회 구간 평균: %.4f N)', mean(U1_eq_hist(turn_idx))); end
+    fprintf('\n');
     disp('----------------------------------');
     
     %% 1. [그래프 1] 위치 추종 (Position Tracking)
@@ -136,6 +152,18 @@ function finalize_and_save_results(log_data, cfg)
     end
     xlabel('Time [s]'); ylabel('Curvature \kappa [1/m]'); grid on;
     
+    %% 6-1 [그래프] 평형점 (phi_eq, U1_eq)
+    h_fig_trim = figure('Name', 'Trim (phi_eq, U1_eq)', 'Theme', 'light', 'Position', [1010 450 600 450]);
+    subplot(2,1,1);
+    plot(t_hist, phi_eq_hist * R2D, 'b', 'LineWidth', 1.2); hold on;
+    yline(mean(phi_eq_hist) * R2D, 'r--', sprintf('mean %.2f deg', mean(phi_eq_hist) * R2D));
+    ylabel('\phi_{eq} [deg]'); title(sprintf('Equilibrium Roll \\phi_{eq} (v = %.2g m/s)', v_trim)); grid on;
+    subplot(2,1,2);
+    plot(t_hist, U1_eq_hist, 'b', 'LineWidth', 1.2); hold on;
+    yline(cfg.m * g_trim, 'k:', 'mg');
+    yline(mean(U1_eq_hist), 'r--', sprintf('mean %.3f N', mean(U1_eq_hist)));
+    xlabel('Time [s]'); ylabel('U_{1,eq} [N]'); title('Equilibrium Thrust U_{1,eq}'); grid on;
+
     %% 7 [그래프 7, 8] 3D & 2D Trajectory
     if ~cfg.play_animation
         h_fig_traj_3d = figure('Name', '3D Trajectory', 'Theme', 'light', 'Position', [10 150 600 600]);
@@ -179,6 +207,7 @@ function finalize_and_save_results(log_data, cfg)
         exportgraphics(h_fig_spd, [baseFileName, '_Speed.png'], 'Resolution', 300);
         exportgraphics(h_fig_pid, [baseFileName, '_PID_Gains.png'], 'Resolution', 300);
         exportgraphics(h_fig_kappa, [baseFileName, '_Curvature.png'], 'Resolution', 300);
+        exportgraphics(h_fig_trim, [baseFileName, '_Trim.png'], 'Resolution', 300);
         
         if ~cfg.play_animation
             exportgraphics(h_fig_traj_3d, [baseFileName, '_Trajectory_3D.png'], 'Resolution', 300);
