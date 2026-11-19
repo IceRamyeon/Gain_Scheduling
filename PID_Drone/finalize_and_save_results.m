@@ -182,12 +182,12 @@ function finalize_and_save_results(log_data, cfg)
     h_fig_trim = figure('Name', 'Trim (phi_eq, U1_eq)', 'Theme', 'light', 'Position', [1010 450 600 450]);
     subplot(2,1,1);
     plot(t_hist, phi_eq_hist * R2D, 'b', 'LineWidth', 1.2); hold on;
-    yline(mean(phi_eq_hist) * R2D, 'r--', sprintf('mean %.2f deg', mean(phi_eq_hist) * R2D));
+    % yline(mean(phi_eq_hist) * R2D, 'r--', sprintf('mean %.2f deg', mean(phi_eq_hist) * R2D));
     ylabel('\phi_{eq} [deg]'); title(sprintf('Equilibrium Roll \\phi_{eq} (v = %.2g m/s)', v_trim)); grid on;
     subplot(2,1,2);
     plot(t_hist, U1_eq_hist, 'b', 'LineWidth', 1.2); hold on;
     yline(cfg.m * g_trim, 'k:', 'mg');
-    yline(mean(U1_eq_hist), 'r--', sprintf('mean %.3f N', mean(U1_eq_hist)));
+    % yline(mean(U1_eq_hist), 'r--', sprintf('mean %.3f N', mean(U1_eq_hist)));
     xlabel('Time [s]'); ylabel('U_{1,eq} [N]'); title('Equilibrium Thrust U_{1,eq}'); grid on;
 
     %% 7 [그래프 7, 8] 3D & 2D Trajectory
