@@ -72,6 +72,14 @@ function finalize_and_save_results(log_data, cfg)
     else
         hdr{end+1, 1} = '제어 모드: MATLAB 시뮬레이션 (PID_Drone)';
     end
+    % Feedforward / Z 게인 스케줄링 적용 여부 (PositionCtrl 설정, PX4 모드에서는 PositionCtrl 을 쓰지 않음)
+    onoff = @(f) ternary_onoff(cfg, f);
+    if isfield(cfg, 'mode') && strcmpi(cfg.mode, 'PX4')
+        note = ' (PX4 모드: PX4 위치제어기 사용, 이 설정은 미적용)';
+    else
+        note = '';
+    end
+    hdr{end+1, 1} = sprintf('Feedforward: %s, Z_Gain_Scheduling: %s%s', onoff('Feedforward'), onoff('Z_Gain_Scheduling'), note);
 
     rpt = {};
     rpt{end+1, 1} = '[최종 결과].';
@@ -182,7 +190,14 @@ function finalize_and_save_results(log_data, cfg)
     plot(t_hist, pid_hist(2,:), 'g', 'LineWidth', 1.5);
     plot(t_hist, pid_hist(3,:), 'b', 'LineWidth', 1.5);
     xlabel('Time [s]'); ylabel('Gain Value'); 
-    title('Scheduled PID Gains for Z-axis (Kp, Ki, Kd)'); grid on;
+    if isfield(cfg, 'mode') && strcmpi(cfg.mode, 'PX4')
+        title('PX4 Equivalent Z-axis PID Gains (fixed, x m)'); grid on;   % PX4 모드는 스케줄링 없음 (고정 게인)
+    else
+        title('Scheduled PID Gains for Z-axis (Kp, Ki, Kd)'); grid on;
+    end
+    if all(isnan(pid_hist(:)))
+        text(0.5, 0.5, 'Z 게인 기록 없음 (NaN)', 'Units', 'normalized', 'HorizontalAlignment', 'center');
+    end
     legend('K_{P,z}', 'K_{I,z}', 'K_{D,z}', 'Location', 'best');
 
     %% 6. [그래프 6] 곡률 추종 (Curvature Tracking)
@@ -271,5 +286,17 @@ function finalize_and_save_results(log_data, cfg)
         disp(['으헤~ 데이터랑 그래프 이미지들 전부 저장했어: ', cfg.save_dir]);
     else
         disp('자동 저장은 꺼져 있어서 아무것도 안 남겼어.');
+    end
+end
+
+%% ---- local functions ----
+function str = ternary_onoff(cfg, field)
+    % cfg 의 논리 설정값 -> 'ON' / 'OFF' (필드가 없으면 '미설정')
+    if ~isfield(cfg, field) || isempty(cfg.(field))
+        str = '미설정';
+    elseif cfg.(field)
+        str = 'ON';
+    else
+        str = 'OFF';
     end
 end

@@ -69,6 +69,13 @@ function log_data = ulog_to_log_data(ulgFile, meta, dt_grid)
         att_des_hist = pick({'phi_cmd', 'theta_cmd', 'psi_cmd', 'U1_cmd'});
     end
     pid_hist     = pick({'kP_z', 'kI_z', 'kD_z'});
+    if isfield(cfg, 'mode') && strcmpi(cfg.mode, 'PX4')
+        % PX4 모드: MATLAB PositionCtrl 을 돌리지 않아 kP_z 등이 NaN 으로 기록됨
+        %  -> ULog 에 저장된 PX4 z 위치/속도 파라미터로 등가 단일 루프 PID 를 계산해 고정 게인으로 채운다
+        %     a = (Kvp*Kp + Kvi) e + (Kvi*Kp) int(e) + (Kvp + Kvd*Kp) de/dt  [m/s^2], x m -> [N] (PositionCtrl 과 같은 단위)
+        kz = local_px4_z_gains(ulog) * cfg.m;
+        pid_hist = repmat(kz(:), 1, N);
+    end
     kappa_hist   = pick({'kappa'});
     if any(strcmp(meta.log_cols, 'kappa_raw'))
         kappa_raw_hist = pick({'kappa_raw'});                  % 댐핑 전 전방 곡률
@@ -116,6 +123,26 @@ function TT = local_topic(ulog, name)
         error('ULog 에 %s 토픽이 없습니다.', name);
     end
     TT = d.TopicMessages{1};
+end
+
+function kz = local_px4_z_gains(ulog)
+    % PX4 z 위치·속도 제어기 파라미터 -> 등가 PID [m/s^2 단위]. 읽지 못하면 PX4 기본값 사용
+    names = {'MPC_Z_P', 'MPC_Z_VEL_P_ACC', 'MPC_Z_VEL_I_ACC', 'MPC_Z_VEL_D_ACC'};
+    vals  = [1.0, 4.0, 2.0, 0.0];                       % PX4 기본값
+    try
+        P = readParameters(ulog);                       % table: 1열 이름, 2열 값
+        pn = string(P{:, 1}); pv = double(P{:, 2});
+        for i = 1:numel(names)
+            j = find(pn == names{i}, 1);
+            if ~isempty(j), vals(i) = pv(j); end
+        end
+    catch err
+        warning('ULog 파라미터를 읽지 못해 PX4 기본값으로 Z 게인을 계산합니다: %s', err.message);
+    end
+    Kp = vals(1); Kvp = vals(2); Kvi = vals(3); Kvd = vals(4);
+    kz = [Kvp*Kp + Kvi, Kvi*Kp, Kvp + Kvd*Kp];
+    fprintf('PX4 등가 Z 게인 (m/s^2 단위): KP = %.3g, KI = %.3g, KD = %.3g  (MPC_Z_P %.3g, VEL_P %.3g, VEL_I %.3g, VEL_D %.3g)\n', ...
+        kz, vals);
 end
 
 function t = local_time(TT)
