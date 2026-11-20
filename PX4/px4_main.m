@@ -30,7 +30,7 @@ cfg.mode = 'PX4';
 cfg.start_with_yaw = true;
 cfg.dt = 0.01;                      % 기준값 표 계산 간격 (시뮬레이션 dt 와 동일하게)
 cfg.target_yaw = [];
-cfg.target_speed = 5;               % [m/s]
+cfg.target_speed = 4;               % [m/s]
 cfg.kappa_lookahead = 2.0;          % Feedforward 곡률 예견 거리 [m] (전방 이 지점의 순간 곡률 사용, [] 이면 전방 5초 평균)
 cfg.kappa_tau = 0;                  % 전방 곡률 댐핑 시정수 [s] (1차 지연, 0 이면 댐핑 없음)
 
