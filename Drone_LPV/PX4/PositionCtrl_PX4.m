@@ -59,9 +59,9 @@ classdef PositionCtrl_PX4 < handle
                 ki_xy = cfg.pos_Ki_ang * obj.g;
                 kd_xy = cfg.pos_Kd_ang * obj.g;
             else
-                kp_xy = 0.10  * obj.g; % 0.9810 (m/s^2)/m
-                ki_xy = 0.001 * obj.g; % 0.0098 (m/s^2)/(m*s)
-                kd_xy = 0.17  * obj.g; % 1.6677 (m/s^2)/(m/s)
+                kp_xy = 0.215  * obj.g; % 2.1092 (m/s^2)/m
+                ki_xy = 0.0387 * obj.g; % 0.3796 (m/s^2)/(m*s)
+                kd_xy = 0.203  * obj.g; % 1.9914 (m/s^2)/(m/s)
             end
 
             if isfield(cfg, 'pos_Kp_z')
@@ -69,9 +69,9 @@ classdef PositionCtrl_PX4 < handle
                 ki_z = cfg.pos_Ki_z;
                 kd_z = cfg.pos_Kd_z;
             else
-                kp_z = 4.0;
-                ki_z = 0.2;
-                kd_z = 3.5;
+                kp_z = 6.0;
+                ki_z = 2.0;
+                kd_z = 4.0;
             end
 
             obj.Kp = [kp_xy; kp_xy; kp_z];

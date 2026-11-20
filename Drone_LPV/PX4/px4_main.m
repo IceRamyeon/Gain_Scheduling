@@ -49,13 +49,15 @@ cfg.K_att       = 4.0;  % [rad/s]
 cfg.tau_rate    = 0.04; % [s]
 
 % [2-DOF 위치 제어기 설정 (요구사항 4: D-on-Measurement + Feedforward)]
-% a = 4.0 rad/s 기준 위상 여유 >= 40 deg, Mp <= 4% 만족 보수적 기본 게인 (각도 환산 기준)
-cfg.pos_Kp_ang        = 0.10;  % 수평 위치 비례 게인 (가속도 환산 시 * g)
-cfg.pos_Ki_ang        = 0.001; % 수평 위치 적분 게인 (가속도 환산 시 * g)
-cfg.pos_Kd_ang        = 0.17;  % 수평 속도 댐핑 게인 (D-on-Measurement, 가속도 환산 시 * g)
-cfg.pos_Kp_z          = 4.0;   % 수직 위치 비례 게인
-cfg.pos_Ki_z          = 0.2;   % 수직 위치 적분 게인
-cfg.pos_Kd_z          = 3.5;   % 수직 속도 댐핑 게인
+% PX4 위치 제어기 산출 등가 PID 계수:
+% - XY 각도 환산 기준: {0.215, 0.0387, 0.203} (내부에서 * g 적용)
+% - Z 가속도 단위 기준: {6.0, 2.0, 4.0} (추력 식 U1 = m*(g - a_z)에서 m 곱해져 {6m, 2m, 4m}와 등가)
+cfg.pos_Kp_ang        = 0.215;  % 수평 위치 비례 게인 (가속도 환산 시 * g)
+cfg.pos_Ki_ang        = 0.0387; % 수평 위치 적분 게인 (가속도 환산 시 * g)
+cfg.pos_Kd_ang        = 0.203;  % 수평 속도 댐핑 게인 (D-on-Measurement, 가속도 환산 시 * g)
+cfg.pos_Kp_z          = 6.0;    % 수직 위치 비례 게인 (힘 환산 6*cfg.m)
+cfg.pos_Ki_z          = 2.0;    % 수직 위치 적분 게인 (힘 환산 2.0*cfg.m)
+cfg.pos_Kd_z          = 4.0;    % 수직 속도 댐핑 게인 (힘 환산 4*cfg.m)
 cfg.k_ff_v            = 1.0;   % 목표 속도 피드포워드 가중치 (0 또는 1)
 cfg.k_ff_a            = 1.0;   % 목표 가속도 피드포워드 가중치 (0 또는 1)
 cfg.Z_Gain_Scheduling = true;  % 기울기에 따른 Z축 추력/게인 보상

@@ -92,13 +92,15 @@ classdef RL_DroneEnv_PX4 < rl.env.MATLABEnvironment
             cfg.K_att       = 4.0;
             cfg.tau_rate    = 0.04;
 
-            % PX4 2-DOF 위치 제어기 설정
-            cfg.pos_Kp_ang        = 0.10;
-            cfg.pos_Ki_ang        = 0.001;
-            cfg.pos_Kd_ang        = 0.17;
-            cfg.pos_Kp_z          = 4.0;
-            cfg.pos_Ki_z          = 0.2;
-            cfg.pos_Kd_z          = 3.5;
+            % PX4 2-DOF 위치 제어기 설정 (PX4 산출 PID 등가 계수)
+            % XY (각도 환산 * g): {0.215, 0.0387, 0.203}
+            % Z  (가속도 단위, U1=m*(g-a_z)에서 m 곱해져 힘 기준 {6m, 2m, 4m}와 등가)
+            cfg.pos_Kp_ang        = 0.215;
+            cfg.pos_Ki_ang        = 0.0387;
+            cfg.pos_Kd_ang        = 0.203;
+            cfg.pos_Kp_z          = 6.0;
+            cfg.pos_Ki_z          = 2.0;
+            cfg.pos_Kd_z          = 4.0;
             cfg.k_ff_v            = 1.0;
             cfg.k_ff_a            = 1.0;
             cfg.Z_Gain_Scheduling = true;
