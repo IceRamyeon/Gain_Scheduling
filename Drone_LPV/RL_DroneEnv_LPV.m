@@ -11,8 +11,14 @@ classdef RL_DroneEnv_LPV < rl.env.MATLABEnvironment
         current_step
         max_steps
 
-        % 미래 곡률 예견 시간 (t 이후의 곡률 조회용, 기본 0.5초)
-        lookahead_dt = 0.5;
+        % 미래 곡률 예견 설정
+        % lookahead_mode:
+        %   'fixed'   - (기본, 11D) 고정 시간 예견 dt = lookahead_dt (0.5s)
+        %   'spatial' - (Option 1, 11D) 속력 반비례 시간 예견 dt = lookahead_L / v_des
+        %   'dual'    - (Option 2, 12D) 속력 반비례(dt = lookahead_L / v_des) + 고정 시간(dt = lookahead_dt) 동시 입력
+        lookahead_mode = 'fixed';
+        lookahead_dt   = 0.5;
+        lookahead_L    = 2.0; % 기준 거리 2.0m (v=4.0m/s일 때 0.5s, v=5.5m/s일 때 0.364s)
 
         % Residual Action Scaling Ranges
         range_P_xy = 1.0;
@@ -38,15 +44,30 @@ classdef RL_DroneEnv_LPV < rl.env.MATLABEnvironment
     end
 
     methods
-        function this = RL_DroneEnv_LPV()
-            % 11차원 상태 벡터: [e_x, e_y, e_z, v_x, v_y, v_z, phi, theta, v_des, kappa_now, kappa_future]
-            obsInfo = rlNumericSpec([11 1]);
+        function this = RL_DroneEnv_LPV(mode_in, lookahead_L_in)
+            if nargin >= 1 && ~isempty(mode_in)
+                init_mode = char(mode_in);
+            else
+                init_mode = 'fixed';
+            end
+            if strcmpi(init_mode, 'dual')
+                obs_dim = 12;
+            else
+                obs_dim = 11;
+            end
+
+            % 상태 벡터: 11차원('fixed','spatial') 또는 12차원('dual')
+            obsInfo = rlNumericSpec([obs_dim 1]);
             obsInfo.Name = 'Drone States with Target Speed and Curvature Lookahead';
 
             actInfo = rlNumericSpec([4 1], 'LowerLimit', -1, 'UpperLimit', 1);
             actInfo.Name = 'Residual Gain Offsets';
 
             this = this@rl.env.MATLABEnvironment(obsInfo, actInfo);
+            this.lookahead_mode = init_mode;
+            if nargin >= 2 && ~isempty(lookahead_L_in)
+                this.lookahead_L = lookahead_L_in;
+            end
 
             this.max_steps   = 1500; % 긴 코스(5~8개 원호)에 맞춰 최대 스텝 상향
             this.prev_action = zeros(4, 1);
@@ -63,7 +84,7 @@ classdef RL_DroneEnv_LPV < rl.env.MATLABEnvironment
             cfg.start_with_yaw    = true;
             cfg.drone1_init_states = [0.0, 0.0, -6.0, cfg.target_speed, 0, 0, 0, 0, 0, 0, 0, 0]';
             cfg.m   = 1.25;   cfg.armLength = 0.265;
-            cfg.Ixx = 0.0232; cfg.Iyy = 0.0232; cfg.Izz = 0.0468;
+            cfg.Ixx = 0.01143; cfg.Iyy = 0.01228; cfg.Izz = 0.02270;
             cfg.posGain = containers.Map({'P_x','I_x','D_x','P_y','I_y','D_y','P_z','I_z','D_z'}, ...
                 {13.5, 5.0, 5.5, 13.5, 5.0, 5.5, 16.88, 6.25, 6.88});
             cfg.attGain = containers.Map({'P_phi','I_phi','D_phi','P_theta','I_theta','D_theta','P_psi','I_psi','D_psi','P_zdot','I_zdot','D_zdot'}, ...
@@ -111,10 +132,23 @@ classdef RL_DroneEnv_LPV < rl.env.MATLABEnvironment
 
             this.current_step = this.current_step + 1;
 
-            % 3. 새로운 관측치 수집 (목표 속력, 현재 곡률, t 이후 곡률 포함 11x1)
+            % 3. 새로운 관측치 수집 (목표 속력, 현재 곡률, 미래 곡률 포함 11x1 또는 12x1)
             state = this.drone1.GetState();
-            [traj_pos, traj_vel, kappa_now, kappa_future] = ...
-                this.drone1.trajCtrl.get_position(this.drone1.t, this.lookahead_dt);
+            v_des = this.cfg.target_speed;
+            dt_spatial = this.lookahead_L / max(v_des, 0.5);
+
+            if strcmpi(this.lookahead_mode, 'spatial')
+                [traj_pos, traj_vel, kappa_now, kappa_future] = ...
+                    this.drone1.trajCtrl.get_position(this.drone1.t, dt_spatial);
+            elseif strcmpi(this.lookahead_mode, 'dual')
+                [traj_pos, traj_vel, kappa_now, kappa_spatial] = ...
+                    this.drone1.trajCtrl.get_position(this.drone1.t, dt_spatial);
+                [~, ~, ~, kappa_temporal] = ...
+                    this.drone1.trajCtrl.get_position(this.drone1.t, this.lookahead_dt);
+            else
+                [traj_pos, traj_vel, kappa_now, kappa_future] = ...
+                    this.drone1.trajCtrl.get_position(this.drone1.t, this.lookahead_dt);
+            end
 
             e_x   = traj_pos(1) - state(1);
             e_y   = traj_pos(2) - state(2);
@@ -124,9 +158,12 @@ classdef RL_DroneEnv_LPV < rl.env.MATLABEnvironment
             v_z   = state(6);
             phi   = state(7);
             theta = state(8);
-            v_des = this.cfg.target_speed;
 
-            Observation = [e_x; e_y; e_z; v_x; v_y; v_z; phi; theta; v_des; kappa_now; kappa_future];
+            if strcmpi(this.lookahead_mode, 'dual')
+                Observation = [e_x; e_y; e_z; v_x; v_y; v_z; phi; theta; v_des; kappa_now; kappa_spatial; kappa_temporal];
+            else
+                Observation = [e_x; e_y; e_z; v_x; v_y; v_z; phi; theta; v_des; kappa_now; kappa_future];
+            end
 
             % 4. 보상 계산
             err_pos   = norm([e_x, e_y, e_z]);
@@ -234,10 +271,23 @@ classdef RL_DroneEnv_LPV < rl.env.MATLABEnvironment
             this.prev_action   = zeros(4, 1);
             this.prev_u_moment = zeros(3, 1);
 
-            % 초기 관측치 계산 (11x1)
+            % 초기 관측치 계산 (11x1 또는 12x1)
             state = this.drone1.GetState();
-            [traj_pos, ~, kappa_now, kappa_future] = ...
-                this.drone1.trajCtrl.get_position(0, this.lookahead_dt);
+            v_des = this.cfg.target_speed;
+            dt_spatial = this.lookahead_L / max(v_des, 0.5);
+
+            if strcmpi(this.lookahead_mode, 'spatial')
+                [traj_pos, ~, kappa_now, kappa_future] = ...
+                    this.drone1.trajCtrl.get_position(0, dt_spatial);
+            elseif strcmpi(this.lookahead_mode, 'dual')
+                [traj_pos, ~, kappa_now, kappa_spatial] = ...
+                    this.drone1.trajCtrl.get_position(0, dt_spatial);
+                [~, ~, ~, kappa_temporal] = ...
+                    this.drone1.trajCtrl.get_position(0, this.lookahead_dt);
+            else
+                [traj_pos, ~, kappa_now, kappa_future] = ...
+                    this.drone1.trajCtrl.get_position(0, this.lookahead_dt);
+            end
 
             e_x   = traj_pos(1) - state(1);
             e_y   = traj_pos(2) - state(2);
@@ -247,9 +297,12 @@ classdef RL_DroneEnv_LPV < rl.env.MATLABEnvironment
             v_z   = state(6);
             phi   = state(7);
             theta = state(8);
-            v_des = this.cfg.target_speed;
 
-            InitialObservation = [e_x; e_y; e_z; v_x; v_y; v_z; phi; theta; v_des; kappa_now; kappa_future];
+            if strcmpi(this.lookahead_mode, 'dual')
+                InitialObservation = [e_x; e_y; e_z; v_x; v_y; v_z; phi; theta; v_des; kappa_now; kappa_spatial; kappa_temporal];
+            else
+                InitialObservation = [e_x; e_y; e_z; v_x; v_y; v_z; phi; theta; v_des; kappa_now; kappa_future];
+            end
         end
     end
 end

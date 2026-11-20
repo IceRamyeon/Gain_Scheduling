@@ -29,9 +29,9 @@ cfg.drone1_init_states = [ 0.0, 0.0, -6.0, ...
 % Drone Parameters
 cfg.m = 1.25;                 % Drone mass (kg)
 cfg.armLength = 0.265;        % Arm length (m)
-cfg.Ixx = 0.0232;             % Moment of inertia around x-axis (kg*m^2)
-cfg.Iyy = 0.0232;             % Moment of inertia around y-axis (kg*m^2)
-cfg.Izz = 0.0468;             % Moment of inertia around z-axis (kg*m^2)
+cfg.Ixx = 0.01143;            % Moment of inertia around x-axis (kg*m^2)
+cfg.Iyy = 0.01228;            % Moment of inertia around y-axis (kg*m^2)
+cfg.Izz = 0.02270;            % Moment of inertia around z-axis (kg*m^2)
 
 % Position Control Gains
 cfg.posGain = containers.Map(...

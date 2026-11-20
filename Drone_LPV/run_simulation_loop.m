@@ -5,7 +5,8 @@ function [log_data, valid_len] = run_simulation_loop(drone1, cfg, agent, rl_env)
 
     use_ppo = (nargin >= 3) && ~isempty(agent);
     if use_ppo && (nargin < 4 || isempty(rl_env))
-        rl_env = struct('lookahead_dt', 0.5, 'range_P_xy', 1.0, 'range_D_xy', 1.2, ...
+        rl_env = struct('lookahead_mode', 'fixed', 'lookahead_dt', 0.5, 'lookahead_L', 2.0, ...
+                        'range_P_xy', 1.0, 'range_D_xy', 1.2, ...
                         'range_P_z', 1.5, 'range_D_z', 1.0);
     end
 
@@ -41,19 +42,40 @@ function [log_data, valid_len] = run_simulation_loop(drone1, cfg, agent, rl_env)
 
     N_sub       = 10; % PPO 잔차 개입 주기 (100 Hz / 10 = 10 Hz)
     current_act = zeros(4, 1);
+    la_mode     = 'fixed';
+    lookahead_t = 0.5;
+    lookahead_L = 2.0;
     if use_ppo
         obs_dim     = agent.ObservationInfo.Dimension(1);
         lookahead_t = rl_env.lookahead_dt;
-    else
-        lookahead_t = 0.5;
+        if isprop(rl_env, 'lookahead_mode') || isfield(rl_env, 'lookahead_mode')
+            la_mode = rl_env.lookahead_mode;
+        end
+        if isprop(rl_env, 'lookahead_L') || isfield(rl_env, 'lookahead_L')
+            lookahead_L = rl_env.lookahead_L;
+        end
     end
+    dt_spatial = lookahead_L / max(cfg.target_speed, 0.5);
 
     for i = 1:num_steps
         drone1_state = drone1.GetState();
         current_time = drone1.t;
 
-        [traj_pos, traj_vel, kappa_now, kappa_future] = ...
-            drone1.trajCtrl.get_position(current_time, lookahead_t);
+        if strcmpi(la_mode, 'spatial')
+            [traj_pos, traj_vel, kappa_now, kappa_future] = ...
+                drone1.trajCtrl.get_position(current_time, dt_spatial);
+            kappa_temporal = kappa_future;
+        elseif strcmpi(la_mode, 'dual')
+            [traj_pos, traj_vel, kappa_now, kappa_spatial] = ...
+                drone1.trajCtrl.get_position(current_time, dt_spatial);
+            [~, ~, ~, kappa_temporal] = ...
+                drone1.trajCtrl.get_position(current_time, lookahead_t);
+            kappa_future = kappa_spatial;
+        else
+            [traj_pos, traj_vel, kappa_now, kappa_future] = ...
+                drone1.trajCtrl.get_position(current_time, lookahead_t);
+            kappa_temporal = kappa_future;
+        end
 
         % [A] PPO 잔차 액션 추론 (use_ppo == true 일 때 10스텝마다)
         if use_ppo && mod(i - 1, N_sub) == 0
@@ -64,7 +86,8 @@ function [log_data, valid_len] = run_simulation_loop(drone1, cfg, agent, rl_env)
                 drone1_state(4:8);
                 cfg.target_speed;
                 kappa_now;
-                kappa_future
+                kappa_future;
+                kappa_temporal
             ];
             action = getAction(agent, obs_full(1:obs_dim));
             if iscell(action), current_act = action{1}; else, current_act = action; end
