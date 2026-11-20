@@ -1,7 +1,7 @@
 %% PX4(Gazebo SITL / 실기체) + MATLAB PositionCtrl 실행 (A 방식)
 %  - 위치 제어: PID_Drone/PositionCtrl (Trim Feedforward + Z 게인 스케줄링) 을 MATLAB 에서 실행
 %  - 자세 제어: PX4 (mc_att_control / mc_rate_control)
-%  - 경로:      cfg.path_type = 'circle' -> PID_Drone/CircleTrajectory (정지 -> 직선 가속 -> 원 n바퀴)
+%  - 경로:      cfg.path_type = 'circle' -> PID_Drone/CircleTrajectory (정지 -> 직선 가속 -> 원 n바퀴 -> 직선 탈출)
 %               cfg.path_type = 'spline' -> PID_Drone/pathGen + TrajectoryPlanner (시뮬레이션과 동일)
 %  - 결과:      비행 후 plot_px4_result.m 으로 ULog + 이 스크립트의 기록을 합쳐서 플롯
 %
@@ -35,9 +35,9 @@ cfg.kappa_lookahead = 2.0;          % Feedforward 곡률 예견 거리 [m] (전�
 cfg.kappa_tau = 0;                  % 전방 곡률 댐핑 시정수 [s] (1차 지연, 0 이면 댐핑 없음)
 
 % 경로 종류 (PID_Drone/main.m 과 동일)
-cfg.path_type = 'circle';          % 'circle' : 정지 -> 직선 가속 -> 원 궤적,  'spline' : 기존 pathGen 경유점 궤적
+cfg.path_type = 'circle';          % 'circle' : 정지 -> 직선 가속 -> 원 궤적 -> 직선 탈출,  'spline' : 기존 pathGen 경유점 궤적
 cfg.curvature = 0.2;               % 원 곡률 [1/m] (반지름 = 1/|kappa|, 부호: + 는 +y 쪽 선회, - 는 -y 쪽)
-cfg.n_laps = 3;                    % 원 바퀴 수 (다 돌면 비행 종료)
+cfg.n_laps = 3;                    % 원 바퀴 수 (다 돌면 초반 직선과 같은 길이를 직진한 뒤 비행 종료)
 cfg.accel_dist_per_speed = 3.0;    % 가속 구간 길이 = 이 값 x target_speed [m]  (가속도 = v/(2*이 값), 가속 시간 = 2*이 값 [s])
 
 cfg.Feedforward = true;

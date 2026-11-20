@@ -1,8 +1,10 @@
 classdef CircleTrajectory < handle
-    % CIRCLETRAJECTORY  정지 -> 직선 가속 -> 원 궤적 (n 바퀴)
+    % CIRCLETRAJECTORY  정지 -> 직선 가속 -> 원 궤적 (n 바퀴) -> 직선 탈출
     %   - 시작점에서 +x 방향으로 정지 상태부터 등가속, 가속 구간 길이 L_acc = c * v
     %   - 가속이 끝나는 점에서 원에 접하도록 진입 (kappa > 0 : +y 쪽으로 선회, kappa < 0 : -y 쪽)
-    %   - 원을 n_laps 바퀴 돌면 종료 (tf)
+    %   - 원을 n_laps 바퀴 돌면 진입점으로 돌아오고, 같은 접선(+x) 방향으로 탈출
+    %   - 탈출 직선: 초반 직선과 같은 길이 L_exit = L_acc 를 목표 속력 v 로 등속 주행 후 종료 (tf)
+    %   - 구간 시각: [0, t_acc] 가속 직선, [t_circ0, t_circ1] 원, [t_circ1, tf] 탈출 직선
     %   TrajectoryPlanner 와 같은 인터페이스:
     %     [pos, vel, kappa_ff, kappa_raw] = get_position(t), get_full_path(dt), tf, total_length
     %   kappa_ff 는 TrajectoryPlanner 와 같은 방식(전방 lookahead_dist 지점 곡률 + 1차 댐핑 kappa_tau)
@@ -17,6 +19,9 @@ classdef CircleTrajectory < handle
         a_acc               % 가속도 [m/s^2] = v^2 / (2 L_acc)
         t_acc               % 가속 시간 [s] = 2 L_acc / v
         L_circle            % 원 구간 총 길이 [m]
+        L_exit              % 탈출 직선 길이 [m] (= L_acc)
+        t_circ0             % 원 진입 시각 [s] (= t_acc)
+        t_circ1             % 원 탈출 시각 [s]
         total_length        % 전체 경로 길이 [m]
         tf                  % 종료 시각 [s]
 
@@ -45,15 +50,18 @@ classdef CircleTrajectory < handle
             obj.t_acc = 2 * obj.L_acc / target_speed;
 
             obj.L_circle     = n_laps * 2 * pi * obj.R;
-            obj.total_length = obj.L_acc + obj.L_circle;
-            obj.tf           = obj.t_acc + obj.L_circle / target_speed;
+            obj.L_exit       = obj.L_acc;                               % 초반 직선과 같은 거리만큼 탈출 직진
+            obj.total_length = obj.L_acc + obj.L_circle + obj.L_exit;
+            obj.t_circ0      = obj.t_acc;
+            obj.t_circ1      = obj.t_acc + obj.L_circle / target_speed;
+            obj.tf           = obj.t_circ1 + obj.L_exit / target_speed;
 
             obj.lookahead_dist = lookahead_dist;
             obj.kappa_tau      = kappa_tau;
             obj.kappa_raw = 0; obj.kappa_ff = []; obj.t_kappa_prev = []; obj.last_kappa = 0;
 
-            fprintf('[CircleTrajectory] R = %.2f m, 가속 %.1f m (%.2f m/s^2, %.1f s), 원 %d바퀴 %.1f m, tf = %.1f s\n', ...
-                obj.R, obj.L_acc, obj.a_acc, obj.t_acc, n_laps, obj.L_circle, obj.tf);
+            fprintf('[CircleTrajectory] R = %.2f m, 가속 %.1f m (%.2f m/s^2, %.1f s), 원 %d바퀴 %.1f m (%.1f ~ %.1f s), 탈출 직선 %.1f m, tf = %.1f s\n', ...
+                obj.R, obj.L_acc, obj.a_acc, obj.t_acc, n_laps, obj.L_circle, obj.t_circ0, obj.t_circ1, obj.L_exit, obj.tf);
         end
 
         %% 시간 t -> 경로 길이 s, 속력
@@ -71,8 +79,14 @@ classdef CircleTrajectory < handle
         %% 경로 길이 s -> 위치, 단위 접선, 곡률
         function [p, T, k] = pose_at(obj, s)
             s = max(0, min(s, obj.total_length));
+            s_exit = obj.L_acc + obj.L_circle;                          % 원 탈출 지점까지의 거리
             if s <= obj.L_acc
                 p = obj.init_pos + [s; 0; 0];
+                T = [1; 0; 0];
+                k = 0;
+            elseif s >= s_exit
+                % 탈출 직선: n 바퀴 후 진입점으로 돌아와 같은 +x 방향으로 직진
+                p = obj.init_pos + [obj.L_acc + (s - s_exit); 0; 0];
                 T = [1; 0; 0];
                 k = 0;
             else

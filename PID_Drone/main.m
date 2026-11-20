@@ -13,9 +13,9 @@ cfg.kappa_tau = 0.2;               % 전방 곡률 댐핑 시정수 [s] (1차 �
 cfg.target_speed = 4;              % Target speed (m/s)            
 
 % 경로 종류
-cfg.path_type = 'circle';          % 'circle' : 정지 -> 직선 가속 -> 원 궤적,  'spline' : 기존 pathGen 경유점 궤적
+cfg.path_type = 'circle';          % 'circle' : 정지 -> 직선 가속 -> 원 궤적 -> 직선 탈출,  'spline' : 기존 pathGen 경유점 궤적
 cfg.curvature = 0.2;               % 원 곡률 [1/m] (반지름 = 1/|kappa|, 부호: + 는 +y 쪽 선회, - 는 -y 쪽)
-cfg.n_laps = 5;                    % 원 바퀴 수 (다 돌면 시뮬레이션 종료)
+cfg.n_laps = 5;                    % 원 바퀴 수 (다 돌면 초반 직선과 같은 길이를 직진한 뒤 시뮬레이션 종료)
 cfg.accel_dist_per_speed = 3.0;    % 가속 구간 길이 = 이 값 x target_speed [m]  (가속도 = v/(2*이 값), 가속 시간 = 2*이 값 [s])
 
 % PID Table Generation Parameters / Gain Scheduling Initiation
