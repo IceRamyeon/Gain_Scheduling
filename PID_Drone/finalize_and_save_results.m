@@ -1,7 +1,6 @@
 function finalize_and_save_results(log_data, cfg)
     % FINALIZE_AND_SAVE_RESULTS 최종 결과 그래프 출력 및 자동 저장 함수
     
-    disp('[최종 결과].');
     
     R2D = 180/pi;
     
@@ -44,21 +43,6 @@ function finalize_and_save_results(log_data, cfg)
     val_mae_z  = mean(z_error(eval_idx));
     val_max_z  = max(z_error(eval_idx));
     
-    disp('----------------------------------');
-    if is_circle
-        fprintf('[평가 구간] 원 구간만: t = %.2f ~ %.2f s (가속 구간 %.2f s 제외)\n', t_eval0, t_hist(end), t_eval0);
-    else
-        fprintf('[평가 구간] 전체: t = %.2f ~ %.2f s\n', t_hist(1), t_hist(end));
-    end
-    disp('[3D 위치 오차]');
-    fprintf('RMSE: %.4f m\n', val_rmse);
-    fprintf('MAE:  %.4f m\n', val_mae);
-    fprintf('Max:  %.4f m\n', val_max);
-    disp('[Z축 오차]');
-    fprintf('RMSE: %.4f m\n', val_rmse_z);
-    fprintf('MAE:  %.4f m\n', val_mae_z);
-    fprintf('Max:  %.4f m\n', val_max_z);
-
     % 평형점(Trim): PositionCtrl 과 같은 식, v = cfg.target_speed, kappa = Feedforward 입력 곡률(kappa_hist)
     g_trim = 9.81;
     v_trim = cfg.target_speed;
@@ -66,21 +50,61 @@ function finalize_and_save_results(log_data, cfg)
     phi_eq_hist = atan(a_cen ./ g_trim);                  % PositionCtrl: phi_eq = atan(+(v^2 kappa)/g) (NED, kappa > 0 -> +phi)
     U1_eq_hist  = cfg.m .* sqrt(g_trim^2 + a_cen.^2);     % PositionCtrl: U1_eq  = m sqrt(g^2 + (v^2 kappa)^2)
     turn_idx = abs(kappa_hist) > 1e-4;                    % 곡선(선회) 구간
-    disp('[평형점 (Trim)]');
-    fprintf('v = %.2f m/s, m = %.4f kg\n', v_trim, cfg.m);
+
+    %% 결과 요약 (콘솔 출력 + 자동 저장 시 .txt 로 저장)
+    % 헤더: 경로·모드 정보 (콘솔에는 이미 앞에서 출력되므로 .txt 에만 기록)
+    hdr = {};
+    if is_circle
+        R_c   = 1 / abs(cfg.curvature);
+        L_acc = cfg.accel_dist_per_speed * cfg.target_speed;
+        a_acc = cfg.target_speed^2 / (2 * L_acc);
+        t_acc = 2 * cfg.accel_dist_per_speed;
+        L_cir = cfg.n_laps * 2 * pi * R_c;
+        tf_c  = t_acc + L_cir / cfg.target_speed;
+        hdr{end+1, 1} = sprintf('[CircleTrajectory] R = %.2f m, 가속 %.1f m (%.2f m/s^2, %.1f s), 원 %d바퀴 %.1f m, tf = %.1f s', ...
+            R_c, L_acc, a_acc, t_acc, cfg.n_laps, L_cir, tf_c);
+        hdr{end+1, 1} = sprintf('경로 길이 %.1f m, 추종 시간 %.1f s', L_acc + L_cir, tf_c);
+    else
+        hdr{end+1, 1} = sprintf('경로: spline (pathGen), 추종 시간 %.1f s', t_hist(end) - t_hist(1));
+    end
+    if isfield(cfg, 'mode')
+        hdr{end+1, 1} = sprintf('제어 모드: %s', cfg.mode);
+    else
+        hdr{end+1, 1} = '제어 모드: MATLAB 시뮬레이션 (PID_Drone)';
+    end
+
+    rpt = {};
+    rpt{end+1, 1} = '[최종 결과].';
+    rpt{end+1, 1} = '----------------------------------';
+    if is_circle
+        rpt{end+1, 1} = sprintf('[평가 구간] 원 구간만: t = %.2f ~ %.2f s (가속 구간 %.2f s 제외)', t_eval0, t_hist(end), t_eval0);
+    else
+        rpt{end+1, 1} = sprintf('[평가 구간] 전체: t = %.2f ~ %.2f s', t_hist(1), t_hist(end));
+    end
+    rpt{end+1, 1} = '[3D 위치 오차]';
+    rpt{end+1, 1} = sprintf('RMSE: %.4f m', val_rmse);
+    rpt{end+1, 1} = sprintf('MAE:  %.4f m', val_mae);
+    rpt{end+1, 1} = sprintf('Max:  %.4f m', val_max);
+    rpt{end+1, 1} = '[Z축 오차]';
+    rpt{end+1, 1} = sprintf('RMSE: %.4f m', val_rmse_z);
+    rpt{end+1, 1} = sprintf('MAE:  %.4f m', val_mae_z);
+    rpt{end+1, 1} = sprintf('Max:  %.4f m', val_max_z);
+    rpt{end+1, 1} = '[평형점 (Trim)]';
+    rpt{end+1, 1} = sprintf('v = %.2f m/s, m = %.4f kg', v_trim, cfg.m);
     if is_circle
         % 원 궤적: 평가 구간(원 구간) 평균
-        fprintf('phi_eq 원 구간 평균: %.3f deg\n', mean(phi_eq_hist(eval_idx)) * R2D);
-        fprintf('U1_eq  원 구간 평균: %.4f N\n',   mean(U1_eq_hist(eval_idx)));
+        rpt{end+1, 1} = sprintf('phi_eq 원 구간 평균: %.3f deg', mean(phi_eq_hist(eval_idx)) * R2D);
+        rpt{end+1, 1} = sprintf('U1_eq  원 구간 평균: %.4f N',   mean(U1_eq_hist(eval_idx)));
     else
-        fprintf('phi_eq 평균: %.3f deg', mean(phi_eq_hist) * R2D);
-        if any(turn_idx), fprintf('  (선회 구간 평균: %.3f deg)', mean(phi_eq_hist(turn_idx)) * R2D); end
-        fprintf('\n');
-        fprintf('U1_eq  평균: %.4f N', mean(U1_eq_hist));
-        if any(turn_idx), fprintf('  (선회 구간 평균: %.4f N)', mean(U1_eq_hist(turn_idx))); end
-        fprintf('\n');
+        ln = sprintf('phi_eq 평균: %.3f deg', mean(phi_eq_hist) * R2D);
+        if any(turn_idx), ln = [ln, sprintf('  (선회 구간 평균: %.3f deg)', mean(phi_eq_hist(turn_idx)) * R2D)]; end
+        rpt{end+1, 1} = ln;
+        ln = sprintf('U1_eq  평균: %.4f N', mean(U1_eq_hist));
+        if any(turn_idx), ln = [ln, sprintf('  (선회 구간 평균: %.4f N)', mean(U1_eq_hist(turn_idx)))]; end
+        rpt{end+1, 1} = ln;
     end
-    disp('----------------------------------');
+    rpt{end+1, 1} = '----------------------------------';
+    fprintf('%s\n', rpt{:});
     
     %% 1. [그래프 1] 위치 추종 (Position Tracking)
     h_fig_pos = figure('Name', 'Position Tracking', 'Theme', 'light', 'Position', [10 100 600 600]);
@@ -234,6 +258,10 @@ function finalize_and_save_results(log_data, cfg)
         exportgraphics(h_fig_pid, [baseFileName, '_PID_Gains.png'], 'Resolution', 300);
         exportgraphics(h_fig_kappa, [baseFileName, '_Curvature.png'], 'Resolution', 300);
         exportgraphics(h_fig_trim, [baseFileName, '_Trim.png'], 'Resolution', 300);
+
+        % 3) 결과 요약 저장 (.txt): 경로·모드 정보 + 평가 지표 + 평형점
+        txtFileName = [baseFileName, '_Summary.txt'];
+        writecell([hdr; rpt], txtFileName, 'FileType', 'text', 'Delimiter', 'tab', 'Encoding', 'UTF-8');
         
         if ~cfg.play_animation
             exportgraphics(h_fig_traj_3d, [baseFileName, '_Trajectory_3D.png'], 'Resolution', 300);
