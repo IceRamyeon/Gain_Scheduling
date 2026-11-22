@@ -20,8 +20,8 @@ fprintf('  - Controller: PX4_AttitudeCtrl (250Hz) + PositionCtrl_PX4 (50Hz)\n');
 fprintf('  - Comm Delay: 0.04s (10 steps @ 250Hz) | Spatial Lookahead: L=2.0m\n');
 fprintf('========================================================================\n');
 
-%% 1. 환경 생성 (Gazebo 등가 EKF2 8Hz 지연 + M10 GPS 노이즈 활성화)
-env = RL_DroneEnv_PX4(true);
+%% 1. 환경 생성 (GPS 랜덤워크 분리: 250Hz 모터 지연·믹서·0.04s 통신 지연 정밀 학습 우선)
+env = RL_DroneEnv_PX4(false);
 env.randomize_speed = true;
 env.randomize_path  = true;
 env.use_curriculum  = true;

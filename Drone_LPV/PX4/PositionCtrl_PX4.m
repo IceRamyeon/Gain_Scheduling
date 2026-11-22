@@ -89,7 +89,7 @@ classdef PositionCtrl_PX4 < handle
             if isfield(cfg, 'max_angle_deg')
                 obj.max_angle = deg2rad(cfg.max_angle_deg);
             else
-                obj.max_angle = deg2rad(30); % 요구사항 4: 30도 클리핑
+                obj.max_angle = deg2rad(30); % 최대 30도 클리핑
             end
 
             obj.int_max = [5.0; 5.0; 5.0];

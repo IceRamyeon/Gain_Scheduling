@@ -78,7 +78,7 @@ classdef RL_DroneEnv_PX4 < rl.env.MATLABEnvironment
             cfg.Ixx             = 0.021667;
             cfg.Iyy             = 0.021667;
             cfg.Izz             = 0.040000;
-            cfg.MPC_THR_HOVER   = 0.60;
+            cfg.MPC_THR_HOVER   = 0.73; % 실측 호버 추력 0.73 (제어기 & 가상 기체 동시 반영)
             cfg.f_max_per_rotor = 8.60;
             cfg.km_yaw          = 0.05;
             cfg.tau_up          = 0.0125;
@@ -104,7 +104,7 @@ classdef RL_DroneEnv_PX4 < rl.env.MATLABEnvironment
             cfg.k_ff_v            = 1.0;
             cfg.k_ff_a            = 1.0;
             cfg.Z_Gain_Scheduling = true;
-            cfg.max_angle_deg     = 30.0;
+            cfg.max_angle_deg     = 30.0; % 원 궤적 평가 및 추력 여유(0.73 호버 기준 35.8도 한계) 고려 30도 유지
 
             % 센서 노이즈 / EKF2 설정 (Gazebo/실기체 현실 모사: 기본 true)
             if nargin >= 1 && ~isempty(use_sensor_noise_in)
@@ -226,7 +226,7 @@ classdef RL_DroneEnv_PX4 < rl.env.MATLABEnvironment
             end
 
             tilt_limit = deg2rad(this.max_tilt_deg);
-            if err_pos > 5.0 || abs(phi) > tilt_limit || abs(theta) > tilt_limit
+            if err_pos > 10.0 || abs(phi) > tilt_limit || abs(theta) > tilt_limit
                 IsDone = true;
                 remaining_steps = max(0, this.max_steps - this.current_step);
                 Reward = Reward - (500 + 0.5 * remaining_steps);
@@ -263,10 +263,10 @@ classdef RL_DroneEnv_PX4 < rl.env.MATLABEnvironment
 
             v_now = this.cfg.target_speed;
             phys_kappa_limit = (9.81 * tand(this.cfg.max_angle_deg)) / max(v_now^2, 1.0);
-            eff_max_kappa    = max(this.max_kappa, phys_kappa_limit);
+            eff_max_kappa    = min(this.max_kappa, phys_kappa_limit);
 
             if this.randomize_path
-                [seg_r, seg_theta, seg_z] = pathGen(true, eff_max_kappa);
+                [seg_r, seg_theta, seg_z] = pathGen(true, eff_max_kappa, true);
             else
                 [seg_r, seg_theta, seg_z] = pathGen(false);
             end

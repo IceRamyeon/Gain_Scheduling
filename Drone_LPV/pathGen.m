@@ -1,4 +1,4 @@
-function [seg_r, seg_theta, seg_z] = pathGen(is_random, max_kappa)
+function [seg_r, seg_theta, seg_z] = pathGen(is_random, max_kappa, strict_limit)
     % PATHGEN 직선(Straight Line)과 고정 곡률 원호(Circular Arc: r, theta) 조합 경로 생성
     %
     % 출력 규격 (각 열이 하나의 구간(Segment)을 의미):
@@ -13,6 +13,7 @@ function [seg_r, seg_theta, seg_z] = pathGen(is_random, max_kappa)
 
     if nargin < 1 || isempty(is_random), is_random = false; end
     if nargin < 2 || isempty(max_kappa), max_kappa = 0.50;  end
+    if nargin < 3 || isempty(strict_limit), strict_limit = false; end
 
     if ~is_random
         %% [고정 벤치마크 경로: 점진적 고곡률 헤어핀(반원, theta=pi) 챌린지 코스]
@@ -62,19 +63,20 @@ function [seg_r, seg_theta, seg_z] = pathGen(is_random, max_kappa)
         end
         prev_dir = turn_dir;
 
-        % --- [핵심] 고난도 헤어핀 샘플링 가중치 부여 ---
+        % --- [핵심] 고난도 헤어핀 샘플링 가중치 부여 (strict_limit == true 시 max_kappa 엄격 준수) ---
         rand_type = rand();
-        if rand_type < 0.25
+        if ~strict_limit && rand_type < 0.25
             % 고난도 타입 A: 지름 5m 헤어핀 (r = 2.5m, kappa = 0.40, 반원 180도)
             r_mag     = 2.5;
             theta_arc = pi;
-        elseif rand_type < 0.40
+        elseif ~strict_limit && rand_type < 0.40
             % 고난도 타입 B: 극한 지름 2.5m 헤어핀 (r = 1.25m, kappa = 0.80, 반원 180도)
             r_mag     = 1.25;
             theta_arc = pi;
         else
-            % 일반 무작위 곡률: 0.08 ~ max_kappa (r = 1 / kappa), 60도 ~ 180도 선회
-            kappa_mag = 0.08 + max(0.02, max_kappa - 0.08) * rand();
+            % 일반 무작위 곡률: 0.06 ~ max_kappa (r = 1 / kappa), 60도 ~ 180도 선회
+            k_low     = min(0.06, 0.5 * max_kappa);
+            kappa_mag = k_low + max(0.01, max_kappa - k_low) * rand();
             r_mag     = 1.0 / kappa_mag;
             theta_arc = deg2rad(60.0 + 120.0 * rand());
         end
