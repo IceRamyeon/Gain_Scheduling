@@ -27,7 +27,7 @@ cfg = struct();
 %  'PPO'    : Sehyun 브랜치 PX4 전용 PPO (Drone_LPV/PX4/RL_DroneEnv_PX4 학습) -> PX4/ppo
 %             -> PositionCtrl_PX4 (PX4 mc_pos_control 과 같은 2-DOF 구조, 잔차 0 이면 PX4 기준선과 같은 꼴)
 %                + PPO 잔차 게인 오프셋 (10 Hz), 경로는 위 cfg.path_type 그대로, 설정은 아래 cfg.ppo
-cfg.mode = 'MATLAB';
+cfg.mode = 'PPO';
 cfg.start_with_yaw = true;
 cfg.dt = 0.01;                      % 기준값 표 계산 간격 (시뮬레이션 dt 와 동일하게)
 cfg.target_yaw = [];
@@ -38,7 +38,7 @@ cfg.kappa_tau = 0;                  % 전방 곡률 댐핑 시정수 [s] (1차 �
 % 경로 종류 (PID_Drone/main.m 과 동일)
 cfg.path_type = 'circle';          % 'circle' : 정지 -> 직선 가속 -> 원 궤적 -> 직선 탈출,  'spline' : 기존 pathGen 경유점 궤적
 cfg.curvature = 0.15;               % 원 곡률 [1/m] (반지름 = 1/|kappa|, 부호: + 는 +y 쪽 선회, - 는 -y 쪽)
-cfg.n_laps = 3;                    % 원 바퀴 수 (다 돌면 초반 직선과 같은 길이를 직진한 뒤 비행 종료)
+cfg.n_laps = 7;                    % 원 바퀴 수 (다 돌면 초반 직선과 같은 길이를 직진한 뒤 비행 종료)
 cfg.accel_dist_per_speed = 3.0;    % 가속 구간 길이 = 이 값 x target_speed [m]  (가속도 = v/(2*이 값), 가속 시간 = 2*이 값 [s])
 
 cfg.Feedforward = true;
