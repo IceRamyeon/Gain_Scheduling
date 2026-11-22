@@ -133,9 +133,9 @@ cfg.ppo.range_P_xy   = 0.8;       % 잔차 게인 스케일 (action [-1, 1] -> �
 cfg.ppo.range_D_xy   = 1.0;
 cfg.ppo.range_P_z    = 1.5;
 cfg.ppo.range_D_z    = 1.0;
-cfg.ppo.on_mode      = 'speed';   % 'speed' : 목표 속력 도달(가속 끝, t >= t_acc)부터 PPO 잔차 적용 -> 등속 직선 cruise_time 뒤 원 진입
+cfg.ppo.on_mode      = 'always';  % 'always': ④ 시작(정지·가속 구간 포함)부터 전체 구간에서 PPO 잔차 적용 (가속 구간은 학습 분포 밖)
+                                  % 'speed' : 목표 속력 도달(가속 끝, t >= t_acc)부터 적용 -> 등속 직선 cruise_time 뒤 원 진입
                                   % 'circle': 원 진입(t >= t_acc + cruise_time)부터 적용
-                                  % 'always': ④ 시작부터 적용 (가속 구간은 학습 분포 밖)
 % PositionCtrl_PX4 기준 게인 (학습 환경 cfg 와 동일)
 cfg.ppo.ctrl.pos_Kp_ang        = 0.215;    % xy [rad/m] (내부에서 x g -> 2.109 m/s^2 per m)
 cfg.ppo.ctrl.pos_Ki_ang        = 0.0387;
