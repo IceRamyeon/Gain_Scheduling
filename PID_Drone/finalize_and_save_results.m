@@ -81,6 +81,9 @@ function finalize_and_save_results(log_data, cfg)
     onoff = @(f) ternary_onoff(cfg, f);
     if isfield(cfg, 'mode') && strcmpi(cfg.mode, 'PX4')
         note = ' (PX4 모드: PX4 위치제어기 사용, 이 설정은 미적용)';
+    elseif isfield(cfg, 'mode') && strcmpi(cfg.mode, 'PPO')
+        note = ' (PPO 모드: PositionCtrl_PX4 + PPO 잔차 사용, 이 설정은 미적용)';
+        hdr{end+1, 1} = sprintf('PPO 에이전트: %s, 잔차 적용: %s', cfg.ppo.agent_file, cfg.ppo.on_mode);
     else
         note = '';
     end
@@ -197,6 +200,8 @@ function finalize_and_save_results(log_data, cfg)
     xlabel('Time [s]'); ylabel('Gain Value'); 
     if isfield(cfg, 'mode') && strcmpi(cfg.mode, 'PX4')
         title('PX4 Equivalent Z-axis PID Gains (fixed, x m)'); grid on;   % PX4 모드는 스케줄링 없음 (고정 게인)
+    elseif isfield(cfg, 'mode') && strcmpi(cfg.mode, 'PPO')
+        title('PositionCtrl\_PX4 Z-axis Gains + PPO Residual (x m)'); grid on;
     else
         title('Scheduled PID Gains for Z-axis (Kp, Ki, Kd)'); grid on;
     end

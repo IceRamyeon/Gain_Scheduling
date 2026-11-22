@@ -13,6 +13,7 @@ function ref = build_reference_table(cfg)
 %   ref.kappa  : 1xN      Feedforward 곡률 (cfg.kappa_lookahead 지정 시: 전방 지점 곡률 + 댐핑, 아니면 전방 5초 평균)
 %   ref.kappa_raw : 1xN   댐핑 전 전방 곡률 (기록용)
 %   ref.yaw    : 1xN [rad] 목표 yaw (run_simulation_loop 과 같은 랩어라운드 처리, 연속값)
+%   (PPO 모드) ref.kappa_now, ref.kappa_spatial : PPO 관측 곡률, ref.ppo_t_on : PPO 잔차 적용 시작 시각 [s]
 
     if isfield(cfg, 'kappa_lookahead'), kappa_lk = cfg.kappa_lookahead; else, kappa_lk = []; end
     if isfield(cfg, 'kappa_tau'), kappa_tau = cfg.kappa_tau; else, kappa_tau = 0; end
@@ -65,4 +66,27 @@ function ref = build_reference_table(cfg)
 
     ref = struct('t', t, 'pos', pos, 'vel', vel, 'acc', acc, 'kappa', kappa, 'kappa_raw', kappa_raw, 'yaw', yaw, ...
                  'tf', t(end), 'traj', traj);
+
+    % PPO 관측용 곡률 (RL_DroneEnv_PX4 와 같은 정의, 댐핑 없는 순간 곡률)
+    %   kappa_now     : 현재 경로 지점의 곡률
+    %   kappa_spatial : 전방 lookahead_L [m] 지점의 곡률 (학습: dt = L / v_des 뒤의 곡률 = L m 앞)
+    if isfield(cfg, 'mode') && strcmpi(cfg.mode, 'PPO')
+        Lk = cfg.ppo.lookahead_L;
+        ref.kappa_now = zeros(1, num_steps); ref.kappa_spatial = zeros(1, num_steps);
+        for i = 1:num_steps
+            if isa(traj, 'CircleTrajectory')
+                s_i = traj.arc_at_time(t(i));
+            else
+                s_i = min(traj.speed * t(i), traj.total_length);
+            end
+            ref.kappa_now(i)     = traj.curvature_at(s_i);
+            ref.kappa_spatial(i) = traj.curvature_at(min(s_i + Lk, traj.total_length));
+        end
+        % PPO 적용 시작 시각: 원 궤적은 원 진입(가속 끝) 이후, 그 외에는 0
+        if isa(traj, 'CircleTrajectory') && isfield(cfg.ppo, 'on_mode') && strcmpi(cfg.ppo.on_mode, 'circle')
+            ref.ppo_t_on = traj.t_circ0;
+        else
+            ref.ppo_t_on = 0;
+        end
+    end
 end
