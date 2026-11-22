@@ -26,24 +26,24 @@ cfg = struct();
 %             -> 게인은 PX4 파라미터(MPC_XY_P, MPC_XY_VEL_*, MPC_Z_*)를 그대로 사용
 %  'PPO'    : Sehyun 브랜치 Drone_LPV 의 LPV 위치제어기 + PPO 잔차 게인 보정 (PX4/ppo)
 %             -> 경로·planner·위치제어기·게인은 PPO 학습 조건(Drone_LPV)과 같게, 설정은 아래 cfg.ppo
-cfg.mode = 'PX4';
+cfg.mode = 'MATLAB';
 cfg.start_with_yaw = true;
 cfg.dt = 0.01;                      % 기준값 표 계산 간격 (시뮬레이션 dt 와 동일하게)
 cfg.target_yaw = [];
-cfg.target_speed = 4;               % [m/s]
-cfg.kappa_lookahead = 2.0;          % Feedforward 곡률 예견 거리 [m] (전방 이 지점의 순간 곡률 사용, [] 이면 전방 5초 평균)
+cfg.target_speed = 5;               % [m/s]
+cfg.kappa_lookahead = 0.0;          % Feedforward 곡률 예견 거리 [m] (전방 이 지점의 순간 곡률 사용, [] 이면 전방 5초 평균)
 cfg.kappa_tau = 0;                  % 전방 곡률 댐핑 시정수 [s] (1차 지연, 0 이면 댐핑 없음)
 
 % 경로 종류 (PID_Drone/main.m 과 동일)
 cfg.path_type = 'circle';          % 'circle' : 정지 -> 직선 가속 -> 원 궤적 -> 직선 탈출,  'spline' : 기존 pathGen 경유점 궤적
-cfg.curvature = 0.2;               % 원 곡률 [1/m] (반지름 = 1/|kappa|, 부호: + 는 +y 쪽 선회, - 는 -y 쪽)
+cfg.curvature = 0.15;               % 원 곡률 [1/m] (반지름 = 1/|kappa|, 부호: + 는 +y 쪽 선회, - 는 -y 쪽)
 cfg.n_laps = 3;                    % 원 바퀴 수 (다 돌면 초반 직선과 같은 길이를 직진한 뒤 비행 종료)
 cfg.accel_dist_per_speed = 3.0;    % 가속 구간 길이 = 이 값 x target_speed [m]  (가속도 = v/(2*이 값), 가속 시간 = 2*이 값 [s])
 
 cfg.Feedforward = true;
-cfg.Z_Gain_Scheduling = true;
+cfg.Z_Gain_Scheduling = false;
 
-cfg.auto_save = false;
+cfg.auto_save = true;
 cfg.play_animation = false;
 cfg.save_dir = '';
 
