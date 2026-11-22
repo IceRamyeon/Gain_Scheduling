@@ -191,7 +191,7 @@ function meta = run_px4_mission(link, cfg, ref, posCtrl, agent)
             % PPO 잔차 게인 오프셋 (10 Hz). 관측은 RL_DroneEnv_PX4 학습과 같은 11차원:
             % [e_x; e_y; e_z; v_x; v_y; v_z; phi; theta; v_des; kappa_now; kappa_spatial]
             %  - e, v 는 PX4 EKF 추정값(LOCAL_POSITION_NED), 경로 좌표계 = 학습의 NED(+x 출발) 와 같은 축
-            %  - 원 궤적은 원 진입(ref.ppo_t_on) 전까지 잔차 0 (= PositionCtrl_PX4 기준선)
+            %  - ref.ppo_t_on (cfg.ppo.on_mode: always 0 / speed t_acc / circle 원 진입) 전까지는 잔차 0 (= PositionCtrl_PX4 기준선)
             ppo_on = phase == 4 && tau >= ref.ppo_t_on;
             if ppo_on && ~ppo_on_prev
                 fprintf('PPO 잔차 적용 시작 (t = %.2f s)\n', tau);
