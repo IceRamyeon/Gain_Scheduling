@@ -56,8 +56,9 @@
             if isfield(cfg, 'kappa_tau'), kappa_tau = cfg.kappa_tau; else, kappa_tau = 0; end
             if isfield(cfg, 'path_type') && strcmpi(cfg.path_type, 'circle')
                 % 정지 -> 직선 가속 -> 원 궤적 (cfg.curvature, cfg.n_laps 바퀴)
+                if isfield(cfg, 'cruise_time'), cruise_t = cfg.cruise_time; else, cruise_t = 0; end
                 obj.trajCtrl = CircleTrajectory(initStates(1:3), cfg.target_speed, cfg.curvature, ...
-                                                cfg.accel_dist_per_speed, cfg.n_laps, kappa_lk, kappa_tau);
+                                                cfg.accel_dist_per_speed, cfg.n_laps, kappa_lk, kappa_tau, cruise_t);
             else
                 obj.trajCtrl = TrajectoryPlanner(initStates(1:3), waypoints, cfg.target_speed, kappa_lk, kappa_tau);
             end            

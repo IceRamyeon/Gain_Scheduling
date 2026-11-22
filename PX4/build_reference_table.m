@@ -19,8 +19,9 @@ function ref = build_reference_table(cfg)
     if isfield(cfg, 'kappa_tau'), kappa_tau = cfg.kappa_tau; else, kappa_tau = 0; end
     if isfield(cfg, 'path_type') && strcmpi(cfg.path_type, 'circle')
         % 정지 -> 직선 가속 -> 원 궤적 (PID_Drone/Drone.m 과 같은 분기)
+        if isfield(cfg, 'cruise_time'), cruise_t = cfg.cruise_time; else, cruise_t = 0; end
         traj = CircleTrajectory(cfg.drone1_init_states(1:3), cfg.target_speed, cfg.curvature, ...
-                                cfg.accel_dist_per_speed, cfg.n_laps, kappa_lk, kappa_tau);
+                                cfg.accel_dist_per_speed, cfg.n_laps, kappa_lk, kappa_tau, cruise_t);
     else
         [wp_x, wp_y, wp_z] = pathGen();
         traj = TrajectoryPlanner(cfg.drone1_init_states(1:3), [wp_x; wp_y; wp_z], cfg.target_speed, kappa_lk, kappa_tau);
@@ -82,11 +83,14 @@ function ref = build_reference_table(cfg)
             ref.kappa_now(i)     = traj.curvature_at(s_i);
             ref.kappa_spatial(i) = traj.curvature_at(min(s_i + Lk, traj.total_length));
         end
-        % PPO 적용 시작 시각: 원 궤적은 원 진입(가속 끝) 이후, 그 외에는 0
-        if isa(traj, 'CircleTrajectory') && isfield(cfg.ppo, 'on_mode') && strcmpi(cfg.ppo.on_mode, 'circle')
-            ref.ppo_t_on = traj.t_circ0;
-        else
-            ref.ppo_t_on = 0;
+        % PPO 적용 시작 시각 (원 궤적)
+        %   'speed'  : 가속이 끝나 목표 속력에 도달한 시각 t_acc (이후 등속 직선 cruise_time 동안 PPO 가 먼저 적응)
+        %   'circle' : 원 진입 시각 t_circ0
+        %   'always' : 0
+        ref.ppo_t_on = 0;
+        if isa(traj, 'CircleTrajectory') && isfield(cfg.ppo, 'on_mode')
+            if strcmpi(cfg.ppo.on_mode, 'speed'),  ref.ppo_t_on = traj.t_acc;   end
+            if strcmpi(cfg.ppo.on_mode, 'circle'), ref.ppo_t_on = traj.t_circ0; end
         end
     end
 end

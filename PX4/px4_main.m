@@ -40,6 +40,7 @@ cfg.path_type = 'circle';          % 'circle' : 정지 -> 직선 가속 -> 원 �
 cfg.curvature = 0.15;               % 원 곡률 [1/m] (반지름 = 1/|kappa|, 부호: + 는 +y 쪽 선회, - 는 -y 쪽)
 cfg.n_laps = 7;                    % 원 바퀴 수 (다 돌면 초반 직선과 같은 길이를 직진한 뒤 비행 종료)
 cfg.accel_dist_per_speed = 3.0;    % 가속 구간 길이 = 이 값 x target_speed [m]  (가속도 = v/(2*이 값), 가속 시간 = 2*이 값 [s])
+cfg.cruise_time = 3.0;             % 가속 후 원 진입 전 등속 직선 시간 [s] (목표 속력으로 안정된 뒤 원 진입)
 
 cfg.Feedforward = true;
 cfg.Z_Gain_Scheduling = false;
@@ -132,8 +133,9 @@ cfg.ppo.range_P_xy   = 0.8;       % 잔차 게인 스케일 (action [-1, 1] -> �
 cfg.ppo.range_D_xy   = 1.0;
 cfg.ppo.range_P_z    = 1.5;
 cfg.ppo.range_D_z    = 1.0;
-cfg.ppo.on_mode      = 'circle';  % 'circle': 원 진입(t >= t_acc, 속도가 목표에 도달)부터 PPO 잔차 적용 (가속 구간은 학습 분포 밖)
-                                  % 'always': ④ 시작부터 적용
+cfg.ppo.on_mode      = 'speed';   % 'speed' : 목표 속력 도달(가속 끝, t >= t_acc)부터 PPO 잔차 적용 -> 등속 직선 cruise_time 뒤 원 진입
+                                  % 'circle': 원 진입(t >= t_acc + cruise_time)부터 적용
+                                  % 'always': ④ 시작부터 적용 (가속 구간은 학습 분포 밖)
 % PositionCtrl_PX4 기준 게인 (학습 환경 cfg 와 동일)
 cfg.ppo.ctrl.pos_Kp_ang        = 0.215;    % xy [rad/m] (내부에서 x g -> 2.109 m/s^2 per m)
 cfg.ppo.ctrl.pos_Ki_ang        = 0.0387;

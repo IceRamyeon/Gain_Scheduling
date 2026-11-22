@@ -15,11 +15,12 @@ function finalize_and_save_results(log_data, cfg)
 
     %% 0. 평가 지표 계산
     % 평가 구간: 원 궤적(path_type = 'circle')이면 가속 직선·탈출 직선을 빼고 원 구간만 평가
-    %  -> CircleTrajectory 와 같은 식: 원 진입 t_acc = 2 * accel_dist_per_speed, 원 탈출 t_acc + n 바퀴 길이 / v
+    %  -> CircleTrajectory 와 같은 식: 원 진입 t_acc + cruise_time (t_acc = 2 * accel_dist_per_speed), 원 탈출 = 진입 + n 바퀴 길이 / v
     %     (t_hist 는 0 에서 시작)
     is_circle = isfield(cfg, 'path_type') && strcmpi(cfg.path_type, 'circle');
     if is_circle
-        t_eval0  = 2 * cfg.accel_dist_per_speed;
+        if isfield(cfg, 'cruise_time'), cruise_t = cfg.cruise_time; else, cruise_t = 0; end
+        t_eval0  = 2 * cfg.accel_dist_per_speed + cruise_t;
         t_eval1  = t_eval0 + cfg.n_laps * 2 * pi / abs(cfg.curvature) / cfg.target_speed;
         eval_idx = t_hist >= t_eval0 & t_hist <= t_eval1;
         if ~any(eval_idx)
@@ -63,12 +64,15 @@ function finalize_and_save_results(log_data, cfg)
         a_acc = cfg.target_speed^2 / (2 * L_acc);
         t_acc = 2 * cfg.accel_dist_per_speed;
         L_cir = cfg.n_laps * 2 * pi * R_c;
-        L_ext = L_acc;                                      % 탈출 직선 (초반 직선과 같은 길이)
-        t_c1  = t_acc + L_cir / cfg.target_speed;
+        if isfield(cfg, 'cruise_time'), cruise_t = cfg.cruise_time; else, cruise_t = 0; end
+        L_crs = cfg.target_speed * cruise_t;                % 등속 직선
+        L_ext = L_acc + L_crs;                              % 탈출 직선 (초반 직선과 같은 길이)
+        t_c0  = t_acc + cruise_t;
+        t_c1  = t_c0 + L_cir / cfg.target_speed;
         tf_c  = t_c1 + L_ext / cfg.target_speed;
-        hdr{end+1, 1} = sprintf('[CircleTrajectory] R = %.2f m, 가속 %.1f m (%.2f m/s^2, %.1f s), 원 %d바퀴 %.1f m (%.1f ~ %.1f s), 탈출 직선 %.1f m, tf = %.1f s', ...
-            R_c, L_acc, a_acc, t_acc, cfg.n_laps, L_cir, t_acc, t_c1, L_ext, tf_c);
-        hdr{end+1, 1} = sprintf('경로 길이 %.1f m, 추종 시간 %.1f s', L_acc + L_cir + L_ext, tf_c);
+        hdr{end+1, 1} = sprintf('[CircleTrajectory] R = %.2f m, 가속 %.1f m (%.2f m/s^2, %.1f s), 등속 직선 %.1f m (%.1f s), 원 %d바퀴 %.1f m (%.1f ~ %.1f s), 탈출 직선 %.1f m, tf = %.1f s', ...
+            R_c, L_acc, a_acc, t_acc, L_crs, cruise_t, cfg.n_laps, L_cir, t_c0, t_c1, L_ext, tf_c);
+        hdr{end+1, 1} = sprintf('경로 길이 %.1f m, 추종 시간 %.1f s', L_acc + L_crs + L_cir + L_ext, tf_c);
     else
         hdr{end+1, 1} = sprintf('경로: spline (pathGen), 추종 시간 %.1f s', t_hist(end) - t_hist(1));
     end
@@ -93,7 +97,7 @@ function finalize_and_save_results(log_data, cfg)
     rpt{end+1, 1} = '[최종 결과].';
     rpt{end+1, 1} = '----------------------------------';
     if is_circle
-        rpt{end+1, 1} = sprintf('[평가 구간] 원 구간만: t = %.2f ~ %.2f s (가속 직선 0 ~ %.2f s, 탈출 직선 %.2f s ~ 제외)', t_eval0, t_eval1, t_eval0, t_eval1);
+        rpt{end+1, 1} = sprintf('[평가 구간] 원 구간만: t = %.2f ~ %.2f s (가속·등속 직선 0 ~ %.2f s, 탈출 직선 %.2f s ~ 제외)', t_eval0, t_eval1, t_eval0, t_eval1);
     else
         rpt{end+1, 1} = sprintf('[평가 구간] 전체: t = %.2f ~ %.2f s', t_hist(1), t_hist(end));
     end
