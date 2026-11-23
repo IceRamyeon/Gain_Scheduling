@@ -9,7 +9,6 @@ fprintf("----------------------- 비행 완료 -----------------------\n");
 
 here = fileparts(mfilename('fullpath'));
 addpath(here);
-addpath(fullfile(here, '..', 'PID_Drone'));
 
 %% ULog 폴더 (PX4-Autopilot 위치에 맞게 한 번만 설정)
 ulogRoot = fullfile(getenv('HOME'), 'PX4-Autopilot', 'build', 'px4_sitl_default', 'rootfs', 'fs', 'log');
