@@ -1,6 +1,9 @@
 # PX4 — Gazebo SITL / 실기체에서 MATLAB PositionCtrl 실행
 
-`PID_Drone`의 위치 제어기(`PositionCtrl`)와 경로 생성(`pathGen`, `TrajectoryPlanner`)을 **수정하지 않고** 그대로 불러서, PX4 위에서 실행하는 코드다.
+`PID_Drone`의 위치 제어기(`PositionCtrl`)와 경로 생성(`pathGen`, `TrajectoryPlanner`, `CircleTrajectory`), 결과 플롯(`finalize_and_save_results`)을 PX4 위에서 실행하는 코드다.
+
+- 위 5개 파일은 `PID_Drone`에서 이 폴더로 **복사**해 두었다. `PX4` 폴더만으로 실행되며 `PID_Drone`은 `addpath` 하지 않는다.
+- `PID_Drone` 쪽 원본을 고치면 이 폴더의 사본에는 반영되지 않으니, 필요하면 다시 복사할 것.
 
 - **A 방식**: 위치 제어는 MATLAB이 하고, 자세·각속도 제어는 PX4가 한다.
   - MATLAB은 `SET_ATTITUDE_TARGET`(자세 쿼터니언 + 정규화 추력)을 보낸다.
@@ -41,6 +44,7 @@
 | `path_to_ned.m`, `ned_to_path.m` | 경로 좌표계(시뮬레이션 좌표) ↔ PX4 Local NED 변환 |
 | `ulog_to_log_data.m` | ULog → 시뮬레이션과 같은 `log_data` 구조체 (④ 구간만) |
 | `plot_px4_result.m` | 비행 기록 + ULog를 읽어 시뮬레이션과 같은 그래프 출력 |
+| `PositionCtrl.m`, `pathGen.m`, `TrajectoryPlanner.m`, `CircleTrajectory.m`, `finalize_and_save_results.m` | `PID_Drone`에서 복사한 사본 (내용 동일) |
 
 ## 실행 순서 (SITL)
 

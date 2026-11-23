@@ -10,12 +10,12 @@
 %   2) 이 스크립트 실행 -> ①~⑤ 자동 진행
 %   3) plot_px4_result.m 실행
 %
-%  PID_Drone 폴더의 파일은 수정하지 않고 addpath 로 불러서 그대로 사용한다.
+%  PositionCtrl, pathGen, TrajectoryPlanner, CircleTrajectory, finalize_and_save_results 는
+%  PID_Drone 에서 PX4 폴더로 복사해 둔 사본을 사용한다 (PID_Drone 은 addpath 하지 않음).
 
 close all; clc; clear;
 here = fileparts(mfilename('fullpath'));
 addpath(here);
-addpath(fullfile(here, '..', 'PID_Drone'));
 
 %% 0. 시뮬레이션과 같은 설정 (PID_Drone/main.m 과 맞춰 둘 것)
 cfg = struct();
