@@ -40,11 +40,14 @@ classdef RL_DroneEnv_PX4 < rl.env.MATLABEnvironment
         last_v_est
 
         % 도메인 무작위화 및 커리큘럼 옵션
-        randomize_speed = true;
-        speed_range     = [2.5, 5.5];
-        randomize_path  = true;
-        max_kappa       = 0.25;
-        max_tilt_deg    = 40.0; % Gazebo x500 최대 30 deg + 과도 마진 10 deg
+        randomize_speed      = true;
+        randomize_init_speed = true; % true 시 50% 확률로 정지 출발(v0=0) 에피소드 포함
+        randomize_delay      = true; % true 시 통신 지연을 0.032~0.080s (8~20 스텝 @250Hz) 무작위화
+        delay_steps_range    = [8, 20];
+        speed_range          = [2.5, 5.5];
+        randomize_path       = true;
+        max_kappa            = 0.25;
+        max_tilt_deg         = 40.0; % Gazebo x500 최대 30 deg + 과도 마진 10 deg
 
         use_curriculum = true;
         episode_count  = 0;
@@ -258,7 +261,28 @@ classdef RL_DroneEnv_PX4 < rl.env.MATLABEnvironment
             if this.randomize_speed
                 v_rand = this.speed_range(1) + (this.speed_range(2) - this.speed_range(1)) * rand();
                 this.cfg.target_speed = v_rand;
-                this.cfg.drone_init_states(4) = v_rand;
+                if this.randomize_init_speed
+                    r_init = rand();
+                    if r_init < 0.50
+                        % 50% 확률: 정지 상태(v0 = 0)에서 출발하여 가속 구간 학습 (Gazebo 미션 대응)
+                        this.cfg.drone_init_states(4) = 0.0;
+                    elseif r_init < 0.75
+                        % 25% 확률: 임의 중간 속력에서 가속 출발
+                        this.cfg.drone_init_states(4) = v_rand * rand();
+                    else
+                        % 25% 확률: 목표 속력 등속 출발
+                        this.cfg.drone_init_states(4) = v_rand;
+                    end
+                else
+                    this.cfg.drone_init_states(4) = v_rand;
+                end
+            end
+
+            % 통신 지연 무작위화 (0.032s ~ 0.080s = 8 ~ 20 steps @ 250Hz)
+            if this.randomize_delay
+                this.cfg.delay_steps = randi(this.delay_steps_range);
+            else
+                this.cfg.delay_steps = 10; % 기본 0.04s
             end
 
             v_now = this.cfg.target_speed;

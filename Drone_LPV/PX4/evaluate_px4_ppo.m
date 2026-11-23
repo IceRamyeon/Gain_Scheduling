@@ -16,14 +16,39 @@ if isfield(s0, 'saved_agent'), ag0 = s0.saved_agent; else, ag0 = s0.agent; end
 s3 = load(fullfile(chk_dir, 'Agent3000.mat'));
 if isfield(s3, 'saved_agent'), ag3000 = s3.saved_agent; else, ag3000 = s3.agent; end
 
-% 1. 원 궤적 평가 (직선 20m + R=5m 2바퀴 + 직선 20m, v = 5.0 m/s)
+% 1. 원 궤적 평가:
+%   (1-A) Gazebo 동일 조건: R=6.67m (kappa=0.15), v=5.0m/s, 정지 출발(v0=0)
+%   (1-B) 고난도 원 궤적:   R=5.00m (kappa=0.20), v=5.0m/s, 등속 출발(v0=5.0)
+wp_circle_gz = [0, 1/0.15, 0; 25.0, 4*pi, 20.0; -6, -6, -6];
+fprintf('\n=================================================================\n');
+fprintf('  [1-A] Gazebo Match Circle (R=6.67m, kappa=0.15, v=5.0m/s, Start from Rest v0=0)\n');
+fprintf('=================================================================\n');
+for m = 1:2
+    env = RL_DroneEnv_PX4(false);
+    env.randomize_speed = false; env.randomize_init_speed = false;
+    env.randomize_delay = false; env.randomize_path = false;
+    env.cfg.target_speed = 5.0; env.cfg.drone_init_states(4) = 0.0; % 정지 출발!
+    env.drone_px4 = Drone_PX4(env.cfg, wp_circle_gz);
+    env.drone_px4.x(9) = 0; env.drone_px4.euler(3) = 0;
+    if m == 1, ag = ag0; lbl = 'Ep 0 (Pure PX4)'; else, ag = ag3000; lbl = 'Ep 3000 (PX4+PPO)'; end
+    rng(42);
+    [lg, ~] = run_px4_simulation_loop(env.drone_px4, env.cfg, ag, env);
+    e  = sqrt(sum((lg.state_hist(1:3,:) - lg.pos_des_hist).^2, 1));
+    sp = sqrt(sum(lg.state_hist(4:6,:).^2, 1));
+    ez = abs(lg.state_hist(3,:) - lg.pos_des_hist(3,:));
+    fprintf('%-18s: Pos RMSE=%.4fm | MAE=%.4fm | Max=%.4fm | Z_RMSE=%.4fm | Spd_RMSE=%.4fm/s | Sat=%.1f%%\n', ...
+        lbl, sqrt(mean(e.^2)), mean(e), max(e), sqrt(mean(ez.^2)), sqrt(mean((sp-5.0).^2)), mean(lg.sat_rot_hist)*100);
+end
+
 wp_circle = [0, 5.0, 0; 20.0, 4*pi, 20.0; -6, -6, -6];
 for ns = [false, true]
     fprintf('\n=================================================================\n');
-    fprintf('  [1] Circle Trajectory (R=5m, v=5.0m/s) | SensorNoise = %d\n', double(ns));
+    fprintf('  [1-B] Circle Trajectory (R=5m, v=5.0m/s) | SensorNoise = %d\n', double(ns));
     fprintf('=================================================================\n');
     for m = 1:2
-        env = RL_DroneEnv_PX4(ns); env.randomize_speed = false; env.randomize_path = false;
+        env = RL_DroneEnv_PX4(ns);
+        env.randomize_speed = false; env.randomize_init_speed = false;
+        env.randomize_delay = false; env.randomize_path = false;
         env.cfg.target_speed = 5.0; env.cfg.drone_init_states(4) = 5.0;
         env.drone_px4 = Drone_PX4(env.cfg, wp_circle);
         env.drone_px4.x(9) = 0; env.drone_px4.euler(3) = 0;
@@ -47,7 +72,9 @@ for v_ev = [4.0, 5.5]
         fprintf('  [2] 339.6m Hairpin Benchmark (v=%.1f m/s) | SensorNoise = %d\n', v_ev, double(ns));
         fprintf('=================================================================\n');
         for m = 1:2
-            env = RL_DroneEnv_PX4(ns); env.randomize_speed = false; env.randomize_path = false;
+            env = RL_DroneEnv_PX4(ns);
+            env.randomize_speed = false; env.randomize_init_speed = false;
+            env.randomize_delay = false; env.randomize_path = false;
             env.cfg.target_speed = v_ev; env.cfg.drone_init_states(4) = v_ev;
             reset(env);
             if m == 1, ag = ag0; lbl = 'Ep 0 (Pure PX4)'; else, ag = ag3000; lbl = 'Ep 3000 (PX4+PPO)'; end
