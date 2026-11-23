@@ -33,11 +33,7 @@ function meta = run_px4_mission(link, cfg, ref, posCtrl, agent)
     thr_param = link.readParam('MPC_THR_HOVER');
     fprintf('MPC_THR_HOVER (파라미터) = %.3f\n', thr_param);
     if isnan(thr_hover), thr_hover = thr_param; end
-    if isnan(thr_hover), thr_hover = 0.5; end          % 임시값: ② 이후 측정값으로 교체됨
-    % 정규화 추력 = thr_hover * U1 / (m g)
-    %  -> PositionCtrl 의 U1 은 질량 m 에 비례(U1_eq, Z 게인 모두 m 포함)하므로 비율로 바꾸면 m 이 상쇄된다.
-    %  -> 단, 실제 추력은 명령에 선형이 아니라서(THR_MDL_FAC) 호버 근처에서만 정확한 근사다.
-    U1_to_thr = @(U1) min(max(thr_hover * U1 / (cfg.m * g), px.thr_limits(1)), px.thr_limits(2));
+    if isnan(thr_hover), thr_hover = 0.73; end          % 임시값: ② 이후 측정값으로 교체됨
 
     %% 경로 시작점·접선과 프리롤 기하
     isCircle = isfield(cfg, 'path_type') && strcmpi(cfg.path_type, 'circle');
@@ -125,7 +121,7 @@ function meta = run_px4_mission(link, cfg, ref, posCtrl, agent)
         end
     end
     meta.thr_hover = thr_hover;
-    U1_to_thr = @(U1) min(max(thr_hover * U1 / (cfg.m * g), px.thr_limits(1)), px.thr_limits(2));
+    U1_to_thr = @(U1) min(max(thr_hover * sqrt(max(U1 / (cfg.m * g), 0)), px.thr_limits(1)), px.thr_limits(2));
     if usePPO
         posCtrl.mpc_thr_hover = thr_hover;             % PositionCtrl_PX4 내부 정규화·Z 안티와인드업도 측정값 기준으로
         fprintf('PositionCtrl_PX4 호버 추력 = %.3f (학습 환경 0.6)\n', thr_hover);
