@@ -1,12 +1,12 @@
 function run_px4_batch()
 %RUN_PX4_BATCH  px4_main 을 설정만 바꿔 여러 번 연속 실행 (명령창에서 run_px4_batch 한 번)
 %
-%  현재 구성: phi_eq ~= 35 deg 운용점 2개 x {FF + 지연 보상, GS + 지연 보상} = 4회
-%     1) v =  9, kappa = 0.085 (R 11.76 m), FF + 보상
-%     2) v =  9, kappa = 0.085 (R 11.76 m), GS + 보상
-%     3) v = 10, kappa = 0.069 (R 14.49 m), FF + 보상
-%     4) v = 10, kappa = 0.069 (R 14.49 m), GS + 보상
-%  공통: 고도 계단 0.5 m, {up,down} x 3, n_laps 3 (원 21바퀴), Eq_Delay_Comp = true
+%  현재 구성: v = 8, 직진 1회 + phi_eq 35 / 40 deg x {GS, FF, GS + 지연 보상, FF + 지연 보상} = 9회
+%     1) 직진 (curvature 0, 단계마다 straight_distance)
+%     2~5) phi_eq 35 deg: kappa = 0.107 (R 9.35 m, omega 0.86 rad/s)  GS -> FF -> GS+보상 -> FF+보상
+%     6~9) phi_eq 40 deg: kappa = 0.129 (R 7.75 m, omega 1.03 rad/s)  GS -> FF -> GS+보상 -> FF+보상
+%  공통: 고도 계단 0.5 m, {up,down} x 3, n_laps 3 (원 21바퀴)
+%  (40 deg GS 는 상승 계단에서 추력 포화가 약간 날 수 있음. 깔끔한 비교가 필요하면 height_step 0.4 로)
 %
 %  동작
 %   - 각 실행은 px4_main 과 똑같이 ①~⑤ -> 착륙·disarm -> ULog 결과 저장 -> 재이륙·프리롤 시작점 복귀 -> 착륙·disarm
@@ -33,17 +33,24 @@ base = struct();
 base.mode              = 'MATLAB';
 base.path_type         = 'circle';
 base.Feedforward       = true;
-base.Eq_Delay_Comp     = true;
 base.height_step       = 0.5;
 base.height_order      = {"up","down","up","down","up","down"};
 base.n_laps            = 3;
 
 %% 실험 목록 (순서대로 실행)
+v8 = setf(base, 'target_speed', 8);
+k35 = 0.107;     % phi_eq = atan(v^2 kappa / g) = 34.9 deg
+k40 = 0.129;     % 40.1 deg
 runs = { ...
-    'v9_k0.085_FF_comp',  setf(base, 'target_speed',  9, 'curvature', 0.085, 'Z_Gain_Scheduling', false); ...
-    'v9_k0.085_GS_comp',  setf(base, 'target_speed',  9, 'curvature', 0.085, 'Z_Gain_Scheduling', true ); ...
-    'v10_k0.069_FF_comp', setf(base, 'target_speed', 10, 'curvature', 0.069, 'Z_Gain_Scheduling', false); ...
-    'v10_k0.069_GS_comp', setf(base, 'target_speed', 10, 'curvature', 0.069, 'Z_Gain_Scheduling', true ); ...
+    'v8_straight',        setf(v8, 'curvature', 0.0, 'straight_distance', 120, 'Z_Gain_Scheduling', true,  'Eq_Delay_Comp', false); ...
+    'v8_k0.107_GS',       setf(v8, 'curvature', k35, 'Z_Gain_Scheduling', true,  'Eq_Delay_Comp', false); ...
+    'v8_k0.107_FF',       setf(v8, 'curvature', k35, 'Z_Gain_Scheduling', false, 'Eq_Delay_Comp', false); ...
+    'v8_k0.107_GS_comp',  setf(v8, 'curvature', k35, 'Z_Gain_Scheduling', true,  'Eq_Delay_Comp', true ); ...
+    'v8_k0.107_FF_comp',  setf(v8, 'curvature', k35, 'Z_Gain_Scheduling', false, 'Eq_Delay_Comp', true ); ...
+    'v8_k0.129_GS',       setf(v8, 'curvature', k40, 'Z_Gain_Scheduling', true,  'Eq_Delay_Comp', false); ...
+    'v8_k0.129_FF',       setf(v8, 'curvature', k40, 'Z_Gain_Scheduling', false, 'Eq_Delay_Comp', false); ...
+    'v8_k0.129_GS_comp',  setf(v8, 'curvature', k40, 'Z_Gain_Scheduling', true,  'Eq_Delay_Comp', true ); ...
+    'v8_k0.129_FF_comp',  setf(v8, 'curvature', k40, 'Z_Gain_Scheduling', false, 'Eq_Delay_Comp', true ); ...
     };
 
 nRun = size(runs, 1);
