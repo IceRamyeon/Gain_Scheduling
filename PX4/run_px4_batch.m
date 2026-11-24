@@ -21,6 +21,11 @@ function run_px4_batch()
 here = fileparts(mfilename('fullpath'));
 addpath(here);
 
+% 명령창에서 px4_main 을 직접 돌린 적이 있으면 base 작업공간의 link(Px4Link)가 UDP 14540 포트를 계속 잡고 있다
+%  -> 여기서 새로 연결하면 "bind: Address already in use". base 의 연결 객체를 먼저 지워 포트를 놓아준다.
+evalin('base', 'clear(''link'', ''cleanupObj'')');
+pause(1);
+
 pause_between = 10;     % 실험 사이 대기 [s]
 
 %% 공통 설정
