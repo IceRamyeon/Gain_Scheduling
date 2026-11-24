@@ -28,6 +28,8 @@ function [S, lines] = analyze_height_steps(log_data, cfg)
     t_c0    = 2 * cfg.accel_dist_per_speed + cruise_t;
     T_level = circle_level_length(cfg) / cfg.target_speed;   % 원: n_laps 바퀴, 직선: straight_distance
     t_steps = t_c0 + (1:numel(dirs)) * T_level;
+    [~, L_tot] = circle_level_length(cfg);
+    t_c1    = t_c0 + L_tot / cfg.target_speed;          % 원(직선 계단) 구간 끝: 이후 탈출 직선은 평가에서 제외
 
     t   = log_data.t_hist(:)';
     h   = -log_data.state_hist(3, :);           % 실제 고도 (NED z -> 위쪽 양수)
@@ -57,7 +59,7 @@ function [S, lines] = analyze_height_steps(log_data, cfg)
 
     for j = 1:numel(dirs)
         ts = t_steps(j);
-        if j < numel(dirs), te = t_steps(j + 1); else, te = t(end); end
+        if j < numel(dirs), te = t_steps(j + 1); else, te = min(t(end), t_c1); end   % 마지막 계단: 원 탈출 과도 구간 제외
         if ts >= t(end), break; end
         win  = t >= ts & t < te;
         pre  = t >= ts - 3 & t < ts;
