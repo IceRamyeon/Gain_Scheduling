@@ -141,7 +141,7 @@ cfg.px4.tiltmax_air_deg = 50;     % PX4 MPC_TILTMAX_AIR [deg] 로 설정 (기본
 cfg.px4.abort_err      = 8.0;     % 위치 오차가 이보다 크면 중단 -> PX4 호버·착륙 [m]
 cfg.px4.abort_tilt_deg = 60;      % 기울기가 이보다 크면 중단 [deg]
 cfg.px4.end_mode       = 'land_plot_return';  % 주행 종료 후 동작
-                                   %   'land_plot_return': 그 자리 착륙 -> disarm 후 ULog 결과창·저장 -> 다시 이륙해 프리롤 시작점 복귀·호버
+                                   %   'land_plot_return': 그 자리 착륙 -> disarm 후 ULog 결과창·저장 -> 다시 이륙해 프리롤 시작점 복귀 -> 착륙·disarm
                                    %   'land_plot'       : 그 자리 착륙 -> ULog 결과창·저장 (예전 방식)
                                    %   'hold_return'     : PX4 Hold 로 프리롤 시작점 복귀·호버 (착륙 안 함, 결과는 MATLAB 기록 기준)
 cfg.px4.return_speed   = 3.0;    % 복귀 이동 속도 [m/s] (MATLAB 오프보드 복귀)
@@ -232,7 +232,7 @@ switch meta.end_mode
             warning('disarm 을 확인하지 못했습니다 (120 s). 결과 처리를 건너뜁니다.');
         end
         if strcmp(meta.end_mode, 'land_plot_return')
-            px4_return_to_start(link, meta.cfg, meta);       % 다시 이륙해 프리롤 시작점 복귀·호버
+            px4_return_to_start(link, meta.cfg, meta);       % 다시 이륙해 프리롤 시작점 복귀 -> 착륙·disarm
         end
     case 'hold_return'
         % 착륙 전이라 ULog 가 닫히지 않으므로 MATLAB 비행 기록(meta.log)으로 바로 그린다

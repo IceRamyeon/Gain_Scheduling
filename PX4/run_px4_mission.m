@@ -5,7 +5,7 @@ function meta = run_px4_mission(link, cfg, ref, posCtrl, agent)
 %   ② 시작점 이동    : PX4 기본 위치제어기   프리롤 시작점(경로 시작점 - L·접선)에서 호버, yaw 정렬
 %   ③ 프리롤 가속    : MATLAB PositionCtrl   직선 가속, 경로 시작점에서 속도 v 도달
 %   ④ 경로 추종      : MATLAB PositionCtrl   TrajectoryPlanner t = 0 ~ tf   <- RMSE 평가 구간
-%   ⑤ 종료 동작      : cfg.px4.end_mode (기본 land_plot_return: 착륙 -> ULog 결과 -> 재이륙·프리롤 시작점 복귀)
+%   ⑤ 종료 동작      : cfg.px4.end_mode (기본 land_plot_return: 착륙 -> ULog 결과 -> 재이륙·프리롤 시작점 복귀 -> 착륙)
 %
 %   ③④ 에서는 PID_Drone/PositionCtrl ('PPO' 모드: PX4/ppo/PositionCtrl_PX4) 의 출력 [phi, theta, psi, U1] 을
 %   SET_ATTITUDE_TARGET(자세 쿼터니언 + 정규화 추력)으로 보내고, 자세 제어는 PX4가 한다.
@@ -252,7 +252,7 @@ function meta = run_px4_mission(link, cfg, ref, posCtrl, agent)
 
     %% ⑤ 종료 동작 (cfg.px4.end_mode)
     %  'land_plot_return' (기본) / 'land_plot' : 그 자리 3 s 호버 후 착륙 -> px4_main 이 disarm 대기 후 ULog 결과,
-    %                                            'land_plot_return' 이면 다시 이륙해 프리롤 시작점 복귀·호버 (px4_return_to_start)
+    %                                            'land_plot_return' 이면 다시 이륙해 프리롤 시작점 복귀 후 착륙·disarm (px4_return_to_start)
     %  'hold_return'                          : PX4 Hold(DO_REPOSITION)로 프리롤 시작점 복귀·호버, 착륙 안 함
     %                                            (ULog 가 닫히지 않으므로 px4_main 은 MATLAB 기록으로 결과)
     if isfield(px, 'end_mode') && ~isempty(px.end_mode), end_mode = lower(px.end_mode); else, end_mode = 'land_plot_return'; end
