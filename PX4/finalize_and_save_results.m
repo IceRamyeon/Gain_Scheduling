@@ -128,6 +128,21 @@ function finalize_and_save_results(log_data, cfg)
     rpt{end+1, 1} = sprintf('RMSE: %.4f m', val_rmse_z);
     rpt{end+1, 1} = sprintf('MAE:  %.4f m', val_mae_z);
     rpt{end+1, 1} = sprintf('Max:  %.4f m', val_max_z);
+    if is_circle
+        % 정상 선회 구간: 원 진입 후 첫 바퀴(직선 모드는 첫 고도 단계)를 뺀 구간 -> 진입 과도와 정상 상태 성능을 나눠 봄
+        if abs(cfg.curvature) < 1e-6, T_skip = circle_level_length(cfg) / cfg.target_speed; else, T_skip = 2 * pi / abs(cfg.curvature) / cfg.target_speed; end
+        ss_idx = eval_idx & t_hist >= t_eval0 + T_skip;
+        % 원 진입 과도: 진입 후 3 s 동안 최대 오차
+        en_idx = t_hist >= t_eval0 & t_hist <= t_eval0 + 3;
+        rpt{end+1, 1} = sprintf('[정상 구간] t = %.2f ~ %.2f s (진입 후 %.1f s 제외)', t_eval0 + T_skip, t_eval1, T_skip);
+        if any(ss_idx)
+            rpt{end+1, 1} = sprintf('3D RMSE: %.4f m, Z RMSE: %.4f m, Z Max: %.4f m', ...
+                sqrt(mean(dist_error(ss_idx).^2)), sqrt(mean(z_error(ss_idx).^2)), max(z_error(ss_idx)));
+        end
+        if any(en_idx)
+            rpt{end+1, 1} = sprintf('[진입 과도] 진입 후 3 s: 3D Max %.4f m, Z Max %.4f m', max(dist_error(en_idx)), max(z_error(en_idx)));
+        end
+    end
     rpt{end+1, 1} = '[평형점 (Trim)]';
     rpt{end+1, 1} = sprintf('v = %.2f m/s, m = %.4f kg', v_trim, cfg.m);
     if is_circle
