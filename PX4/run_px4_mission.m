@@ -5,7 +5,7 @@ function meta = run_px4_mission(link, cfg, ref, posCtrl, agent)
 %   ② 시작점 이동    : PX4 기본 위치제어기   프리롤 시작점(경로 시작점 - L·접선)에서 호버, yaw 정렬
 %   ③ 프리롤 가속    : MATLAB PositionCtrl   직선 가속, 경로 시작점에서 속도 v 도달
 %   ④ 경로 추종      : MATLAB PositionCtrl   TrajectoryPlanner t = 0 ~ tf   <- RMSE 평가 구간
-%   ⑤ 호버·복귀·착륙 : PX4 기본 위치제어기로 프리롤 시작점 복귀 -> AUTO.LAND (cfg.px4.return_to_start)
+%   ⑤ 복귀·호버      : PX4 Hold(DO_REPOSITION)로 프리롤 시작점 복귀 후 호버 유지, 착륙 안 함 (cfg.px4.return_to_start, land_at_end)
 %
 %   ③④ 에서는 PID_Drone/PositionCtrl ('PPO' 모드: PX4/ppo/PositionCtrl_PX4) 의 출력 [phi, theta, psi, U1] 을
 %   SET_ATTITUDE_TARGET(자세 쿼터니언 + 정규화 추력)으로 보내고, 자세 제어는 PX4가 한다.
@@ -85,6 +85,7 @@ function meta = run_px4_mission(link, cfg, ref, posCtrl, agent)
     link.setMessageRate(32, px.rate_hz);               % LOCAL_POSITION_NED
     link.setMessageRate(30, px.rate_hz);               % ATTITUDE
     link.setMessageRate(83, px.rate_hz);               % ATTITUDE_TARGET (호버 추력 측정용)
+    link.setMessageRate(33, 10);                       % GLOBAL_POSITION_INT (⑤ 복귀 목표 위도·경도 계산용)
     pause(0.5);
     [x_ned, ~, ok] = link.getState();
     t0 = tic;
@@ -248,18 +249,37 @@ function meta = run_px4_mission(link, cfg, ref, posCtrl, agent)
         wait_tick();
     end
 
-    %% ⑤ 호버 -> 프리롤 시작점 복귀 -> 착륙 (PX4 위치제어 -> AUTO.LAND)
-    disp('⑤ 호버·복귀·착륙');
+    %% ⑤ 프리롤 시작점 복귀 (착륙하지 않고 호버 유지)
+    %  - 기본: PX4 에 DO_REPOSITION 을 보내 Hold 모드에서 PX4 가 스스로 복귀·호버 -> MATLAB 은 바로 결과 처리로 넘어감
+    %  - DO_REPOSITION 이 거부·무응답이면: MATLAB 이 오프보드로 복귀시킨 뒤 Hold 로 전환 (이때는 복귀가 끝나야 넘어감)
+    %  - 착륙은 하지 않는다 (QGroundControl 등에서 직접 착륙). cfg.px4.land_at_end = true 면 복귀 후 착륙
+    disp('⑤ 프리롤 시작점 복귀');
     [x_ned, ~] = link.getState();
-    t5 = tic;
-    while toc(t5) < 3                                   % 현재 위치에서 멈춤
-        link.sendPosition(x_ned(1:3), x_ned(9)); pause(Ts);
-    end
+    hold_here = @() link.sendPosition(x_ned(1:3), x_ned(9));
+    for k5 = 1:round(0.5 / Ts), hold_here(); pause(Ts); end      % 잠깐 정지 명령
+    land_end = isfield(px, 'land_at_end') && px.land_at_end;
+    meta.return_mode = 'none';
     if ~isfield(px, 'return_to_start') || px.return_to_start
-        return_to_point(p_pre_ned, yaw0 + rot);
+        res = NaN;
+        if ~land_end
+            res = reposition_to(p_pre_ned, hold_here);
+        end
+        if res == 0
+            meta.return_mode = 'px4_reposition';
+            disp('PX4 Hold 모드로 프리롤 시작점 복귀 중 (MATLAB 은 결과 처리 진행)');
+        else
+            if ~land_end, warning('DO_REPOSITION 실패 (결과 %g) -> MATLAB 오프보드로 복귀합니다.', res); end
+            return_to_point(p_pre_ned, yaw0 + rot);
+            meta.return_mode = 'offboard';
+            if ~land_end, link.setHold(); end
+        end
+    else
+        if ~land_end, link.setHold(); end
     end
-    link.setLand();
-    pause(1);
+    if land_end
+        link.setLand();
+        pause(1);
+    end
 
     meta.log = LOG(1:nlog, :);
     meta.ref = rmfield(ref, 'traj');
@@ -270,6 +290,21 @@ function meta = run_px4_mission(link, cfg, ref, posCtrl, agent)
     end
 
     %% ---- nested helpers ----
+    function res = reposition_to(p_goal_ned, keepalive)
+        % 로컬 NED 목표점 -> 현재 전역 위치 기준 평면 근사로 위도·경도·고도 계산 -> DO_REPOSITION
+        res = NaN;
+        gnow = link.getGlobal(1.0, keepalive);             % 기다리는 동안에도 오프보드 셋포인트 유지
+        if any(isnan(gnow)), return; end
+        [xs, ~] = link.getState();
+        dN = p_goal_ned(1) - xs(1); dE = p_goal_ned(2) - xs(2); dD = p_goal_ned(3) - xs(3);
+        Re = 6378137;
+        lat = gnow(1) + rad2deg(dN / Re);
+        lon = gnow(2) + rad2deg(dE / (Re * cosd(gnow(1))));
+        alt = gnow(3) - dD;                                % NED 아래(+) -> 고도 감소
+        fprintf('복귀 목표: %.1f m 이동 (DO_REPOSITION)\n', norm([dN dE dD]));
+        res = link.repositionGlobal(lat, lon, alt, keepalive);
+    end
+
     function return_to_point(p_goal, yaw_goal)
         % 현재 위치 -> p_goal 을 직선으로 잇는 이동 셋포인트를 cfg.px4.return_speed 로 보내며 복귀한 뒤 정지 확인
         %  (먼 목표점을 한 번에 주면 PX4 가 최대 속도로 급가속하므로, 셋포인트를 일정 속도로 옮긴다)

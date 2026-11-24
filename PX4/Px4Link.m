@@ -172,6 +172,62 @@ classdef Px4Link < handle
             end
         end
 
+        %% 전역 위치 (GLOBAL_POSITION_INT) -> [위도 deg, 경도 deg, 고도 AMSL m], 실패하면 NaN
+        function g = getGlobal(obj, timeout_s, keepalive)
+            if nargin < 2, timeout_s = 2; end
+            if nargin < 3, keepalive = []; end
+            g = nan(3, 1);
+            sub = mavlinksub(obj.mav, obj.client, "GLOBAL_POSITION_INT", "BufferSize", 1);
+            t0 = tic;
+            while toc(t0) < timeout_s
+                mm = latestmsgs(sub, 1);
+                if ~isempty(mm)
+                    P = mm.Payload;
+                    g = [double(P.lat) * 1e-7; double(P.lon) * 1e-7; double(P.alt) * 1e-3];
+                    break;
+                end
+                if ~isempty(keepalive), keepalive(); end
+                pause(0.02);
+            end
+            try, delete(sub); catch, end
+        end
+
+        %% 지정 위치로 이동 후 그 자리 호버 (MAV_CMD_DO_REPOSITION, COMMAND_INT, Hold 모드로 전환)
+        %  lat/lon [deg], alt [m AMSL]. keepalive: ACK 를 기다리는 동안 매 주기 호출할 함수 (오프보드 셋포인트 유지용)
+        %  result: COMMAND_ACK 결과 (0 = 수락), 응답이 없으면 NaN
+        function result = repositionGlobal(obj, lat, lon, alt, keepalive, timeout_s)
+            if nargin < 5, keepalive = []; end
+            if nargin < 6, timeout_s = 1.5; end
+            subAck = mavlinksub(obj.mav, obj.client, "COMMAND_ACK", "BufferSize", 20);
+            m = createmsg(obj.dialect, "COMMAND_INT");
+            m.Payload.target_system(:)    = obj.target_sys;
+            m.Payload.target_component(:) = obj.target_comp;
+            m.Payload.frame(:)   = 0;                          % MAV_FRAME_GLOBAL (고도 AMSL)
+            m.Payload.command(:) = 192;                        % MAV_CMD_DO_REPOSITION
+            m.Payload.current(:) = 0; m.Payload.autocontinue(:) = 0;
+            m.Payload.param1(:) = -1;                          % 속도: 기본값
+            m.Payload.param2(:) = 1;                           % MAV_DO_REPOSITION_FLAGS_CHANGE_MODE (Hold 로 전환)
+            m.Payload.param3(:) = 0;
+            m.Payload.param4(:) = NaN;                         % yaw: 현재 방식 유지
+            m.Payload.x(:) = int32(round(lat * 1e7));
+            m.Payload.y(:) = int32(round(lon * 1e7));
+            m.Payload.z(:) = single(alt);
+            sendmsg(obj.mav, m, obj.client);
+            result = NaN;
+            t0 = tic;
+            while toc(t0) < timeout_s && isnan(result)
+                if ~isempty(keepalive), keepalive(); end
+                acks = latestmsgs(subAck, 20);
+                for k = 1:numel(acks)
+                    if double(acks(k).Payload.command) == 192
+                        result = double(acks(k).Payload.result);
+                    end
+                end
+                pause(0.02);
+            end
+            try, delete(subAck); catch, end
+        end
+
         %% 파라미터 쓰기 (float 파라미터, 예: MPC_TILTMAX_AIR) -> 다시 읽어서 반영값 반환
         %  SITL 에서는 바꾼 값이 파라미터 파일에 저장되어 다음 실행에도 유지된다
         function val = setParam(obj, name, value, timeout_s)
