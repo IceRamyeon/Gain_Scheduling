@@ -21,7 +21,7 @@ function finalize_and_save_results(log_data, cfg)
     if is_circle
         if isfield(cfg, 'cruise_time'), cruise_t = cfg.cruise_time; else, cruise_t = 0; end
         t_eval0  = 2 * cfg.accel_dist_per_speed + cruise_t;
-        t_eval1  = t_eval0 + cfg.n_laps * 2 * pi / abs(cfg.curvature) / cfg.target_speed;
+        t_eval1  = t_eval0 + circle_total_laps(cfg) * 2 * pi / abs(cfg.curvature) / cfg.target_speed;   % 고도 계단이 있으면 단계 수만큼 바퀴 증가
         eval_idx = t_hist >= t_eval0 & t_hist <= t_eval1;
         if ~any(eval_idx)
             warning('원 구간(t = %.2f ~ %.2f s) 데이터가 없어 전체 구간으로 평가합니다.', t_eval0, t_eval1);
@@ -63,7 +63,7 @@ function finalize_and_save_results(log_data, cfg)
         L_acc = cfg.accel_dist_per_speed * cfg.target_speed;
         a_acc = cfg.target_speed^2 / (2 * L_acc);
         t_acc = 2 * cfg.accel_dist_per_speed;
-        L_cir = cfg.n_laps * 2 * pi * R_c;
+        L_cir = circle_total_laps(cfg) * 2 * pi * R_c;
         if isfield(cfg, 'cruise_time'), cruise_t = cfg.cruise_time; else, cruise_t = 0; end
         L_crs = cfg.target_speed * cruise_t;                % 등속 직선
         L_ext = L_acc + L_crs;                              % 탈출 직선 (초반 직선과 같은 길이)
@@ -71,7 +71,7 @@ function finalize_and_save_results(log_data, cfg)
         t_c1  = t_c0 + L_cir / cfg.target_speed;
         tf_c  = t_c1 + L_ext / cfg.target_speed;
         hdr{end+1, 1} = sprintf('[CircleTrajectory] R = %.2f m, 가속 %.1f m (%.2f m/s^2, %.1f s), 등속 직선 %.1f m (%.1f s), 원 %d바퀴 %.1f m (%.1f ~ %.1f s), 탈출 직선 %.1f m, tf = %.1f s', ...
-            R_c, L_acc, a_acc, t_acc, L_crs, cruise_t, cfg.n_laps, L_cir, t_c0, t_c1, L_ext, tf_c);
+            R_c, L_acc, a_acc, t_acc, L_crs, cruise_t, circle_total_laps(cfg), L_cir, t_c0, t_c1, L_ext, tf_c);
         hdr{end+1, 1} = sprintf('경로 길이 %.1f m, 추종 시간 %.1f s', L_acc + L_crs + L_cir + L_ext, tf_c);
     else
         hdr{end+1, 1} = sprintf('경로: spline (pathGen), 추종 시간 %.1f s', t_hist(end) - t_hist(1));
@@ -124,6 +124,11 @@ function finalize_and_save_results(log_data, cfg)
         rpt{end+1, 1} = ln;
     end
     rpt{end+1, 1} = '----------------------------------';
+    % 고도 계단 실험: 계단별 응답 지표 (analyze_height_steps)
+    if is_circle && isfield(cfg, 'height_order') && ~isempty(cfg.height_order)
+        [~, step_lines] = analyze_height_steps(log_data, cfg);
+        rpt = [rpt; step_lines(:); {'----------------------------------'}];
+    end
     fprintf('%s\n', rpt{:});
     
     %% 1. [그래프 1] 위치 추종 (Position Tracking)

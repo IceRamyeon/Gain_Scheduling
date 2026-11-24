@@ -24,6 +24,15 @@ cfg.Calculate_PID_Table = 0;  % If true, the PID table will be generated based o
 cfg.Feedforward = true;  % If 1 : Feedforward Path curvature and velocity, 0 : No Feedforward
 cfg.Z_Gain_Scheduling = true; % If 0 : Fixed PID + Feedforward, 1 : LPV Gain Scheduling for z-axis
 
+% 고도 계단 실험 (CircleTrajectory): 기준 고도(-z0, 예: 6 m)에서 시작해 n_laps 바퀴마다 한 단계씩 계단 변화
+%   'up' = +height_step, 'down' = -height_step, 마지막 고도를 유지한 채 탈출 직선 후 종료
+%   원 전체 바퀴 수 = n_laps x (numel(height_order) + 1). 비워 두면({}) 고도 고정 (기존 실험과 같음)
+%   주의: 셀 배열 {'up','up','down'} 이나 문자열 배열 ["up","up","down"] 로 쓸 것 (['up','down'] 은 'updown' 한 덩어리가 됨)
+cfg.height_step  = 0.3;            % 계단 크기 [m] (포화 없는 선형 범위: 추력 여유 / K_P,z 이하)
+cfg.height_order = {};             % 예: {'up', 'up', 'down'} -> 6.0 > 6.3 > 6.6 > 6.3 m
+cfg.height_settle_band = 0.10;     % 정착시간 판정 band (계단 크기 대비 비율)
+cfg.Z_D_on_measurement = true;     % z 미분항: true = 측정 속도 기반 -K_D*vz (계단 시 미분 킥 없음), false = 기존 오차 미분
+
 
 % Simulation 환경 및 저장 설정 추가
 cfg.play_animation = false;          % 시뮬레이션 애니메이션 재생 여부

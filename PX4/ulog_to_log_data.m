@@ -114,6 +114,11 @@ function log_data = ulog_to_log_data(ulgFile, meta, dt_grid)
     log_data.kappa_hist   = kappa_hist;
     log_data.kappa_raw_hist = kappa_raw_hist;
     log_data.action_hist  = action_hist;
+    % 정규화 추력 명령 (MATLAB 이 PX4 로 보낸 값) -> 추력 포화 비율 계산용 (analyze_height_steps)
+    if any(strcmp(meta.log_cols, 'thr_norm'))
+        log_data.thr_norm_hist = interp1(tl, C(:, col('thr_norm')), tg, 'nearest', 'extrap')';
+        log_data.thr_limits    = cfg.px4.thr_limits;
+    end
 end
 
 %% ---- local functions ----

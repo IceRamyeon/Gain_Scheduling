@@ -9,13 +9,23 @@ classdef CircleTrajectory < handle
     %   TrajectoryPlanner 와 같은 인터페이스:
     %     [pos, vel, kappa_ff, kappa_raw] = get_position(t), get_full_path(dt), tf, total_length
     %   kappa_ff 는 TrajectoryPlanner 와 같은 방식(전방 lookahead_dist 지점 곡률 + 1차 댐핑 kappa_tau)
+    %
+    %   고도 계단 (height_step, height_order, 선택)
+    %   - height_order = {'up', 'up', 'down'} 처럼 주면, 고도 단계마다 n_laps 바퀴씩 돈다
+    %     -> 원 전체 바퀴 수 = n_laps x (numel(height_order) + 1)
+    %   - 기준 고도 h0 = -init_pos(3) (예: 초기 z = -6 -> 6 m) 에서 시작
+    %   - n_laps 바퀴를 돌 때마다 (바퀴 경계 = 원 진입점) 'up' 이면 +height_step, 'down' 이면 -height_step 으로 계단 변화
+    %     예: h0 = 6, step = 0.3, {'up','up','down'} -> 6.0 > 6.3 > 6.6 > 6.3 m
+    %   - 마지막 고도를 유지한 채 탈출 직선을 날고 끝난다 (h0 로 돌아가지 않음)
+    %   - 수평 경로·시간·곡률은 고도와 무관 (경로 길이 s 는 수평 길이 기준)
 
     properties
         init_pos            % 3x1 시작점
         v                   % 목표 속력 [m/s]
         kappa               % 원 곡률 [1/m] (부호 = 선회 방향)
         R                   % 반지름 [m]
-        n_laps              % 바퀴 수
+        n_laps              % 고도 단계 하나당 바퀴 수 (고도 계단이 없으면 전체 바퀴 수)
+        n_laps_total        % 원 전체 바퀴 수 = n_laps x 고도 단계 수
         L_acc               % 가속 구간 길이 [m] = accel_dist_per_speed * v
         a_acc               % 가속도 [m/s^2] = v^2 / (2 L_acc)
         t_acc               % 가속 시간 [s] = 2 L_acc / v
@@ -35,13 +45,22 @@ classdef CircleTrajectory < handle
         kappa_ff
         t_kappa_prev
         last_kappa
+
+        h0                  % 기준(시작) 고도 [m] = -init_pos(3)
+        height_step         % 계단 크기 [m]
+        height_order        % 계단 방향 ({'up', 'down', ...}, 비어 있으면 고도 고정)
+        h_levels            % 단계별 고도 [m] (1 x numel(height_order)+1)
+        s_steps             % 계단이 바뀌는 경로 길이 [m]
+        t_steps             % 계단이 바뀌는 시각 [s]
     end
 
     methods
-        function obj = CircleTrajectory(init_pos, target_speed, curvature, accel_dist_per_speed, n_laps, lookahead_dist, kappa_tau, cruise_time)
+        function obj = CircleTrajectory(init_pos, target_speed, curvature, accel_dist_per_speed, n_laps, lookahead_dist, kappa_tau, cruise_time, height_step, height_order)
             if nargin < 6, lookahead_dist = []; end
             if nargin < 7 || isempty(kappa_tau), kappa_tau = 0; end
             if nargin < 8 || isempty(cruise_time), cruise_time = 0; end
+            if nargin < 9 || isempty(height_step), height_step = 0; end
+            if nargin < 10, height_order = {}; end
             if abs(curvature) < 1e-6, error('CircleTrajectory: curvature 는 0 이 아니어야 합니다.'); end
 
             obj.init_pos = init_pos(:);
@@ -50,26 +69,52 @@ classdef CircleTrajectory < handle
             obj.R        = 1 / abs(curvature);
             obj.n_laps   = n_laps;
 
+            % 고도 계단 단계
+            dirs = CircleTrajectory.parse_height_order(height_order);
+            if ~isempty(dirs) && ~(height_step > 0)
+                error('CircleTrajectory: height_order 를 쓰려면 height_step > 0 [m] 이어야 합니다.');
+            end
+            obj.height_step  = height_step;
+            obj.height_order = height_order;
+            obj.n_laps_total = n_laps * (numel(dirs) + 1);
+            obj.h0           = -obj.init_pos(3);
+            obj.h_levels     = obj.h0 + [0, cumsum(dirs)] * height_step;
+
             obj.L_acc = accel_dist_per_speed * target_speed;          % 속도에 비례하는 가속 구간
             obj.a_acc = target_speed^2 / (2 * obj.L_acc);
             obj.t_acc = 2 * obj.L_acc / target_speed;
 
-            obj.L_circle     = n_laps * 2 * pi * obj.R;
+            obj.L_circle     = obj.n_laps_total * 2 * pi * obj.R;
             obj.cruise_time  = cruise_time;
             obj.L_cruise     = target_speed * cruise_time;              % 목표 속력 도달 후 등속 직선
             obj.L_str        = obj.L_acc + obj.L_cruise;                % 원 진입 지점까지의 직선 길이
             obj.L_exit       = obj.L_str;                               % 초반 직선과 같은 거리만큼 탈출 직진
             obj.total_length = obj.L_str + obj.L_circle + obj.L_exit;
             obj.t_circ0      = obj.t_acc + cruise_time;
-            obj.t_circ1      = obj.t_acc + obj.L_circle / target_speed;
+            obj.t_circ1      = obj.t_circ0 + obj.L_circle / target_speed;   % 원 진입 시각 + 원 구간 시간
             obj.tf           = obj.t_circ1 + obj.L_exit / target_speed;
 
             obj.lookahead_dist = lookahead_dist;
             obj.kappa_tau      = kappa_tau;
             obj.kappa_raw = 0; obj.kappa_ff = []; obj.t_kappa_prev = []; obj.last_kappa = 0;
 
+            % 계단 위치·시각: 고도 단계마다 n_laps 바퀴
+            L_level     = n_laps * 2 * pi * obj.R;
+            obj.s_steps = obj.L_str + (1:numel(dirs)) * L_level;
+            obj.t_steps = obj.t_circ0 + (1:numel(dirs)) * L_level / target_speed;
+
             fprintf('[CircleTrajectory] R = %.2f m, 가속 %.1f m (%.2f m/s^2, %.1f s), 등속 직선 %.1f m (%.1f s), 원 %d바퀴 %.1f m (%.1f ~ %.1f s), 탈출 직선 %.1f m, tf = %.1f s\n', ...
-                obj.R, obj.L_acc, obj.a_acc, obj.t_acc, obj.L_cruise, cruise_time, n_laps, obj.L_circle, obj.t_circ0, obj.t_circ1, obj.L_exit, obj.tf);
+                obj.R, obj.L_acc, obj.a_acc, obj.t_acc, obj.L_cruise, cruise_time, obj.n_laps_total, obj.L_circle, obj.t_circ0, obj.t_circ1, obj.L_exit, obj.tf);
+            if ~isempty(dirs)
+                fprintf('[CircleTrajectory] 고도 계단: %s m (단계마다 %d바퀴, 계단 시각 %s s)\n', ...
+                    strjoin(arrayfun(@(h) sprintf('%.2f', h), obj.h_levels, 'UniformOutput', false), ' > '), n_laps, ...
+                    strjoin(arrayfun(@(x) sprintf('%.1f', x), obj.t_steps, 'UniformOutput', false), ', '));
+            end
+        end
+
+        %% 경로 길이 s -> 기준 고도 [m] (양수 = 위)
+        function h = height_at(obj, s)
+            h = obj.h_levels(1 + sum(s >= obj.s_steps));
         end
 
         %% 시간 t -> 경로 길이 s, 속력
@@ -107,6 +152,7 @@ classdef CircleTrajectory < handle
                 T = [cos(ang); sin(ang); 0];
                 k = obj.kappa;
             end
+            p(3) = -obj.height_at(s);                                   % NED: z = -고도
         end
 
         function k = curvature_at(obj, s)
@@ -154,6 +200,27 @@ classdef CircleTrajectory < handle
                 P(:, i) = obj.pose_at(s);
             end
             X = P(1, :); Y = P(2, :); Z = P(3, :);
+        end
+    end
+
+    methods (Static)
+        function dirs = parse_height_order(order)
+            % {'up','down'} 또는 ["up","down"] -> [+1, -1]
+            if isempty(order), dirs = zeros(1, 0); return; end
+            if ischar(order)
+                error(['CircleTrajectory: height_order 는 셀 배열 {''up'', ''down''} 이나 문자열 배열 ["up", "down"] 으로 주세요. ' ...
+                       '([''up'', ''down''] 처럼 대괄호에 문자를 넣으면 ''updown'' 하나로 붙어 버립니다.)']);
+            end
+            order = cellstr(order);
+            dirs = zeros(1, numel(order));
+            for i = 1:numel(order)
+                switch lower(strtrim(order{i}))
+                    case 'up',   dirs(i) = +1;
+                    case 'down', dirs(i) = -1;
+                    otherwise
+                        error('CircleTrajectory: height_order 의 ''%s'' 는 ''up'' 또는 ''down'' 이어야 합니다.', order{i});
+                end
+            end
         end
     end
 end

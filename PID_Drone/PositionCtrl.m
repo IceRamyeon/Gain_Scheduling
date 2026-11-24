@@ -30,6 +30,7 @@ classdef PositionCtrl < handle
 
         use_feedforward  % Feedforward 사용 여부 플래그 추가
         use_z_scheduling  % Z축 게인 스케줄링 여부 플래그 추가
+        z_D_on_meas       % true: z 미분항을 측정 속도(-vz)로 계산 (기준 고도 계단 시 미분 킥 제거)
 
         % Logging용 변수
         current_kP_z
@@ -57,6 +58,16 @@ classdef PositionCtrl < handle
                 obj.use_z_scheduling = cfg.Z_Gain_Scheduling;
             else
                 obj.use_z_scheduling = true; % 기본값은 3번 모델
+            end
+
+            % z 미분항 구성: true(기본) = 측정 속도 기반 K_D*(0 - vz),  false = 기존 오차 미분 K_D*d(z_err)/dt
+            %  -> 두 방식은 K_D*vz_des 항만 다르다. 등고도(vz_des = 0)에서는 같은 값을 내고,
+            %     기준 고도가 계단으로 바뀌는 순간에만 기존 방식이 K_D*dh/dt 의 킥을 낸다.
+            %     폐루프 특성방정식(극점)은 같고 기준 입력 -> 고도 전달함수의 영점만 다르다.
+            if isfield(cfg, 'Z_D_on_measurement')
+                obj.z_D_on_meas = cfg.Z_D_on_measurement;
+            else
+                obj.z_D_on_meas = true;
             end
 
             % 기본 고정 게인 저장
@@ -115,6 +126,9 @@ classdef PositionCtrl < handle
             dx_err = (obj.x_err - obj.x_err_prev)/obj.dt;
             dy_err = (obj.y_err - obj.y_err_prev)/obj.dt;
             dz_err = (obj.z_err - obj.z_err_prev)/obj.dt;
+            if obj.z_D_on_meas
+                dz_err = -state(6);     % 측정 속도 기반: d(z_err)/dt = vz_des - vz 에서 vz_des(기준 고도 변화율) 항 제외
+            end
             
             % 3. Body 좌표계 오차 회전 (Heading 기준)
             ex_body =  cos(psi) * obj.x_err + sin(psi) * obj.y_err;

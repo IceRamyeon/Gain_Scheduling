@@ -57,8 +57,10 @@
             if isfield(cfg, 'path_type') && strcmpi(cfg.path_type, 'circle')
                 % 정지 -> 직선 가속 -> 원 궤적 (cfg.curvature, cfg.n_laps 바퀴)
                 if isfield(cfg, 'cruise_time'), cruise_t = cfg.cruise_time; else, cruise_t = 0; end
+                if isfield(cfg, 'height_step'),  h_step  = cfg.height_step;  else, h_step  = 0;  end   % 고도 계단 크기 [m]
+                if isfield(cfg, 'height_order'), h_order = cfg.height_order; else, h_order = {}; end  % {'up','down',...}
                 obj.trajCtrl = CircleTrajectory(initStates(1:3), cfg.target_speed, cfg.curvature, ...
-                                                cfg.accel_dist_per_speed, cfg.n_laps, kappa_lk, kappa_tau, cruise_t);
+                                                cfg.accel_dist_per_speed, cfg.n_laps, kappa_lk, kappa_tau, cruise_t, h_step, h_order);
             else
                 obj.trajCtrl = TrajectoryPlanner(initStates(1:3), waypoints, cfg.target_speed, kappa_lk, kappa_tau);
             end            
