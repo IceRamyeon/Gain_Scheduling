@@ -56,6 +56,16 @@ function finalize_and_save_results(log_data, cfg)
     U1_eq_hist  = cfg.m .* sqrt(g_trim^2 + a_cen.^2);     % PositionCtrl: U1_eq  = m sqrt(g^2 + (v^2 kappa)^2)
     turn_idx = abs(kappa_hist) > 1e-4;                    % 곡선(선회) 구간
 
+    % 실제 평형 롤: 실제 수평 속도와 진행 방향 변화율로 구한 구심 가속도 a_c = v_xy * d(chi)/dt -> phi = atan(a_c / g)
+    %  (기준 phi_eq_hist 는 기준 v, kappa 로 계산한 피드포워드 값, 이건 드론이 실제로 낸 선회에 필요한 롤)
+    v_xy  = hypot(state_hist(4, :), state_hist(5, :));
+    chi   = unwrap(atan2(state_hist(5, :), state_hist(4, :)));
+    dt_m  = median(diff(t_hist));
+    n_sm  = max(1, round(0.2 / dt_m));                    % 0.2 s 이동평균 (미분 노이즈 완화)
+    chi_dot = movmean(gradient(chi, t_hist), n_sm);
+    phi_eq_act_hist = atan(v_xy .* chi_dot ./ g_trim);
+    phi_eq_act_hist(v_xy < 0.5) = NaN;                    % 저속에서는 진행 방향이 불안정
+
     %% 결과 요약 (콘솔 출력 + 자동 저장 시 .txt 로 저장)
     % 헤더: 경로·모드 정보 (콘솔에는 이미 앞에서 출력되므로 .txt 에만 기록)
     hdr = {};
@@ -124,6 +134,8 @@ function finalize_and_save_results(log_data, cfg)
         % 원 궤적: 평가 구간(원 구간) 평균
         rpt{end+1, 1} = sprintf('phi_eq 원 구간 평균: %.3f deg', mean(phi_eq_hist(eval_idx)) * R2D);
         rpt{end+1, 1} = sprintf('U1_eq  원 구간 평균: %.4f N',   mean(U1_eq_hist(eval_idx)));
+        rpt{end+1, 1} = sprintf('실제 평형 롤(v_xy * dchi/dt) 원 구간 평균: %.3f deg, 실제 롤 평균: %.3f deg, 롤 명령 최대: %.2f deg', ...
+            mean(phi_eq_act_hist(eval_idx), 'omitnan') * R2D, mean(state_hist(7, eval_idx)) * R2D, max(abs(att_des_hist(1, eval_idx))) * R2D);
     else
         ln = sprintf('phi_eq 평균: %.3f deg', mean(phi_eq_hist) * R2D);
         if any(turn_idx), ln = [ln, sprintf('  (선회 구간 평균: %.3f deg)', mean(phi_eq_hist(turn_idx)) * R2D)]; end
@@ -248,9 +260,16 @@ function finalize_and_save_results(log_data, cfg)
     %% 6-1 [그래프] 평형점 (phi_eq, U1_eq)
     h_fig_trim = figure('Name', 'Trim (phi_eq, U1_eq)', 'Theme', 'light', 'Position', [1010 450 600 450]);
     subplot(2,1,1);
-    plot(t_hist, phi_eq_hist * R2D, 'b', 'LineWidth', 1.2); hold on;
+    plot(t_hist, phi_eq_hist * R2D, 'k--', 'LineWidth', 1.5); hold on;           % 기준 (v_des, kappa_des 피드포워드)
+    plot(t_hist, phi_eq_act_hist * R2D, 'b', 'LineWidth', 1.2);                 % 실제 선회에 필요한 롤
+    plot(t_hist, state_hist(7, :) * R2D, 'r', 'LineWidth', 1.0);                % 실제 롤
+    plot(t_hist, att_des_hist(1, :) * R2D, ':', 'Color', [0.5 0.5 0.5], 'LineWidth', 1.0);   % 롤 명령
+    if isfield(cfg, 'max_angle_deg') && ~isempty(cfg.max_angle_deg)
+        yline([-1 1] * cfg.max_angle_deg, 'm:', 'HandleVisibility', 'off');     % 명령 각도 제한
+    end
     % yline(mean(phi_eq_hist) * R2D, 'r--', sprintf('mean %.2f deg', mean(phi_eq_hist) * R2D));
-    ylabel('\phi_{eq} [deg]'); title(sprintf('Equilibrium Roll \\phi_{eq} (v = %.2g m/s)', v_trim)); grid on;
+    ylabel('Roll [deg]'); title(sprintf('Equilibrium Roll \\phi_{eq} (v = %.2g m/s)', v_trim)); grid on;
+    legend('\phi_{eq} ref (v, \kappa)', '\phi_{eq} actual (v_{xy} d\chi/dt)', '\phi actual', '\phi command', 'Location', 'best');
     subplot(2,1,2);
     plot(t_hist, U1_eq_hist, 'b', 'LineWidth', 1.2); hold on;
     yline(cfg.m * g_trim, 'k:', 'mg');
