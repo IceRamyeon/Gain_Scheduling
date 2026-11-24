@@ -171,6 +171,22 @@ classdef Px4Link < handle
             catch
             end
         end
+
+        %% 파라미터 쓰기 (float 파라미터, 예: MPC_TILTMAX_AIR) -> 다시 읽어서 반영값 반환
+        %  SITL 에서는 바꾼 값이 파라미터 파일에 저장되어 다음 실행에도 유지된다
+        function val = setParam(obj, name, value, timeout_s)
+            if nargin < 4, timeout_s = 3; end
+            m = createmsg(obj.dialect, "PARAM_SET");
+            m.Payload.target_system(:)    = obj.target_sys;
+            m.Payload.target_component(:) = obj.target_comp;
+            m.Payload.param_id(:) = 0;
+            m.Payload.param_id(1:numel(name)) = double(name);
+            m.Payload.param_value(:) = single(value);
+            m.Payload.param_type(:)  = 9;                      % MAV_PARAM_TYPE_REAL32
+            sendmsg(obj.mav, m, obj.client);
+            pause(0.2);
+            val = obj.readParam(name, timeout_s);
+        end
     end
 
     methods (Static)

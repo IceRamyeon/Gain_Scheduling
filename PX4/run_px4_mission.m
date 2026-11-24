@@ -24,6 +24,16 @@ function meta = run_px4_mission(link, cfg, ref, posCtrl, agent)
     g   = 9.81;
     rot = deg2rad(px.path_rot_deg);
 
+    %% PX4 기울기 제한 (MPC_TILTMAX_AIR): 고각도 선회(phi_eq 35~40 deg)용으로 cfg.px4.tiltmax_air_deg 로 설정
+    %  - PX4 위치제어기('PX4' 모드, 이륙·이동 구간)의 최대 기울기. 오프보드 자세 명령에도 같은 한계를 두기 위해 맞춰 둔다
+    if isfield(px, 'tiltmax_air_deg') && ~isempty(px.tiltmax_air_deg) && ~isnan(px.tiltmax_air_deg)
+        tilt_now = link.setParam('MPC_TILTMAX_AIR', px.tiltmax_air_deg);
+        fprintf('MPC_TILTMAX_AIR = %.1f deg (요청 %.1f)\n', tilt_now, px.tiltmax_air_deg);
+        if isnan(tilt_now) || abs(tilt_now - px.tiltmax_air_deg) > 0.5
+            warning('MPC_TILTMAX_AIR 설정이 반영되지 않았습니다. PX4 콘솔에서 param set MPC_TILTMAX_AIR %.0f 로 직접 설정하세요.', px.tiltmax_air_deg);
+        end
+    end
+
     %% 호버 추력 (U1[N] -> 정규화 추력 변환에 사용)
     %  - cfg.px4.thr_hover 에 값이 있으면 그 값을 쓴다.
     %  - NaN 이면 ② 호버 중 PX4 가 실제로 쓰는 추력(ATTITUDE_TARGET.thrust)을 측정해서 쓴다.
