@@ -98,6 +98,9 @@ function finalize_and_save_results(log_data, cfg)
         note = '';
     end
     hdr{end+1, 1} = sprintf('Feedforward: %s, Z_Gain_Scheduling: %s%s', onoff('Feedforward'), onoff('Z_Gain_Scheduling'), note);
+    gf = @(f, d) local_getfield(cfg, f, d);
+    hdr{end+1, 1} = sprintf('max_angle_deg: %g, Err_Yaw: %s, Eq_Delay_Comp: %d (K_att %g), Z_D_on_measurement: %d', ...
+        gf('max_angle_deg', 30), char(string(gf('Err_Yaw', 'measured'))), gf('Eq_Delay_Comp', false), gf('K_att', 6.5), gf('Z_D_on_measurement', true));
 
     rpt = {};
     rpt{end+1, 1} = '[최종 결과].';
@@ -324,4 +327,8 @@ function str = ternary_onoff(cfg, field)
     else
         str = 'OFF';
     end
+end
+
+function v = local_getfield(cfg, f, d)
+    if isfield(cfg, f) && ~isempty(cfg.(f)), v = cfg.(f); else, v = d; end
 end

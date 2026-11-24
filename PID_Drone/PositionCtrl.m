@@ -32,6 +32,9 @@ classdef PositionCtrl < handle
         use_z_scheduling  % Z축 게인 스케줄링 여부 플래그 추가
         z_D_on_meas       % true: z 미분항을 측정 속도(-vz)로 계산 (기준 고도 계단 시 미분 킥 제거)
         use_ndi           % true: 기존 비선형 역산(NDI) 분기 사용 (cfg.Use_NDI)
+        err_yaw_desired   % true: 오차를 목표 yaw(psi_des)로 회전, false: 측정 yaw (cfg.Err_Yaw)
+        eq_delay_comp     % true: 평형점에 자세 루프 지연 보정 피치 추가 (cfg.Eq_Delay_Comp)
+        K_att             % 자세 루프 각도 P 게인 [1/s] (PX4 MC_PITCH_P, 지연 보정용)
 
         % Logging용 변수
         current_kP_z
@@ -92,7 +95,26 @@ classdef PositionCtrl < handle
             obj.lpv_a0 = gains('I_x') * obj.g;
             obj.lpv_a2 = gains('D_x') * obj.g;
             
-            obj.max_angle = 30 * (pi/180); 
+            % 각도 제한: cfg.max_angle_deg (기본 30 deg). phi_eq 가 이 값을 넘으면 평형점 자체가 잘린다
+            if isfield(cfg, 'max_angle_deg') && ~isempty(cfg.max_angle_deg)
+                obj.max_angle = cfg.max_angle_deg * (pi/180);
+            else
+                obj.max_angle = 30 * (pi/180);
+            end
+
+            % 오차 회전 yaw: 'measured'(기본, 측정 yaw) / 'desired'(목표 yaw)
+            %  PX4 는 자세 명령(psi_des 포함 쿼터니언)의 추력 방향을 먼저 맞추고 yaw 는 늦게 따라간다.
+            %  선회 중 yaw 가 늦으면 측정 yaw 로 돌린 body 오차가 psi_des 기준 명령과 어긋나므로 PX4 에서는 'desired' 권장
+            obj.err_yaw_desired = isfield(cfg, 'Err_Yaw') && strcmpi(cfg.Err_Yaw, 'desired');
+
+            % 평형점 지연 보정: 기울어진 채 수직축으로 회전하려면 피치 각속도 q_eq = |v kappa| sin|phi_eq| 가 필요하고,
+            %  각도 P 자세 루프(K_att)는 이를 만들려고 정상상태 피치 오차 q_eq / K_att 를 남긴다 -> 그만큼 명령 피치에 미리 더함
+            obj.eq_delay_comp = isfield(cfg, 'Eq_Delay_Comp') && cfg.Eq_Delay_Comp;
+            if isfield(cfg, 'K_att') && ~isempty(cfg.K_att)
+                obj.K_att = cfg.K_att;
+            else
+                obj.K_att = 6.5;
+            end
             obj.Reset();
         end
         
@@ -119,6 +141,9 @@ classdef PositionCtrl < handle
             end
             
             x = state(1); y = state(2); z = state(3); psi = state(9); 
+            if obj.err_yaw_desired
+                psi = obj.psi_des;      % 오차 회전을 명령 좌표계(목표 yaw)와 맞춤
+            end
             
             % 2. 글로벌 오차 계산
             obj.x_err = obj.x_des - x; 
@@ -193,7 +218,13 @@ classdef PositionCtrl < handle
                 delta_U1 = -(kP_z * obj.z_err + kI_z * obj.z_err_sum + kD_z * dz_err);
                 
                 % 최종 지령 = 평형점(피드포워드) + 보상값
-                theta_des = 0 + delta_theta;
+                % 평형점 피치: 기본 0, 지연 보정 시 자세 루프 정상상태 오차만큼 기수를 미리 든다 (NED: +theta = 기수 들림)
+                theta_eq = 0;
+                if obj.eq_delay_comp && obj.use_feedforward
+                    q_eq     = abs(obj.v_des * obj.kappa_des) * sin(abs(phi_eq));
+                    theta_eq = q_eq / obj.K_att;
+                end
+                theta_des = theta_eq + delta_theta;
                 phi_des   = phi_eq + delta_phi;
                 U1_des    = U1_eq + delta_U1;
                 

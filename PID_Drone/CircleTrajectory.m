@@ -242,7 +242,11 @@ classdef CircleTrajectory < handle
                 error(['CircleTrajectory: height_order 는 셀 배열 {''up'', ''down''} 이나 문자열 배열 ["up", "down"] 으로 주세요. ' ...
                        '([''up'', ''down''] 처럼 대괄호에 문자를 넣으면 ''updown'' 하나로 붙어 버립니다.)']);
             end
-            order = cellstr(order);
+            if isstring(order)
+                order = cellstr(order);
+            elseif iscell(order)
+                order = cellfun(@char, order, 'UniformOutput', false);   % {"up"} 처럼 셀 안의 string 도 허용
+            end
             dirs = zeros(1, numel(order));
             for i = 1:numel(order)
                 switch lower(strtrim(order{i}))

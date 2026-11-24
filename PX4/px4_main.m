@@ -55,6 +55,10 @@ cfg.height_settle_band = 0.10;     % 정착시간 판정 band (계단 크기 대
 cfg.Z_D_on_measurement = true;     % z 미분항: true = 측정 속도 기반 -K_D*vz (계단 시 미분 킥 없음), false = 기존 오차 미분
 cfg.Use_NDI = false;               % true: 기존 비선형 역산(NDI) 분기. false(기본): 평형점 + 선형 보정 구조
                                    %   이 구조에서 Feedforward = false -> 호버 평형점 고정 = 피드포워드 없는 고정 PID
+cfg.max_angle_deg = 45;            % PositionCtrl 롤·피치 명령 제한 [deg] (phi_eq 35~40 deg 선회는 45~50 필요, 기존 고정값 30)
+cfg.Err_Yaw = 'desired';           % 오차 회전 yaw: 'desired'(목표 yaw, PX4 자세 명령 좌표계와 일치) / 'measured'(기존)
+cfg.Eq_Delay_Comp = false;         % 평형점 지연 보정: 피치 += |v kappa| sin|phi_eq| / K_att
+cfg.K_att = 6.5;                   % PX4 자세 각도 P (MC_PITCH_P, SITL 에서 param show 로 확인)
 cfg.straight_distance = 60;        % curvature = 0 (직선 모드)일 때 고도 단계 하나당 직진 거리 [m] (n_laps 대신 사용)
 
 cfg.auto_save = true;
