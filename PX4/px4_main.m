@@ -55,7 +55,7 @@ cfg.height_settle_band = 0.10;     % 정착시간 판정 band (계단 크기 대
 cfg.Z_D_on_measurement = true;     % z 미분항: true = 측정 속도 기반 -K_D*vz (계단 시 미분 킥 없음), false = 기존 오차 미분
 cfg.Use_NDI = false;               % true: 기존 비선형 역산(NDI) 분기. false(기본): 평형점 + 선형 보정 구조
                                    %   이 구조에서 Feedforward = false -> 호버 평형점 고정 = 피드포워드 없는 고정 PID
-cfg.straight_ref_curvature = 0.1;  % curvature = 0 (직선 모드)일 때 이 곡률의 원 궤적과 같은 길이·시각으로 직진
+cfg.straight_distance = 30;        % curvature = 0 (직선 모드)일 때 고도 단계 하나당 직진 거리 [m] (n_laps 대신 사용)
 
 cfg.auto_save = true;
 cfg.play_animation = false;

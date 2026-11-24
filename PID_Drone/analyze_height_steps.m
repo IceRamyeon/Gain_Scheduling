@@ -26,7 +26,7 @@ function [S, lines] = analyze_height_steps(log_data, cfg)
     % 계단 시각 (CircleTrajectory 와 같은 식)
     if isfield(cfg, 'cruise_time'), cruise_t = cfg.cruise_time; else, cruise_t = 0; end
     t_c0    = 2 * cfg.accel_dist_per_speed + cruise_t;
-    T_level = cfg.n_laps * 2 * pi * circle_ref_radius(cfg) / cfg.target_speed;   % 직선 모드도 같은 길이
+    T_level = circle_level_length(cfg) / cfg.target_speed;   % 원: n_laps 바퀴, 직선: straight_distance
     t_steps = t_c0 + (1:numel(dirs)) * T_level;
 
     t   = log_data.t_hist(:)';
@@ -101,7 +101,7 @@ function [S, lines] = analyze_height_steps(log_data, cfg)
 
     %% 출력
     if isempty(S), return; end
-    lines{end+1, 1} = sprintf('[고도 계단] step %.2f m, 단계마다 %d바퀴, 정착 band +-%.0f%%', dh_abs, cfg.n_laps, band_rel * 100);
+    lines{end+1, 1} = sprintf('[고도 계단] step %.2f m, 단계마다 %.1f m (%.1f s), 정착 band +-%.0f%%', dh_abs, circle_level_length(cfg), T_level, band_rel * 100);
     lines{end+1, 1} = ' #  방향  t_step   h [m]          t_r[s]  M_p[%]  t_s[s]  ss_err[m]  IAE/dh  cross_pk(pre)  along_pk(pre)  dU1_pk[N]  sat[%]';
     for j = 1:numel(S)
         s = S(j);

@@ -21,7 +21,8 @@ function finalize_and_save_results(log_data, cfg)
     if is_circle
         if isfield(cfg, 'cruise_time'), cruise_t = cfg.cruise_time; else, cruise_t = 0; end
         t_eval0  = 2 * cfg.accel_dist_per_speed + cruise_t;
-        t_eval1  = t_eval0 + circle_total_laps(cfg) * 2 * pi * circle_ref_radius(cfg) / cfg.target_speed;   % 고도 계단이 있으면 단계 수만큼 바퀴 증가
+        [~, L_seg] = circle_level_length(cfg);                   % 원(직선) 구간 전체 길이 (고도 계단 단계 수 반영)
+        t_eval1  = t_eval0 + L_seg / cfg.target_speed;
         eval_idx = t_hist >= t_eval0 & t_hist <= t_eval1;
         if ~any(eval_idx)
             warning('원 구간(t = %.2f ~ %.2f s) 데이터가 없어 전체 구간으로 평가합니다.', t_eval0, t_eval1);
@@ -59,23 +60,25 @@ function finalize_and_save_results(log_data, cfg)
     % 헤더: 경로·모드 정보 (콘솔에는 이미 앞에서 출력되므로 .txt 에만 기록)
     hdr = {};
     if is_circle
-        R_c   = circle_ref_radius(cfg);                    % 직선 모드(curvature = 0)면 기준 원 반지름
+        R_c   = 1 / abs(cfg.curvature);                    % 직선 모드(curvature = 0)면 Inf
         L_acc = cfg.accel_dist_per_speed * cfg.target_speed;
         a_acc = cfg.target_speed^2 / (2 * L_acc);
         t_acc = 2 * cfg.accel_dist_per_speed;
-        L_cir = circle_total_laps(cfg) * 2 * pi * R_c;
+        [~, L_cir] = circle_level_length(cfg);
         if isfield(cfg, 'cruise_time'), cruise_t = cfg.cruise_time; else, cruise_t = 0; end
         L_crs = cfg.target_speed * cruise_t;                % 등속 직선
         L_ext = L_acc + L_crs;                              % 탈출 직선 (초반 직선과 같은 길이)
         t_c0  = t_acc + cruise_t;
         t_c1  = t_c0 + L_cir / cfg.target_speed;
         tf_c  = t_c1 + L_ext / cfg.target_speed;
-        hdr{end+1, 1} = sprintf('[CircleTrajectory] R = %.2f m, 가속 %.1f m (%.2f m/s^2, %.1f s), 등속 직선 %.1f m (%.1f s), 원 %d바퀴 %.1f m (%.1f ~ %.1f s), 탈출 직선 %.1f m, tf = %.1f s', ...
-            R_c, L_acc, a_acc, t_acc, L_crs, cruise_t, circle_total_laps(cfg), L_cir, t_c0, t_c1, L_ext, tf_c);
-        hdr{end+1, 1} = sprintf('경로 길이 %.1f m, 추종 시간 %.1f s', L_acc + L_crs + L_cir + L_ext, tf_c);
         if abs(cfg.curvature) < 1e-6
-            hdr{end+1, 1} = sprintf('직선 모드 (curvature = 0): 위 원 구간 길이만큼 직진 (기준 반지름 %.2f m)', R_c);
+            hdr{end+1, 1} = sprintf('[CircleTrajectory] 직선 모드: 가속 %.1f m (%.2f m/s^2, %.1f s), 등속 직선 %.1f m (%.1f s), 계단 구간 직진 %.1f m (%.1f ~ %.1f s), 탈출 직선 %.1f m, tf = %.1f s', ...
+                L_acc, a_acc, t_acc, L_crs, cruise_t, L_cir, t_c0, t_c1, L_ext, tf_c);
+        else
+            hdr{end+1, 1} = sprintf('[CircleTrajectory] R = %.2f m, 가속 %.1f m (%.2f m/s^2, %.1f s), 등속 직선 %.1f m (%.1f s), 원 %d바퀴 %.1f m (%.1f ~ %.1f s), 탈출 직선 %.1f m, tf = %.1f s', ...
+                R_c, L_acc, a_acc, t_acc, L_crs, cruise_t, circle_total_laps(cfg), L_cir, t_c0, t_c1, L_ext, tf_c);
         end
+        hdr{end+1, 1} = sprintf('경로 길이 %.1f m, 추종 시간 %.1f s', L_acc + L_crs + L_cir + L_ext, tf_c);
     else
         hdr{end+1, 1} = sprintf('경로: spline (pathGen), 추종 시간 %.1f s', t_hist(end) - t_hist(1));
     end

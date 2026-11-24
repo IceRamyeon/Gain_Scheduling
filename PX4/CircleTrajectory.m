@@ -20,9 +20,9 @@ classdef CircleTrajectory < handle
     %   - 수평 경로·시간·곡률은 고도와 무관 (경로 길이 s 는 수평 길이 기준)
     %
     %   직선 모드 (curvature = 0)
-    %   - 원 대신 직선을 날되, 길이·시각은 ref_curvature(기본 0.1) 원 궤적과 똑같이 맞춘다
-    %     (원 구간 자리에 같은 길이의 직선: n_laps_total x 2*pi/ref_curvature)
-    %   - 같은 속도의 kappa = ref_curvature 실험과 계단 시각·평가 구간이 일치 -> 직진(phi_eq = 0) 기준 응답으로 비교
+    %   - 원 구간 자리에 직선을 난다. 고도 단계 하나당 straight_distance [m] (기본 30 m) 를 직진하고 다음 계단으로
+    %     -> 직선 구간 전체 길이 = straight_distance x (numel(height_order) + 1), n_laps 는 쓰지 않음
+    %   - 직진(phi_eq = 0) 기준 응답 측정용
 
     properties
         init_pos            % 3x1 시작점
@@ -31,12 +31,13 @@ classdef CircleTrajectory < handle
         R                   % 반지름 [m]
         n_laps              % 고도 단계 하나당 바퀴 수 (고도 계단이 없으면 전체 바퀴 수)
         n_laps_total        % 원 전체 바퀴 수 = n_laps x 고도 단계 수
-        is_straight         % true: 직선 모드 (curvature = 0, 길이는 ref_curvature 원과 같음)
-        ref_curvature       % 직선 모드에서 길이를 맞출 기준 곡률 [1/m]
+        is_straight         % true: 직선 모드 (curvature = 0)
+        straight_distance   % 직선 모드에서 고도 단계 하나당 직진 거리 [m]
+        L_level             % 고도 단계 하나의 경로 길이 [m] (원: n_laps x 2 pi R, 직선: straight_distance)
         L_acc               % 가속 구간 길이 [m] = accel_dist_per_speed * v
         a_acc               % 가속도 [m/s^2] = v^2 / (2 L_acc)
         t_acc               % 가속 시간 [s] = 2 L_acc / v
-        L_circle            % 원 구간 총 길이 [m]
+        L_circle            % 원 구간 총 길이 [m] (직선 모드: 직선 구간 총 길이)
         cruise_time         % 가속 후 원 진입 전 등속 직선 시간 [s]
         L_cruise            % 등속 직선 길이 [m] = v * cruise_time
         L_str               % 초반 직선 전체 길이 [m] = L_acc + L_cruise (원 진입 지점)
@@ -62,24 +63,24 @@ classdef CircleTrajectory < handle
     end
 
     methods
-        function obj = CircleTrajectory(init_pos, target_speed, curvature, accel_dist_per_speed, n_laps, lookahead_dist, kappa_tau, cruise_time, height_step, height_order, ref_curvature)
+        function obj = CircleTrajectory(init_pos, target_speed, curvature, accel_dist_per_speed, n_laps, lookahead_dist, kappa_tau, cruise_time, height_step, height_order, straight_distance)
             if nargin < 6, lookahead_dist = []; end
             if nargin < 7 || isempty(kappa_tau), kappa_tau = 0; end
             if nargin < 8 || isempty(cruise_time), cruise_time = 0; end
             if nargin < 9 || isempty(height_step), height_step = 0; end
             if nargin < 10, height_order = {}; end
-            if nargin < 11 || isempty(ref_curvature), ref_curvature = 0.1; end
-            obj.is_straight   = abs(curvature) < 1e-6;
-            obj.ref_curvature = abs(ref_curvature);
-            if obj.is_straight && ~(obj.ref_curvature > 0)
-                error('CircleTrajectory: 직선 모드(curvature = 0)에는 ref_curvature > 0 이 필요합니다.');
+            if nargin < 11 || isempty(straight_distance), straight_distance = 30; end
+            obj.is_straight       = abs(curvature) < 1e-6;
+            obj.straight_distance = straight_distance;
+            if obj.is_straight && ~(straight_distance > 0)
+                error('CircleTrajectory: 직선 모드(curvature = 0)에는 straight_distance > 0 [m] 이 필요합니다.');
             end
 
             obj.init_pos = init_pos(:);
             obj.v        = target_speed;
             if obj.is_straight
                 obj.kappa = 0;
-                obj.R     = 1 / obj.ref_curvature;                      % 길이 계산용 (같은 길이의 기준 원 반지름)
+                obj.R     = Inf;
             else
                 obj.kappa = curvature;
                 obj.R     = 1 / abs(curvature);
@@ -101,7 +102,12 @@ classdef CircleTrajectory < handle
             obj.a_acc = target_speed^2 / (2 * obj.L_acc);
             obj.t_acc = 2 * obj.L_acc / target_speed;
 
-            obj.L_circle     = obj.n_laps_total * 2 * pi * obj.R;
+            if obj.is_straight
+                obj.L_level = straight_distance;                        % 직선: 단계마다 straight_distance
+            else
+                obj.L_level = n_laps * 2 * pi * obj.R;                  % 원: 단계마다 n_laps 바퀴
+            end
+            obj.L_circle     = obj.L_level * (numel(dirs) + 1);
             obj.cruise_time  = cruise_time;
             obj.L_cruise     = target_speed * cruise_time;              % 목표 속력 도달 후 등속 직선
             obj.L_str        = obj.L_acc + obj.L_cruise;                % 원 진입 지점까지의 직선 길이
@@ -115,20 +121,20 @@ classdef CircleTrajectory < handle
             obj.kappa_tau      = kappa_tau;
             obj.kappa_raw = 0; obj.kappa_ff = []; obj.t_kappa_prev = []; obj.last_kappa = 0;
 
-            % 계단 위치·시각: 고도 단계마다 n_laps 바퀴
-            L_level     = n_laps * 2 * pi * obj.R;
-            obj.s_steps = obj.L_str + (1:numel(dirs)) * L_level;
-            obj.t_steps = obj.t_circ0 + (1:numel(dirs)) * L_level / target_speed;
+            % 계단 위치·시각: 고도 단계마다 L_level (원 n_laps 바퀴 또는 직선 straight_distance)
+            obj.s_steps = obj.L_str + (1:numel(dirs)) * obj.L_level;
+            obj.t_steps = obj.t_circ0 + (1:numel(dirs)) * obj.L_level / target_speed;
 
             if obj.is_straight
-                fprintf('[CircleTrajectory] 직선 모드: kappa = %.3f 원 %d바퀴와 같은 길이 %.1f m 를 직진\n', ...
-                    obj.ref_curvature, obj.n_laps_total, obj.L_circle);
-            end
+                fprintf('[CircleTrajectory] 직선 모드: 가속 %.1f m, 등속 직선 %.1f m, 계단 구간 %.1f m (단계마다 %.1f m, %.1f ~ %.1f s), 탈출 직선 %.1f m, tf = %.1f s\n', ...
+                    obj.L_acc, obj.L_cruise, obj.L_circle, obj.L_level, obj.t_circ0, obj.t_circ1, obj.L_exit, obj.tf);
+            else
             fprintf('[CircleTrajectory] R = %.2f m, 가속 %.1f m (%.2f m/s^2, %.1f s), 등속 직선 %.1f m (%.1f s), 원 %d바퀴 %.1f m (%.1f ~ %.1f s), 탈출 직선 %.1f m, tf = %.1f s\n', ...
                 obj.R, obj.L_acc, obj.a_acc, obj.t_acc, obj.L_cruise, cruise_time, obj.n_laps_total, obj.L_circle, obj.t_circ0, obj.t_circ1, obj.L_exit, obj.tf);
+            end
             if ~isempty(dirs)
-                fprintf('[CircleTrajectory] 고도 계단: %s m (단계마다 %d바퀴, 계단 시각 %s s)\n', ...
-                    strjoin(arrayfun(@(h) sprintf('%.2f', h), obj.h_levels, 'UniformOutput', false), ' > '), n_laps, ...
+                fprintf('[CircleTrajectory] 고도 계단: %s m (단계마다 %.1f m, 계단 시각 %s s)\n', ...
+                    strjoin(arrayfun(@(h) sprintf('%.2f', h), obj.h_levels, 'UniformOutput', false), ' > '), obj.L_level, ...
                     strjoin(arrayfun(@(x) sprintf('%.1f', x), obj.t_steps, 'UniformOutput', false), ', '));
             end
         end
