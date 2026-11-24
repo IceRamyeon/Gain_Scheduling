@@ -140,9 +140,12 @@ cfg.px4.thr_limits     = [0.1 0.9];
 cfg.px4.tiltmax_air_deg = 50;     % PX4 MPC_TILTMAX_AIR [deg] 로 설정 (기본 45, NaN 이면 건드리지 않음). SITL 은 값이 저장되어 유지됨
 cfg.px4.abort_err      = 8.0;     % 위치 오차가 이보다 크면 중단 -> PX4 호버·착륙 [m]
 cfg.px4.abort_tilt_deg = 60;      % 기울기가 이보다 크면 중단 [deg]
-cfg.px4.return_to_start = true;   % 주행이 끝나면(중단 포함) 프리롤 시작점으로 복귀 (PX4 Hold 모드, 호버 유지)
-cfg.px4.return_speed   = 3.0;    % 복귀 이동 속도 [m/s] (DO_REPOSITION 실패 시 MATLAB 오프보드 복귀에 사용)
-cfg.px4.land_at_end    = false;  % true 면 복귀 후 착륙 (false: 이륙 상태로 호버 유지, 착륙은 QGC 등에서 직접)
+cfg.px4.end_mode       = 'land_plot_return';  % 주행 종료 후 동작
+                                   %   'land_plot_return': 그 자리 착륙 -> disarm 후 ULog 결과창·저장 -> 다시 이륙해 프리롤 시작점 복귀·호버
+                                   %   'land_plot'       : 그 자리 착륙 -> ULog 결과창·저장 (예전 방식)
+                                   %   'hold_return'     : PX4 Hold 로 프리롤 시작점 복귀·호버 (착륙 안 함, 결과는 MATLAB 기록 기준)
+cfg.px4.return_speed   = 3.0;    % 복귀 이동 속도 [m/s] (MATLAB 오프보드 복귀)
+cfg.px4.ulog_close_wait = 4;     % disarm 후 ULog 파일이 닫힐 때까지 기다리는 시간 [s]
 cfg.px4.result_dir     = fullfile(here, 'results');
 
 %% 1-1. PPO 모드 설정 (Sehyun 브랜치 Drone_LPV/PX4/RL_DroneEnv_PX4 + PositionCtrl_PX4 와 같은 값, 커밋 0bd9cfd)
@@ -213,17 +216,35 @@ save(metaFile, 'meta');
 fprintf('비행 기록 저장: %s\n', metaFile);
 disp('ULog 위치(SITL): ~/PX4-Autopilot/build/px4_sitl_default/rootfs/fs/log/<날짜>/<시간>.ulg');
 
-%% 6. 결과 그래프·저장 (평가 구간 직후, 드론은 PX4 가 복귀·호버 중)
-%  - 착륙 전이라 ULog 가 아직 닫히지 않으므로, MATLAB 비행 기록(meta.log)으로 바로 그린다
-%  - ULog 기반 상세 그래프(PX4 토크 등)는 착륙 후 plot_px4_result 를 실행
-if isnan(meta.t4_start) || isnan(meta.t4_end)
-    warning('④ 경로 추종 구간 기록이 없어 결과 그래프를 그리지 않습니다.');
-else
-    log_data = meta_to_log_data(meta, 0.02);
-    run_time = datetime('now');
-    cfg_plot = meta.cfg;
-    cfg_plot.save_dir = fullfile(cfg.px4.result_dir, 'plots', ...
-        char(datetime(run_time, 'Format', 'yyyy-MM-dd')), char(datetime(run_time, 'Format', 'HH_mm_ss')));
-    disp('※ 결과는 MATLAB 비행 기록 기준입니다 (U1 = PositionCtrl 추력 명령, U2~U4 없음). ULog 기준 그래프는 착륙 후 plot_px4_result.');
-    finalize_and_save_results(log_data, cfg_plot);
+%% 6. 결과 그래프·저장 + (선택) 재이륙·복귀
+switch meta.end_mode
+    case {'land_plot_return', 'land_plot'}
+        % 착륙 -> disarm 되면 ULog 가 닫힘 -> ULog 기준 결과 (plot_px4_result)
+        disp('착륙·disarm 대기 중...');
+        if link.waitDisarmed(120)
+            pause(cfg.px4.ulog_close_wait);
+            try
+                plot_px4_result;
+            catch err
+                warning('ULog 결과 처리 실패: %s', err.message);
+            end
+        else
+            warning('disarm 을 확인하지 못했습니다 (120 s). 결과 처리를 건너뜁니다.');
+        end
+        if strcmp(meta.end_mode, 'land_plot_return')
+            px4_return_to_start(link, meta.cfg, meta);       % 다시 이륙해 프리롤 시작점 복귀·호버
+        end
+    case 'hold_return'
+        % 착륙 전이라 ULog 가 닫히지 않으므로 MATLAB 비행 기록(meta.log)으로 바로 그린다
+        if isnan(meta.t4_start) || isnan(meta.t4_end)
+            warning('④ 경로 추종 구간 기록이 없어 결과 그래프를 그리지 않습니다.');
+        else
+            log_data = meta_to_log_data(meta, 0.02);
+            run_time = datetime('now');
+            cfg_plot = meta.cfg;
+            cfg_plot.save_dir = fullfile(cfg.px4.result_dir, 'plots', ...
+                char(datetime(run_time, 'Format', 'yyyy-MM-dd')), char(datetime(run_time, 'Format', 'HH_mm_ss')));
+            disp('※ 결과는 MATLAB 비행 기록 기준입니다 (U1 = PositionCtrl 추력 명령, U2~U4 없음). ULog 기준 그래프는 착륙 후 plot_px4_result.');
+            finalize_and_save_results(log_data, cfg_plot);
+        end
 end

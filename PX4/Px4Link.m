@@ -172,6 +172,34 @@ classdef Px4Link < handle
             end
         end
 
+        %% 시동 상태 (HEARTBEAT base_mode 의 MAV_MODE_FLAG_SAFETY_ARMED = 128). 수신 실패면 NaN
+        function armed = isArmed(obj, timeout_s)
+            if nargin < 2, timeout_s = 2; end
+            armed = NaN;
+            sub = mavlinksub(obj.mav, obj.client, "HEARTBEAT", "BufferSize", 1);
+            t0 = tic;
+            while toc(t0) < timeout_s
+                mm = latestmsgs(sub, 1);
+                if ~isempty(mm)
+                    armed = bitand(uint32(mm.Payload.base_mode), uint32(128)) > 0;
+                    break;
+                end
+                pause(0.05);
+            end
+            try, delete(sub); catch, end
+        end
+
+        %% disarm 될 때까지 대기 (착륙 후 자동 disarm). 시간 안에 disarm 되면 true
+        function ok = waitDisarmed(obj, timeout_s)
+            if nargin < 2, timeout_s = 90; end
+            ok = false; t0 = tic;
+            while toc(t0) < timeout_s
+                a = obj.isArmed(1.5);              % HEARTBEAT 는 1 Hz
+                if ~isnan(a) && ~a, ok = true; return; end
+                pause(0.5);
+            end
+        end
+
         %% 전역 위치 (GLOBAL_POSITION_INT) -> [위도 deg, 경도 deg, 고도 AMSL m], 실패하면 NaN
         function g = getGlobal(obj, timeout_s, keepalive)
             if nargin < 2, timeout_s = 2; end
