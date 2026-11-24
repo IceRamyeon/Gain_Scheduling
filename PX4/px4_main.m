@@ -37,7 +37,7 @@ cfg.kappa_tau = 0;                  % 전방 곡률 댐핑 시정수 [s] (1차 �
 
 % 경로 종류 (PID_Drone/main.m 과 동일)
 cfg.path_type = 'circle';          % 'circle' : 정지 -> 직선 가속 -> 원 궤적 -> 직선 탈출,  'spline' : 기존 pathGen 경유점 궤적
-cfg.curvature = 0.15;               % 원 곡률 [1/m] (반지름 = 1/|kappa|, 부호: + 는 +y 쪽 선회, - 는 -y 쪽)
+cfg.curvature = 0.15;               % 원 곡률 [1/m] (반지름 = 1/|kappa|, 부호: + 는 +y 쪽 선회, - 는 -y 쪽, 0 = 직선 모드)
 cfg.n_laps = 7;                    % 원 바퀴 수 (다 돌면 초반 직선과 같은 길이를 직진한 뒤 비행 종료)
 cfg.accel_dist_per_speed = 3.0;    % 가속 구간 길이 = 이 값 x target_speed [m]  (가속도 = v/(2*이 값), 가속 시간 = 2*이 값 [s])
 cfg.cruise_time = 3.0;             % 가속 후 원 진입 전 등속 직선 시간 [s] (목표 속력으로 안정된 뒤 원 진입)
@@ -53,6 +53,9 @@ cfg.height_step  = 0.3;            % 계단 크기 [m] (포화 없는 선형 범
 cfg.height_order = {};             % 예: {'up', 'up', 'down'} -> 6.0 > 6.3 > 6.6 > 6.3 m
 cfg.height_settle_band = 0.10;     % 정착시간 판정 band (계단 크기 대비 비율)
 cfg.Z_D_on_measurement = true;     % z 미분항: true = 측정 속도 기반 -K_D*vz (계단 시 미분 킥 없음), false = 기존 오차 미분
+cfg.Use_NDI = false;               % true: 기존 비선형 역산(NDI) 분기. false(기본): 평형점 + 선형 보정 구조
+                                   %   이 구조에서 Feedforward = false -> 호버 평형점 고정 = 피드포워드 없는 고정 PID
+cfg.straight_ref_curvature = 0.1;  % curvature = 0 (직선 모드)일 때 이 곡률의 원 궤적과 같은 길이·시각으로 직진
 
 cfg.auto_save = true;
 cfg.play_animation = false;
@@ -107,7 +110,7 @@ cfg.Izz = 0.040;
 %     z : KP = 4*1 + 2 = 6, KI = 2*1 = 2, KD = 4 [m/s^2 단위] -> NDI 모드의 U1 [N] 단위로 m 을 곱함
 %   주의: Feedforward 모드의 PositionCtrl 은 z 게인을 xy 와 같은 계수(P_x, I_x, D_x)에서 만든다
 %         (kP_z = P_x * g * m / cos(phi_eq)) -> z 는 가속도 단위 2.11 / 0.38 / 1.99 가 되어 PX4 z(6 / 2 / 4)보다 느리다
-%   P_z, I_z, D_z 는 Feedforward = false (NDI) 일 때만 쓰임
+%   P_z, I_z, D_z 는 Use_NDI = true 일 때만 쓰임 (NDI 분기는 P_x 등도 가속도 단위로 씀 -> 지금 값(rad 단위)과 g 배 차이)
 %
 %   [이전 값 1] 4차 특성방정식 설계 (PX4 자세 루프 a = 4 rad/s, 극점 -1, -1, -0.5, -1.5)
 %     xy: P 0.089, I 0.019, D 0.147 [rad 단위],  z: P 4.0, I 0.001, D 0.0

@@ -59,8 +59,9 @@
                 if isfield(cfg, 'cruise_time'), cruise_t = cfg.cruise_time; else, cruise_t = 0; end
                 if isfield(cfg, 'height_step'),  h_step  = cfg.height_step;  else, h_step  = 0;  end   % 고도 계단 크기 [m]
                 if isfield(cfg, 'height_order'), h_order = cfg.height_order; else, h_order = {}; end  % {'up','down',...}
+                if isfield(cfg, 'straight_ref_curvature'), k_ref = cfg.straight_ref_curvature; else, k_ref = 0.1; end  % curvature = 0 직선 모드의 길이 기준
                 obj.trajCtrl = CircleTrajectory(initStates(1:3), cfg.target_speed, cfg.curvature, ...
-                                                cfg.accel_dist_per_speed, cfg.n_laps, kappa_lk, kappa_tau, cruise_t, h_step, h_order);
+                                                cfg.accel_dist_per_speed, cfg.n_laps, kappa_lk, kappa_tau, cruise_t, h_step, h_order, k_ref);
             else
                 obj.trajCtrl = TrajectoryPlanner(initStates(1:3), waypoints, cfg.target_speed, kappa_lk, kappa_tau);
             end            

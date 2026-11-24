@@ -18,6 +18,11 @@ classdef CircleTrajectory < handle
     %     예: h0 = 6, step = 0.3, {'up','up','down'} -> 6.0 > 6.3 > 6.6 > 6.3 m
     %   - 마지막 고도를 유지한 채 탈출 직선을 날고 끝난다 (h0 로 돌아가지 않음)
     %   - 수평 경로·시간·곡률은 고도와 무관 (경로 길이 s 는 수평 길이 기준)
+    %
+    %   직선 모드 (curvature = 0)
+    %   - 원 대신 직선을 날되, 길이·시각은 ref_curvature(기본 0.1) 원 궤적과 똑같이 맞춘다
+    %     (원 구간 자리에 같은 길이의 직선: n_laps_total x 2*pi/ref_curvature)
+    %   - 같은 속도의 kappa = ref_curvature 실험과 계단 시각·평가 구간이 일치 -> 직진(phi_eq = 0) 기준 응답으로 비교
 
     properties
         init_pos            % 3x1 시작점
@@ -26,6 +31,8 @@ classdef CircleTrajectory < handle
         R                   % 반지름 [m]
         n_laps              % 고도 단계 하나당 바퀴 수 (고도 계단이 없으면 전체 바퀴 수)
         n_laps_total        % 원 전체 바퀴 수 = n_laps x 고도 단계 수
+        is_straight         % true: 직선 모드 (curvature = 0, 길이는 ref_curvature 원과 같음)
+        ref_curvature       % 직선 모드에서 길이를 맞출 기준 곡률 [1/m]
         L_acc               % 가속 구간 길이 [m] = accel_dist_per_speed * v
         a_acc               % 가속도 [m/s^2] = v^2 / (2 L_acc)
         t_acc               % 가속 시간 [s] = 2 L_acc / v
@@ -55,18 +62,28 @@ classdef CircleTrajectory < handle
     end
 
     methods
-        function obj = CircleTrajectory(init_pos, target_speed, curvature, accel_dist_per_speed, n_laps, lookahead_dist, kappa_tau, cruise_time, height_step, height_order)
+        function obj = CircleTrajectory(init_pos, target_speed, curvature, accel_dist_per_speed, n_laps, lookahead_dist, kappa_tau, cruise_time, height_step, height_order, ref_curvature)
             if nargin < 6, lookahead_dist = []; end
             if nargin < 7 || isempty(kappa_tau), kappa_tau = 0; end
             if nargin < 8 || isempty(cruise_time), cruise_time = 0; end
             if nargin < 9 || isempty(height_step), height_step = 0; end
             if nargin < 10, height_order = {}; end
-            if abs(curvature) < 1e-6, error('CircleTrajectory: curvature 는 0 이 아니어야 합니다.'); end
+            if nargin < 11 || isempty(ref_curvature), ref_curvature = 0.1; end
+            obj.is_straight   = abs(curvature) < 1e-6;
+            obj.ref_curvature = abs(ref_curvature);
+            if obj.is_straight && ~(obj.ref_curvature > 0)
+                error('CircleTrajectory: 직선 모드(curvature = 0)에는 ref_curvature > 0 이 필요합니다.');
+            end
 
             obj.init_pos = init_pos(:);
             obj.v        = target_speed;
-            obj.kappa    = curvature;
-            obj.R        = 1 / abs(curvature);
+            if obj.is_straight
+                obj.kappa = 0;
+                obj.R     = 1 / obj.ref_curvature;                      % 길이 계산용 (같은 길이의 기준 원 반지름)
+            else
+                obj.kappa = curvature;
+                obj.R     = 1 / abs(curvature);
+            end
             obj.n_laps   = n_laps;
 
             % 고도 계단 단계
@@ -103,6 +120,10 @@ classdef CircleTrajectory < handle
             obj.s_steps = obj.L_str + (1:numel(dirs)) * L_level;
             obj.t_steps = obj.t_circ0 + (1:numel(dirs)) * L_level / target_speed;
 
+            if obj.is_straight
+                fprintf('[CircleTrajectory] 직선 모드: kappa = %.3f 원 %d바퀴와 같은 길이 %.1f m 를 직진\n', ...
+                    obj.ref_curvature, obj.n_laps_total, obj.L_circle);
+            end
             fprintf('[CircleTrajectory] R = %.2f m, 가속 %.1f m (%.2f m/s^2, %.1f s), 등속 직선 %.1f m (%.1f s), 원 %d바퀴 %.1f m (%.1f ~ %.1f s), 탈출 직선 %.1f m, tf = %.1f s\n', ...
                 obj.R, obj.L_acc, obj.a_acc, obj.t_acc, obj.L_cruise, cruise_time, obj.n_laps_total, obj.L_circle, obj.t_circ0, obj.t_circ1, obj.L_exit, obj.tf);
             if ~isempty(dirs)
@@ -133,7 +154,11 @@ classdef CircleTrajectory < handle
         function [p, T, k] = pose_at(obj, s)
             s = max(0, min(s, obj.total_length));
             s_exit = obj.L_str + obj.L_circle;                          % 원 탈출 지점까지의 거리
-            if s <= obj.L_str                                           % 가속 + 등속 직선
+            if obj.is_straight                                          % 직선 모드: 전 구간 +x 직진
+                p = obj.init_pos + [s; 0; 0];
+                T = [1; 0; 0];
+                k = 0;
+            elseif s <= obj.L_str                                       % 가속 + 등속 직선
                 p = obj.init_pos + [s; 0; 0];
                 T = [1; 0; 0];
                 k = 0;

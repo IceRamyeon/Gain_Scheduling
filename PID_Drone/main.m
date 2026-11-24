@@ -14,7 +14,7 @@ cfg.target_speed = 4;              % Target speed (m/s)
 
 % 경로 종류
 cfg.path_type = 'circle';          % 'circle' : 정지 -> 직선 가속 -> 원 궤적 -> 직선 탈출,  'spline' : 기존 pathGen 경유점 궤적
-cfg.curvature = 0.2;               % 원 곡률 [1/m] (반지름 = 1/|kappa|, 부호: + 는 +y 쪽 선회, - 는 -y 쪽)
+cfg.curvature = 0.2;               % 원 곡률 [1/m] (반지름 = 1/|kappa|, 부호: + 는 +y 쪽 선회, - 는 -y 쪽, 0 = 직선 모드)
 cfg.n_laps = 5;                    % 원 바퀴 수 (다 돌면 초반 직선과 같은 길이를 직진한 뒤 시뮬레이션 종료)
 cfg.accel_dist_per_speed = 3.0;    % 가속 구간 길이 = 이 값 x target_speed [m]  (가속도 = v/(2*이 값), 가속 시간 = 2*이 값 [s])
 cfg.cruise_time = 3.0;             % 가속 후 원 진입 전 등속 직선 시간 [s] (목표 속력으로 안정된 뒤 원 진입)
@@ -32,6 +32,9 @@ cfg.height_step  = 0.3;            % 계단 크기 [m] (포화 없는 선형 범
 cfg.height_order = {};             % 예: {'up', 'up', 'down'} -> 6.0 > 6.3 > 6.6 > 6.3 m
 cfg.height_settle_band = 0.10;     % 정착시간 판정 band (계단 크기 대비 비율)
 cfg.Z_D_on_measurement = true;     % z 미분항: true = 측정 속도 기반 -K_D*vz (계단 시 미분 킥 없음), false = 기존 오차 미분
+cfg.Use_NDI = false;               % true: 기존 비선형 역산(NDI) 분기. false(기본): 평형점 + 선형 보정 구조
+                                   %   이 구조에서 Feedforward = false -> 호버 평형점 고정 = 피드포워드 없는 고정 PID
+cfg.straight_ref_curvature = 0.1;  % curvature = 0 (직선 모드)일 때 이 곡률의 원 궤적과 같은 길이·시각으로 직진
 
 
 % Simulation 환경 및 저장 설정 추가

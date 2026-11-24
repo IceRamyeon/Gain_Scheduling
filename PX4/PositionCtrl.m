@@ -31,6 +31,7 @@ classdef PositionCtrl < handle
         use_feedforward  % Feedforward 사용 여부 플래그 추가
         use_z_scheduling  % Z축 게인 스케줄링 여부 플래그 추가
         z_D_on_meas       % true: z 미분항을 측정 속도(-vz)로 계산 (기준 고도 계단 시 미분 킥 제거)
+        use_ndi           % true: 기존 비선형 역산(NDI) 분기 사용 (cfg.Use_NDI)
 
         % Logging용 변수
         current_kP_z
@@ -58,6 +59,17 @@ classdef PositionCtrl < handle
                 obj.use_z_scheduling = cfg.Z_Gain_Scheduling;
             else
                 obj.use_z_scheduling = true; % 기본값은 3번 모델
+            end
+
+            % 제어기 구조
+            %   Use_NDI = false (기본): 평형점 + 선형 보정 구조
+            %       Feedforward = true  -> 평형점 phi_eq(v,kappa), U1_eq(v,kappa) 스케줄링
+            %       Feedforward = false -> 호버 평형점 고정 (phi_eq = 0, U1_eq = m g, b_z = 1/m) = 피드포워드 없는 고정 PID
+            %   Use_NDI = true: 기존 비선형 역산 분기 (고정 게인 P_x.. 를 가속도 단위로 사용 -> posGain 단위 주의)
+            if isfield(cfg, 'Use_NDI')
+                obj.use_ndi = cfg.Use_NDI;
+            else
+                obj.use_ndi = false;
             end
 
             % z 미분항 구성: true(기본) = 측정 속도 기반 K_D*(0 - vz),  false = 기존 오차 미분 K_D*d(z_err)/dt
@@ -140,11 +152,17 @@ classdef PositionCtrl < handle
             dex_body =  cos(psi) * dx_err + sin(psi) * dy_err;
             dey_body = -sin(psi) * dx_err + cos(psi) * dy_err;
             
-            if obj.use_feedforward
-                % 피드포워드 계산 (NED: +phi -> +y(오른쪽) 가속, kappa > 0 -> +y 쪽 선회)
-                %  -> 구심 가속도 v^2 kappa 를 롤로 만들려면 tan(phi_eq) = +v^2 kappa / g
-                phi_eq = atan((obj.v_des^2 * obj.kappa_des) / obj.g);
-                U1_eq = obj.m * sqrt(obj.g^2 + (obj.v_des^2 * obj.kappa_des)^2);
+            if ~obj.use_ndi
+                if obj.use_feedforward
+                    % 피드포워드 계산 (NED: +phi -> +y(오른쪽) 가속, kappa > 0 -> +y 쪽 선회)
+                    %  -> 구심 가속도 v^2 kappa 를 롤로 만들려면 tan(phi_eq) = +v^2 kappa / g
+                    phi_eq = atan((obj.v_des^2 * obj.kappa_des) / obj.g);
+                    U1_eq = obj.m * sqrt(obj.g^2 + (obj.v_des^2 * obj.kappa_des)^2);
+                else
+                    % 피드포워드 없음: 호버 평형점 고정 (선회에 필요한 롤·추력을 전부 PID 피드백이 만들어야 함)
+                    phi_eq = 0;
+                    U1_eq  = obj.m * obj.g;
+                end
                 
                 % X, Y축 게인 자동 산출
                 kP_xy = obj.lpv_a1 / obj.g;
@@ -152,7 +170,7 @@ classdef PositionCtrl < handle
                 kD_xy = obj.lpv_a2 / obj.g;
                 
                 % Z축 게인 산출 로직 분리
-                if obj.use_z_scheduling
+                if obj.use_z_scheduling && obj.use_feedforward
                     % 3번 모델: 기울기(phi_eq)에 따른 스케줄링 적용
                     b_z = cos(phi_eq) / obj.m;
                 else
