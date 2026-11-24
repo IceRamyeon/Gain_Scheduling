@@ -31,14 +31,14 @@ cfg.mode = 'MATLAB';
 cfg.start_with_yaw = true;
 cfg.dt = 0.01;                      % 기준값 표 계산 간격 (시뮬레이션 dt 와 동일하게)
 cfg.target_yaw = [];
-cfg.target_speed = 7;               % [m/s]
+cfg.target_speed = 10;               % [m/s]
 cfg.kappa_lookahead = 0.0;          % Feedforward 곡률 예견 거리 [m] (전방 이 지점의 순간 곡률 사용, [] 이면 전방 5초 평균)
 cfg.kappa_tau = 0;                  % 전방 곡률 댐핑 시정수 [s] (1차 지연, 0 이면 댐핑 없음)
 
 % 경로 종류 (PID_Drone/main.m 과 동일)
 cfg.path_type = 'circle';          % 'circle' : 정지 -> 직선 가속 -> 원 궤적 -> 직선 탈출,  'spline' : 기존 pathGen 경유점 궤적
-cfg.curvature = 0.168;               % 원 곡률 [1/m] (반지름 = 1/|kappa|, 부호: + 는 +y 쪽 선회, - 는 -y 쪽, 0 = 직선 모드)
-cfg.n_laps = 2;                    % 원 바퀴 수 (다 돌면 초반 직선과 같은 길이를 직진한 뒤 비행 종료)
+cfg.curvature = 0.0;               % 원 곡률 [1/m] (반지름 = 1/|kappa|, 부호: + 는 +y 쪽 선회, - 는 -y 쪽, 0 = 직선 모드)
+cfg.n_laps = 3;                    % 원 바퀴 수 (다 돌면 초반 직선과 같은 길이를 직진한 뒤 비행 종료)
 cfg.accel_dist_per_speed = 3.0;    % 가속 구간 길이 = 이 값 x target_speed [m]  (가속도 = v/(2*이 값), 가속 시간 = 2*이 값 [s])
 cfg.cruise_time = 5.0;             % 가속 후 원 진입 전 등속 직선 시간 [s] (목표 속력으로 안정된 뒤 원 진입)
 
@@ -50,7 +50,7 @@ cfg.Z_Gain_Scheduling = true;
 %   원 전체 바퀴 수 = n_laps x (numel(height_order) + 1). 비워 두면({}) 고도 고정 (기존 실험과 같음)
 %   주의: 셀 배열 {'up','up','down'} 이나 문자열 배열 ["up","up","down"] 로 쓸 것 (['up','down'] 은 'updown' 한 덩어리가 됨)
 cfg.height_step  = 0.3;            % 계단 크기 [m] (포화 없는 선형 범위: 추력 여유 / K_P,z 이하)
-cfg.height_order = {"up"};             % 예: {'up', 'up', 'down'} -> 6.0 > 6.3 > 6.6 > 6.3 m
+cfg.height_order = {"up","down","up","down","up","down"};             % 예: {'up', 'up', 'down'} -> 6.0 > 6.3 > 6.6 > 6.3 m
 cfg.height_settle_band = 0.10;     % 정착시간 판정 band (계단 크기 대비 비율)
 cfg.Z_D_on_measurement = true;     % z 미분항: true = 측정 속도 기반 -K_D*vz (계단 시 미분 킥 없음), false = 기존 오차 미분
 cfg.Use_NDI = false;               % true: 기존 비선형 역산(NDI) 분기. false(기본): 평형점 + 선형 보정 구조
@@ -59,7 +59,7 @@ cfg.max_angle_deg = 50;            % PositionCtrl 롤·피치 명령 제한 [deg
 cfg.Err_Yaw = 'desired';           % 오차 회전 yaw: 'desired'(목표 yaw, PX4 자세 명령 좌표계와 일치) / 'measured'(기존)
 cfg.Eq_Delay_Comp = false;         % 평형점 지연 보정: 피치 += |v kappa| sin|phi_eq| / K_att
 cfg.K_att = 6.5;                   % PX4 자세 각도 P (MC_PITCH_P, SITL 에서 param show 로 확인)
-cfg.straight_distance = 60;        % curvature = 0 (직선 모드)일 때 고도 단계 하나당 직진 거리 [m] (n_laps 대신 사용)
+cfg.straight_distance = 120;        % curvature = 0 (직선 모드)일 때 고도 단계 하나당 직진 거리 [m] (n_laps 대신 사용)
 
 cfg.auto_save = true;
 cfg.play_animation = false;
@@ -144,7 +144,7 @@ cfg.px4.end_mode       = 'land_plot_return';  % 주행 종료 후 동작
                                    %   'land_plot_return': 그 자리 착륙 -> disarm 후 ULog 결과창·저장 -> 다시 이륙해 프리롤 시작점 복귀 -> 착륙·disarm
                                    %   'land_plot'       : 그 자리 착륙 -> ULog 결과창·저장 (예전 방식)
                                    %   'hold_return'     : PX4 Hold 로 프리롤 시작점 복귀·호버 (착륙 안 함, 결과는 MATLAB 기록 기준)
-cfg.px4.return_speed   = 3.0;    % 복귀 이동 속도 [m/s] (MATLAB 오프보드 복귀)
+cfg.px4.return_speed   = 10.0;    % 복귀 이동 속도 [m/s] (MATLAB 오프보드 복귀)
 cfg.px4.ulog_close_wait = 4;     % disarm 후 ULog 파일이 닫힐 때까지 기다리는 시간 [s]
 cfg.px4.result_dir     = fullfile(here, 'results');
 
