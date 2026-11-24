@@ -5,7 +5,7 @@ function meta = run_px4_mission(link, cfg, ref, posCtrl, agent)
 %   ② 시작점 이동    : PX4 기본 위치제어기   프리롤 시작점(경로 시작점 - L·접선)에서 호버, yaw 정렬
 %   ③ 프리롤 가속    : MATLAB PositionCtrl   직선 가속, 경로 시작점에서 속도 v 도달
 %   ④ 경로 추종      : MATLAB PositionCtrl   TrajectoryPlanner t = 0 ~ tf   <- RMSE 평가 구간
-%   ⑤ 호버·착륙      : PX4 기본 위치제어기 -> AUTO.LAND
+%   ⑤ 호버·복귀·착륙 : PX4 기본 위치제어기로 프리롤 시작점 복귀 -> AUTO.LAND (cfg.px4.return_to_start)
 %
 %   ③④ 에서는 PID_Drone/PositionCtrl ('PPO' 모드: PX4/ppo/PositionCtrl_PX4) 의 출력 [phi, theta, psi, U1] 을
 %   SET_ATTITUDE_TARGET(자세 쿼터니언 + 정규화 추력)으로 보내고, 자세 제어는 PX4가 한다.
@@ -248,12 +248,15 @@ function meta = run_px4_mission(link, cfg, ref, posCtrl, agent)
         wait_tick();
     end
 
-    %% ⑤ 호버·착륙 (PX4 위치제어 -> AUTO.LAND)
-    disp('⑤ 호버·착륙');
+    %% ⑤ 호버 -> 프리롤 시작점 복귀 -> 착륙 (PX4 위치제어 -> AUTO.LAND)
+    disp('⑤ 호버·복귀·착륙');
     [x_ned, ~] = link.getState();
     t5 = tic;
-    while toc(t5) < 3
+    while toc(t5) < 3                                   % 현재 위치에서 멈춤
         link.sendPosition(x_ned(1:3), x_ned(9)); pause(Ts);
+    end
+    if ~isfield(px, 'return_to_start') || px.return_to_start
+        return_to_point(p_pre_ned, yaw0 + rot);
     end
     link.setLand();
     pause(1);
@@ -267,6 +270,33 @@ function meta = run_px4_mission(link, cfg, ref, posCtrl, agent)
     end
 
     %% ---- nested helpers ----
+    function return_to_point(p_goal, yaw_goal)
+        % 현재 위치 -> p_goal 을 직선으로 잇는 이동 셋포인트를 cfg.px4.return_speed 로 보내며 복귀한 뒤 정지 확인
+        %  (먼 목표점을 한 번에 주면 PX4 가 최대 속도로 급가속하므로, 셋포인트를 일정 속도로 옮긴다)
+        %  - 고도: 출발 고도 -> 목표 고도로 같이 보간, yaw: 진행 방향을 보며 이동 후 목표 yaw 로 정렬
+        if isfield(px, 'return_speed') && ~isempty(px.return_speed), v_ret = px.return_speed; else, v_ret = 3.0; end
+        [xs, ~] = link.getState();
+        p0  = xs(1:3);
+        dp  = p_goal(:) - p0;
+        D   = norm(dp);
+        fprintf('프리롤 시작점 복귀: %.1f m, %.1f m/s\n', D, v_ret);
+        if D > 0.5
+            u     = dp / D;
+            yaw_m = atan2(u(2), u(1));                  % 이동 중 진행 방향 바라보기
+            if hypot(u(1), u(2)) < 0.3, yaw_m = xs(9); end   % 거의 수직 이동이면 현재 yaw 유지
+            % 먼저 진행 방향으로 회전
+            hold_until(p0, yaw_m, 0.5, 0.5, 15);
+            T_ret = D / v_ret;
+            tr = tic;
+            while toc(tr) < T_ret
+                s = v_ret * toc(tr);
+                link.sendPosition(p0 + s * u, yaw_m, v_ret * u);
+                pause(Ts);
+            end
+        end
+        hold_until(p_goal(:), yaw_goal, 0.3, 2.0, 60);
+    end
+
     function wait_tick()
         % 고정 주기 유지 (MATLAB은 실시간 OS가 아니라서 몇 ms 흔들림은 남는다)
         rem_t = k * Ts - toc(loop_t);

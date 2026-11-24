@@ -140,6 +140,8 @@ cfg.px4.thr_limits     = [0.1 0.9];
 cfg.px4.tiltmax_air_deg = 50;     % PX4 MPC_TILTMAX_AIR [deg] 로 설정 (기본 45, NaN 이면 건드리지 않음). SITL 은 값이 저장되어 유지됨
 cfg.px4.abort_err      = 8.0;     % 위치 오차가 이보다 크면 중단 -> PX4 호버·착륙 [m]
 cfg.px4.abort_tilt_deg = 60;      % 기울기가 이보다 크면 중단 [deg]
+cfg.px4.return_to_start = true;   % 주행이 끝나면(중단 포함) 프리롤 시작점으로 복귀한 뒤 착륙
+cfg.px4.return_speed   = 3.0;    % 복귀 이동 속도 [m/s]
 cfg.px4.result_dir     = fullfile(here, 'results');
 
 %% 1-1. PPO 모드 설정 (Sehyun 브랜치 Drone_LPV/PX4/RL_DroneEnv_PX4 + PositionCtrl_PX4 와 같은 값, 커밋 0bd9cfd)
