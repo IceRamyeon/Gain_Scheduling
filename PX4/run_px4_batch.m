@@ -7,7 +7,7 @@ function run_px4_batch()
 %     4~6)  v = 9 : kappa = 0.0699 (R 14.31 m, omega 0.63 rad/s)  직진 -> GS -> FF
 %     7~11) v = 10: kappa = 0.0566 (R 17.67 m, omega 0.57 rad/s)  직진 -> GS -> FF -> GS+보상 -> FF+보상
 %     (지연 보상(Eq_Delay_Comp) 실험은 v = 10 에서만, v = 8 / 9 는 보상 없음)
-%  공통: 고도 계단 0.5 m, {up,down} x 3, n_laps 3 (원 21바퀴), 직진은 단계마다 120 m
+%  공통: 고도 계단 0.5 m, {up,down} x 4, n_laps 4 (원 36바퀴), 직진은 단계마다 120 m
 %  이전 구성(v = 8, phi_eq 35 / 40 deg 9회)은 커밋 19f67a7 참고
 %
 %  동작
