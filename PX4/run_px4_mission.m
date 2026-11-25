@@ -203,10 +203,14 @@ function meta = run_px4_mission(link, cfg, ref, posCtrl, agent)
         end
 
         % 안전 감시
-        if norm(x(1:3) - cmd(1:3)) > px.abort_err || max(abs(x(7:8))) > deg2rad(px.abort_tilt_deg)
+        bad_nan = any(isnan(x(1:3))) || any(isnan(cmd(1:3)));     % NaN 이면 아래 비교가 false 가 되어 감시가 꺼지므로 따로 검사
+        if bad_nan || norm(x(1:3) - cmd(1:3)) > px.abort_err || max(abs(x(7:8))) > deg2rad(px.abort_tilt_deg)
             meta.aborted = true;
-            meta.abort_reason = sprintf('phase %d, 위치오차 %.1f m, 기울기 %.0f deg', ...
-                phase, norm(x(1:3) - cmd(1:3)), rad2deg(max(abs(x(7:8)))));
+            if phase == 4, tau_ab = t_boot - meta.t4_start; else, tau_ab = t_boot - t3_start; end
+            meta.abort_reason = sprintf(['phase %d, tau %.2f s, 위치오차 %.1f m, 기울기 %.0f deg, ' ...
+                'x = [%.1f %.1f %.1f], cmd = [%.1f %.1f %.1f]'], ...
+                phase, tau_ab, norm(x(1:3) - cmd(1:3)), rad2deg(max(abs(x(7:8)))), x(1:3), cmd(1:3));
+            meta.abort_x_ned = x_ned; meta.abort_x = x; meta.abort_cmd = cmd;
             warning('중단: %s', meta.abort_reason);
             meta.t4_end = t_boot;
             break;
