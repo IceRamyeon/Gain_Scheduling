@@ -147,7 +147,6 @@ cfg.px4.end_mode       = 'land_plot_return';  % 주행 종료 후 동작
 cfg.px4.return_speed   = 20.0;    % 복귀·② 장거리 이동 최대 속도 [m/s] (px4_smooth_transit, PX4 MPC_XY_VEL_MAX 는 이동 중에만 올림)
 cfg.px4.return_acc     = 2.0;     % 복귀·② 장거리 이동 최대 가속도 [m/s^2] (사인 램프 가감속, 20 m/s 까지 약 16 s)
 cfg.px4.start_here     = false;   % true: 지금 서 있는 곳을 프리롤 시작점으로 (경로 원점 수평 이동, ② 장거리 이동 생략). 배치 실행에서 사용
-cfg.px4.transit_speed_est = 5.0;    % ② 프리롤 시작점 이동 제한 시간 계산용 이동 속도 추정 [m/s] (제한 시간 = max(60, 거리/이 값 + 30) s)
 cfg.px4.ulog_close_wait = 4;     % disarm 후 ULog 파일이 닫힐 때까지 기다리는 시간 [s]
 cfg.px4.result_dir     = fullfile(here, 'results');
 
