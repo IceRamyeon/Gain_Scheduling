@@ -14,6 +14,12 @@
 %  PID_Drone 에서 PX4 폴더로 복사해 둔 사본을 사용한다 (PID_Drone 은 addpath 하지 않음).
 
 close all; clc; clear;
+% 일괄 실험(run_px4_batch*)에서 호출되면 명령창을 지운 직후 몇 번째 실험인지 표시
+batch_label = getappdata(0, 'px4_batch_label');
+if ~isempty(batch_label)
+    fprintf('==================== 일괄 실험 %s ====================\n', batch_label);
+end
+clear batch_label;
 here = fileparts(mfilename('fullpath'));
 addpath(here);
 

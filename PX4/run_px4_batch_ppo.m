@@ -89,6 +89,7 @@ for i = 1:nRun
         ov.px4.end_mode = 'land_plot_return';
     end
     fprintf('\n===== [%d/%d] %s =====\n', i, nRun, name);
+    setappdata(0, 'px4_batch_label', sprintf('[%d/%d] %s', i, nRun, name));   % px4_main 이 clc 후 표시
     t_start(i) = datetime('now');
     try
         aborted = run_one(ov);
@@ -160,6 +161,9 @@ end
 function rmappdata_safe()
 if isappdata(0, 'px4_cfg_override')
     rmappdata(0, 'px4_cfg_override');
+end
+if isappdata(0, 'px4_batch_label')
+    rmappdata(0, 'px4_batch_label');
 end
 end
 
