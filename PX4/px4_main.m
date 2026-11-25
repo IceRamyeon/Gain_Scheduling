@@ -27,7 +27,7 @@ cfg = struct();
 %  'PPO'    : Sehyun 브랜치 PX4 전용 PPO (Drone_LPV/PX4/RL_DroneEnv_PX4 학습) -> PX4/ppo
 %             -> PositionCtrl_PX4 (PX4 mc_pos_control 과 같은 2-DOF 구조, 잔차 0 이면 PX4 기준선과 같은 꼴)
 %                + PPO 잔차 게인 오프셋 (10 Hz), 경로는 위 cfg.path_type 그대로, 설정은 아래 cfg.ppo
-cfg.mode = 'MATLAB';
+cfg.mode = 'PPO';
 cfg.start_with_yaw = true;
 cfg.dt = 0.01;                      % 기준값 표 계산 간격 (시뮬레이션 dt 와 동일하게)
 cfg.target_yaw = [];
@@ -37,7 +37,7 @@ cfg.kappa_tau = 0;                  % 전방 곡률 댐핑 시정수 [s] (1차 �
 
 % 경로 종류 (PID_Drone/main.m 과 동일)
 cfg.path_type = 'circle';          % 'circle' : 정지 -> 직선 가속 -> 원 궤적 -> 직선 탈출,  'spline' : 기존 pathGen 경유점 궤적
-cfg.curvature = 0.0;               % 원 곡률 [1/m] (반지름 = 1/|kappa|, 부호: + 는 +y 쪽 선회, - 는 -y 쪽, 0 = 직선 모드)
+cfg.curvature = 0.069;               % 원 곡률 [1/m] (반지름 = 1/|kappa|, 부호: + 는 +y 쪽 선회, - 는 -y 쪽, 0 = 직선 모드)
 cfg.n_laps = 3;                    % 원 바퀴 수 (다 돌면 초반 직선과 같은 길이를 직진한 뒤 비행 종료)
 cfg.accel_dist_per_speed = 3.0;    % 가속 구간 길이 = 이 값 x target_speed [m]  (가속도 = v/(2*이 값), 가속 시간 = 2*이 값 [s])
 cfg.cruise_time = 5.0;             % 가속 후 원 진입 전 등속 직선 시간 [s] (목표 속력으로 안정된 뒤 원 진입)
@@ -152,7 +152,7 @@ cfg.px4.ulog_close_wait = 4;     % disarm 후 ULog 파일이 닫힐 때까지 �
 cfg.px4.result_dir     = fullfile(here, 'results');
 
 %% 1-1. PPO 모드 설정 (Sehyun 브랜치 Drone_LPV/PX4/RL_DroneEnv_PX4 + PositionCtrl_PX4 와 같은 값, 커밋 0bd9cfd)
-cfg.ppo.agent_file   = fullfile(here, 'ppo', 'saved_px4_ppo_agent.mat');   % 학습된 에이전트 (agent 또는 saved_agent)
+cfg.ppo.agent_file   = fullfile(here, 'ppo', 'saved_gs_altstep_ppo_agent.mat');   % 학습된 에이전트 (agent 또는 saved_agent)
 cfg.ppo.rate_hz      = 10;        % PPO 개입 주기 (학습: 0.1 s)
 cfg.ppo.lookahead_L  = 2.0;       % 관측 kappa_spatial 의 예견 거리 [m] (학습: dt = L / v_des)
 cfg.ppo.range_P_xy   = 0.8;       % 잔차 게인 스케일 (action [-1, 1] -> 오프셋, 가속도 단위 m/s^2)
@@ -172,7 +172,7 @@ cfg.ppo.ctrl.pos_Kd_z          = 4.0;
 cfg.ppo.ctrl.k_ff_v            = 1.0;      % 목표 속도 feedforward
 cfg.ppo.ctrl.k_ff_a            = 1.0;      % 목표 가속도 feedforward
 cfg.ppo.ctrl.Z_Gain_Scheduling = true;     % 기울기 보상 (1 / cos(phi) cos(theta))
-cfg.ppo.ctrl.max_angle_deg     = 30.0;
+cfg.ppo.ctrl.max_angle_deg     = 50.0;
 cfg.ppo.ctrl.MPC_THR_HOVER     = 0.73;     % 임시값: run_px4_mission 이 ② 측정 호버 추력으로 덮어씀 (학습 환경 값은 0.6)
 
 %% 1-2. 일괄 실험 덮어쓰기 (run_px4_batch 에서 호출될 때만 적용, 직접 실행 시에는 비어 있음)
