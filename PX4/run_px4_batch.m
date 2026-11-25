@@ -36,8 +36,8 @@ base.mode              = 'MATLAB';
 base.path_type         = 'circle';
 base.Feedforward       = true;
 base.height_step       = 0.5;
-base.height_order      = {"up","down","up","down","up","down"};
-base.n_laps            = 3;
+base.height_order      = {"up","down","up","down","up","down","up","down"};
+base.n_laps            = 4;
 
 %% 실험 목록 (순서대로 실행)
 v8  = setf(base, 'target_speed', 8);
