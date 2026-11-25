@@ -131,6 +131,9 @@ function meta = run_px4_mission(link, cfg, ref, posCtrl, agent)
     d_pre = norm(p_pre_ned(1:2) - p_to(1:2));
     t_pre = max(60, d_pre / v_tr + 30);
     fprintf('   프리롤 시작점까지 %.0f m (제한 시간 %.0f s)\n', d_pre, t_pre);
+    if d_pre > 2.0
+        px4_smooth_transit(link, p_to, p_pre_ned, px);   % 먼 거리면 부드러운 속도 프로파일로 이동 (최대 return_speed)
+    end
     hold_until(p_pre_ned, yaw0 + rot, 0.3, 2.0, t_pre);
     meta.p_pre_ned = p_home_ned; meta.yaw_pre = yaw0 + rot;  % 종료 후 복귀 목표 (원래 경로 원점 기준 프리롤 시작점, px4_return_to_start)
 

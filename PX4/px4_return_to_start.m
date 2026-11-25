@@ -1,12 +1,11 @@
 function px4_return_to_start(link, cfg, meta)
     % PX4_RETURN_TO_START  착륙(disarm) 상태에서 다시 이륙해 프리롤 시작점으로 복귀한 뒤 착륙·disarm
     %   ① 현재 위치에서 프리롤 시작점 고도로 이륙 (오프보드 위치제어)
-    %   ② 프리롤 시작점까지 직선 이동 셋포인트를 cfg.px4.return_speed 로 옮기며 이동 (진행 방향을 보며)
+    %   ② 프리롤 시작점까지 px4_smooth_transit 로 이동 (최대 cfg.px4.return_speed, 사인 램프 가감속, 진행 방향을 보며)
     %   ③ 시작 yaw 로 정렬, 정지 확인 후 AUTO.LAND -> disarm 될 때까지 대기
     %   meta.p_pre_ned, meta.yaw_pre : run_px4_mission 이 ② 에서 기록한 프리롤 시작점 (NED) 과 yaw
     px = cfg.px4;
     Ts = 1 / px.rate_hz;
-    if isfield(px, 'return_speed') && ~isempty(px.return_speed), v_ret = px.return_speed; else, v_ret = 3.0; end
     if ~isfield(meta, 'p_pre_ned')
         warning('meta 에 프리롤 시작점(p_pre_ned)이 없어 복귀하지 않습니다.');
         return;
@@ -28,19 +27,8 @@ function px4_return_to_start(link, cfg, meta)
     link.arm();
     hold_until(p_to, yaw_now, 0.3, 1.0, 40);
 
-    dp = p_goal - p_to; D = norm(dp);
-    fprintf('프리롤 시작점 복귀: %.1f m, %.1f m/s\n', D, v_ret);
-    if D > 0.5
-        u = dp / D;
-        yaw_m = atan2(u(2), u(1));
-        if hypot(u(1), u(2)) < 0.3, yaw_m = yaw_now; end
-        hold_until(p_to, yaw_m, 0.5, 0.5, 15);         % 진행 방향으로 회전
-        T_ret = D / v_ret; tr = tic;
-        while toc(tr) < T_ret
-            link.sendPosition(p_to + v_ret * toc(tr) * u, yaw_m, v_ret * u);
-            pause(Ts);
-        end
-    end
+    % 프리롤 시작점까지 부드러운 속도 프로파일로 이동 (최대 return_speed, 최대 가속도 return_acc, 사인 램프 가감속)
+    px4_smooth_transit(link, p_to, p_goal, px);
     hold_until(p_goal, yaw_goal, 0.3, 2.0, 60);
     disp('프리롤 시작점 도착 -> 착륙');
     link.setLand();
