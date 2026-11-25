@@ -322,6 +322,9 @@ function finalize_and_save_results(log_data, cfg)
         
         currentTimeString = datestr(now, 'yyyymmdd_HHMMSS');
         baseFileName = fullfile(cfg.save_dir, sprintf('DroneSimResult_%s', currentTimeString));
+        if isfield(cfg, 'result_name') && ~isempty(cfg.result_name)      % 다시 그리기(replot_px4_result) 등에서 이름 지정
+            baseFileName = fullfile(cfg.save_dir, cfg.result_name);
+        end
         
         % 1) 데이터 저장 (.mat)
         matFileName = [baseFileName, '.mat'];
