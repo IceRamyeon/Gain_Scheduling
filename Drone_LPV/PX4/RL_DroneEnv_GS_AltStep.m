@@ -21,16 +21,17 @@ classdef RL_DroneEnv_GS_AltStep < rl.env.MATLABEnvironment
         lookahead_L = 2.0;
 
         % PositionCtrl_GS 단위(XY: rad/m, Z: N/m)에 맞춘 잔차 게인 스케일
-        % - 위상 여유 보강(D 우세 + 적정 P 보강)으로 kappa=0.15 & 0.20 모두에서 Z/XY 동시 개선
-        range_P_xy = 0.04;
-        range_D_xy = 0.18;
-        range_P_z  = 0.3;
-        range_D_z  = 2.0;
+        % (PositionCtrl_PX4 에서도 run_px4_mission 의 range_[0.8, 1.0, 1.5, 1.0] 입력이 이 값과 1:1 동일하게 매핑됨)
+        range_P_xy = 0.05;
+        range_D_xy = 0.16;
+        range_P_z  = 1.5;
+        range_D_z  = 1.5;
 
         % 다중 주기 & FIFO 지연 버퍼 상태
         prev_yaw
         prev_action
         prev_u_moment
+        prev_U1_des
         zoh_att_cmd
         fifo_buffer
         buf_idx
@@ -45,8 +46,8 @@ classdef RL_DroneEnv_GS_AltStep < rl.env.MATLABEnvironment
         randomize_thrust_exp = true;
         thrust_exp_range     = [1.75, 2.05];
         randomize_att_loop   = true;
-        mc_att_p_range       = [3.5, 6.5];  % PX4 MC_ROLL/PITCH_P 범위 (기본 4.0~6.5)
-        tau_rate_range       = [0.03, 0.06];
+        mc_att_p_range       = [5.5, 7.5];  % ChoeJae SITL 확인값 K_att = MC_ROLL/PITCH_P = 6.5 중심 무작위화
+        tau_rate_range       = [0.03, 0.05];
         max_tilt_deg         = 60.0;        % ChoeJae abort_tilt_deg = 60
 
         episode_count = 0;
@@ -87,13 +88,13 @@ classdef RL_DroneEnv_GS_AltStep < rl.env.MATLABEnvironment
             cfg.tau_down        = 0.0250;
             cfg.drag_coeff      = [0.10; 0.10; 0.20];
 
-            % PX4 자세 제어기 (250 Hz 이중 루프)
+            % PX4 자세 제어기 (250 Hz 이중 루프, ChoeJae SITL 확인값 K_att = MC_ROLL/PITCH_P = 6.5 일치)
             cfg.att_mode    = 2;
             cfg.sysid_order = 2;
-            cfg.sysid_a     = 4.0;
-            cfg.K_att       = 4.0;
-            cfg.MC_ROLL_P   = 4.0;
-            cfg.MC_PITCH_P  = 4.0;
+            cfg.sysid_a     = 6.5;
+            cfg.K_att       = 6.5;
+            cfg.MC_ROLL_P   = 6.5;
+            cfg.MC_PITCH_P  = 6.5;
             cfg.tau_rate    = 0.04;
 
             % ChoeJae PositionCtrl_GS 설정 (px4_main.m 과 100% 동일)
@@ -134,16 +135,25 @@ classdef RL_DroneEnv_GS_AltStep < rl.env.MATLABEnvironment
 
         function [Observation, Reward, IsDone, LoggedSignals] = step(this, Action)
             % 1. PPO Action -> PositionCtrl_GS 잔차 게인 오프셋 주입
+            %    - dP_z: 계단 입력 시 순간 추력(U1) 임펄스 스파이크를 억제할 수 있도록
+            %      하향 감쇠(-range_P_z = -2.0 N/m)는 충분히 허용하고 상향 증폭은 +0.25 N/m로 제한
             dP_xy = this.range_P_xy * Action(1);
             dD_xy = max(0, this.range_D_xy * Action(2));
-            dP_z  = this.range_P_z  * Action(3);
-            dD_z  = max(0, this.range_D_z  * Action(4));
+            if Action(3) >= 0
+                dP_z = 0.25 * Action(3);
+            else
+                dP_z = this.range_P_z * Action(3); % 최대 -2.0 N/m 감쇠 (Soft-Start)
+            end
+            dD_z  = max(0, this.range_D_z * Action(4));
             this.posCtrl.setResidualOffsets(dP_xy, dD_xy, dP_z, dD_z);
 
             % 2. 다중 주기 시뮬레이션 (RL 10 Hz = 0.1 s = 250 Hz 25 스텝)
-            N_sub     = 25;
-            pos_ratio = round(this.cfg.dt_pos / this.cfg.dt_sim); % 5 스텝마다 50 Hz 위치 루프
-            sat_count = 0;
+            N_sub        = 25;
+            pos_ratio    = round(this.cfg.dt_pos / this.cfg.dt_sim); % 5 스텝마다 50 Hz 위치 루프
+            sat_count    = 0;
+            max_dU1_norm = 0.0; % 구간 내 평형 추력 대비 최대 순간 추력 편차 |U1_des - U1_eq| / mg
+            max_jmp_U1   = 0.0; % 구간 내 50Hz 스텝 간 추력 점프(임펄스) |U1_des - prev_U1_des| / mg
+            mg_val       = this.cfg.m * 9.81;
 
             for k = 1:N_sub
                 state_true   = this.drone_px4.GetState();
@@ -172,8 +182,14 @@ classdef RL_DroneEnv_GS_AltStep < rl.env.MATLABEnvironment
                     state_est(4:6) = v_est;
 
                     att_u1 = this.posCtrl.Update(cmd_gs, state_est); % [phi; theta; psi; U1_des]
+                    U1_des_now = att_u1(4);
+                    U1_eq_now  = this.cfg.m * sqrt(9.81^2 + (this.cfg.target_speed^2 * kappa_ff)^2);
+                    max_dU1_norm = max(max_dU1_norm, abs(U1_des_now - U1_eq_now) / mg_val);
+                    max_jmp_U1   = max(max_jmp_U1,   abs(U1_des_now - this.prev_U1_des) / mg_val);
+                    this.prev_U1_des = U1_des_now;
+
                     % ChoeJae f8ccf1f 동일: 제곱근 추력 정규화 + [0.1, 0.9] 클리핑
-                    thr_raw = this.cfg.MPC_THR_HOVER * sqrt(max(att_u1(4) / (this.cfg.m * 9.81), 0.0));
+                    thr_raw = this.cfg.MPC_THR_HOVER * sqrt(max(U1_des_now / mg_val, 0.0));
                     thr_cmd = max(0.1, min(thr_raw, 0.9));
                     if thr_raw < 0.1 || thr_raw > 0.9
                         sat_count = sat_count + 1;
@@ -242,12 +258,14 @@ classdef RL_DroneEnv_GS_AltStep < rl.env.MATLABEnvironment
             q_eq   = (v_now * kappa_now) * sin(phi_eq);
             r_att  = max(-2.5 * ((phi - phi_eq)^2 + theta^2) - 0.15 * (p^2 + (q - q_eq)^2), -30);
 
-            % (4) PPO 게인 잔차 평활화 (채터링 억제) 및 추력/로터 포화 방지
+            % (4) 순간 과도 추력(U1 임펄스 스파이크) 억제 보상 + 액션 평활화 + 포화 방지
+            %     - 계단 입력 순간 U1이 임펄스 모양으로 튀는 현상(|U1 - U1_eq| 및 스텝 간 점프 |dU1|)을 직접 감점
+            r_u1_imp = -3.0 * (max_dU1_norm^2) - 5.0 * (max_jmp_U1^2);
             r_smooth = -0.01 * sum(Action.^2) - 0.05 * sum((Action - this.prev_action).^2);
             r_sat    = -5.0 * (sat_count / N_sub);
             this.prev_action = Action;
 
-            Reward = r_xy + r_z + r_att + r_smooth + r_sat + 0.1;
+            Reward = r_xy + r_z + r_att + r_u1_imp + r_smooth + r_sat + 0.1;
 
             % 5. 에피소드 종료 판정
             IsDone = false;
@@ -281,8 +299,19 @@ classdef RL_DroneEnv_GS_AltStep < rl.env.MATLABEnvironment
                 this.cfg.target_speed = v_rand;
                 this.cfg.curvature    = dir_c * k_mag;
                 this.cfg.n_laps       = 2; % 학습 효율을 위해 단계당 2바퀴
-                this.cfg.height_step  = 0.10 + 0.90 * rand(); % 0.1 ~ 1.0 m 랜덤 상승
-                this.cfg.height_order = {'up'};
+                this.cfg.height_step  = 0.10 + 0.90 * rand(); % 0.1 ~ 1.0 m 랜덤 계단 크기
+
+                % 상승('up')과 하강('down') 모두 균등하게 학습 (단일 상승, 단일 하강, 상승->하강, 하강->상승)
+                r_ord = rand();
+                if r_ord < 0.25
+                    this.cfg.height_order = {'up'};
+                elseif r_ord < 0.50
+                    this.cfg.height_order = {'down'};
+                elseif r_ord < 0.75
+                    this.cfg.height_order = {'up', 'down'};
+                else
+                    this.cfg.height_order = {'down', 'up'};
+                end
             end
 
             if this.randomize_delay
@@ -300,11 +329,13 @@ classdef RL_DroneEnv_GS_AltStep < rl.env.MATLABEnvironment
                 mc_p = this.mc_att_p_range(1) + (this.mc_att_p_range(2) - this.mc_att_p_range(1)) * rand();
                 this.cfg.MC_ROLL_P  = mc_p;
                 this.cfg.MC_PITCH_P = mc_p;
+                this.cfg.K_att      = mc_p;
                 this.cfg.tau_rate   = this.tau_rate_range(1) + ...
                     (this.tau_rate_range(2) - this.tau_rate_range(1)) * rand();
             else
-                this.cfg.MC_ROLL_P  = 4.0;
-                this.cfg.MC_PITCH_P = 4.0;
+                this.cfg.MC_ROLL_P  = 6.5;
+                this.cfg.MC_PITCH_P = 6.5;
+                this.cfg.K_att      = 6.5;
                 this.cfg.tau_rate   = 0.04;
             end
 
@@ -340,6 +371,7 @@ classdef RL_DroneEnv_GS_AltStep < rl.env.MATLABEnvironment
             this.current_step  = 0;
             this.prev_action   = zeros(4, 1);
             this.prev_u_moment = zeros(3, 1);
+            this.prev_U1_des   = this.cfg.m * 9.81;
             this.last_p_est    = this.drone_px4.r;
             this.last_v_est    = this.drone_px4.dr;
 
