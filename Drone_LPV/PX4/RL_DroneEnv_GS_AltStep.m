@@ -21,11 +21,11 @@ classdef RL_DroneEnv_GS_AltStep < rl.env.MATLABEnvironment
         lookahead_L = 2.0;
 
         % PositionCtrl_GS 단위(XY: rad/m, Z: N/m)에 맞춘 잔차 게인 스케일
-        % - Z축은 LPV Gain Scheduling이 주담당(잔차 보수적 유지), XY축은 PPO가 집중 보정
-        range_P_xy = 0.18;
+        % - 위상 여유 보강(D 우세 + 적정 P 보강)으로 kappa=0.15 & 0.20 모두에서 Z/XY 동시 개선
+        range_P_xy = 0.04;
         range_D_xy = 0.18;
-        range_P_z  = 1.0;
-        range_D_z  = 1.0;
+        range_P_z  = 0.3;
+        range_D_z  = 2.0;
 
         % 다중 주기 & FIFO 지연 버퍼 상태
         prev_yaw
@@ -218,9 +218,7 @@ classdef RL_DroneEnv_GS_AltStep < rl.env.MATLABEnvironment
                 kappa_spatial
             ];
 
-            % 4. 고도 계단 정밀 추종 + 원 궤적 유지 다목적 보상함수
-            %    - PPO는 자세 내부 루프를 직접 제어하지 않으며, 원 선회 시 phi_eq/yaw_rate가
-            %      필연적으로 존재하므로 불필요한 자세(phi, theta, rates) 및 모멘트 페널티 제거
+            % 4. 고도 계단 정밀 추종 + 원 궤적 유지 + 평형점 기준 자세 진동 억제 보상함수
             e_true = traj_pos - state(1:3);
             err_xy = norm(e_true(1:2));
             err_z  = abs(e_true(3));
@@ -228,19 +226,28 @@ classdef RL_DroneEnv_GS_AltStep < rl.env.MATLABEnvironment
             vz     = state(6);
             phi    = state(7);
             theta  = state(8);
+            p      = state(10);
+            q      = state(11);
 
-            % (1) XY 원 궤적 정밀 추종 집중 보상 (XY RMSE 극대화 저감)
-            r_xy = 10.0 * exp(-(err_xy^2) / (2 * 0.15^2)) - 8.0 * err_xy - 3.0 * (err_xy^2);
+            % (1) XY 원 궤적 정밀 추종 보상
+            r_xy = 8.0 * exp(-(err_xy^2) / (2 * 0.15^2)) - 6.0 * err_xy - 2.0 * (err_xy^2);
 
-            % (2) Z축 고도 유지 보조 보상 (Z축은 GS가 주담당, PPO는 고도 이탈 방지 수준만 보조)
-            r_z  = 2.0 * exp(-(err_z^2) / (2 * 0.05^2)) - 3.0 * err_z - 0.3 * (vz^2);
+            % (2) Z축 고도 계단 응답 보상 (가중치 2 -> 5 상향 + 목표 근접 적응형 댐핑으로 맞바꿈 방지)
+            r_z  = 5.0 * exp(-(err_z^2) / (2 * 0.04^2)) - 8.0 * err_z ...
+                 - 1.0 * (vz^2) * exp(-((err_z / 0.06)^2)) - 0.15 * (vz^2);
 
-            % (3) PPO 게인 잔차 평활화 (채터링 억제) 및 추력/로터 포화 방지
+            % (3) 평형점(phi_eq, theta_eq=0, p_eq=0, q_eq=v*kappa*sin(phi_eq)) 기준 자세 진동 페널티
+            v_now  = norm(traj_vel(1:2));
+            phi_eq = atan((v_now^2 * kappa_now) / 9.81);
+            q_eq   = (v_now * kappa_now) * sin(phi_eq);
+            r_att  = max(-2.5 * ((phi - phi_eq)^2 + theta^2) - 0.15 * (p^2 + (q - q_eq)^2), -30);
+
+            % (4) PPO 게인 잔차 평활화 (채터링 억제) 및 추력/로터 포화 방지
             r_smooth = -0.01 * sum(Action.^2) - 0.05 * sum((Action - this.prev_action).^2);
             r_sat    = -5.0 * (sat_count / N_sub);
             this.prev_action = Action;
 
-            Reward = r_z + r_xy + r_smooth + r_sat + 0.1;
+            Reward = r_xy + r_z + r_att + r_smooth + r_sat + 0.1;
 
             % 5. 에피소드 종료 판정
             IsDone = false;

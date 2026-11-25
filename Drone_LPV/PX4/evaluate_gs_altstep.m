@@ -164,54 +164,56 @@ if has_agent
     close(h_fig);
     fprintf('\n>>> Saved plot: GS_AltStep_Comparison.png\n');
 
-    % 에피소드별(500 단위: 0 ~ 4000) 학습 성능 향상 추이 평가 (kappa=0.15, v=5.0m/s, +0.3m)
+    % 에피소드별(500 단위: 0 ~ 4000) 학습 성능 향상 추이 평가 (kappa=0.15 및 kappa=0.20 모두 기준)
     ckpts = 0:500:4000;
     ckpt_dir = fullfile(px4_dir, 'savedAgents_gs_altstep');
-    fprintf('\n================================================================================\n');
-    fprintf('  Learning Progression (Ep 0 -> 500 -> ... -> 4000) | kappa=0.15, +0.3m\n');
-    fprintf('================================================================================\n');
-    for ci = 1:numel(ckpts)
-        ep_num = ckpts(ci);
-        f_ckpt = fullfile(ckpt_dir, sprintf('Agent%d.mat', ep_num));
-        if ~exist(f_ckpt, 'file'), continue; end
-        Sc = load(f_ckpt);
-        if isfield(Sc, 'saved_agent'), ag_c = Sc.saved_agent; else, ag_c = Sc.agent; end
-        ag_c.UseExplorationPolicy = false;
+    for kap_ev = [0.15, 0.20]
+        fprintf('\n================================================================================\n');
+        fprintf('  Learning Progression (Ep 0 -> 500 -> ... -> 4000) | kappa=%.2f, v=5.0m/s, +0.3m\n', kap_ev);
+        fprintf('================================================================================\n');
+        for ci = 1:numel(ckpts)
+            ep_num = ckpts(ci);
+            f_ckpt = fullfile(ckpt_dir, sprintf('Agent%d.mat', ep_num));
+            if ~exist(f_ckpt, 'file'), continue; end
+            Sc = load(f_ckpt);
+            if isfield(Sc, 'saved_agent'), ag_c = Sc.saved_agent; else, ag_c = Sc.agent; end
+            ag_c.UseExplorationPolicy = false;
 
-        env = RL_DroneEnv_GS_AltStep(false);
-        env.randomize_mission = false; env.randomize_delay = false;
-        env.randomize_thrust_exp = false; env.randomize_att_loop = false;
-        env.cfg.target_speed = 5.0; env.cfg.curvature = 0.15; env.cfg.n_laps = 3;
-        env.cfg.height_step = 0.3; env.cfg.height_order = {'up'};
-        env.cfg.Z_Gain_Scheduling = true;
-        obs = reset(env);
+            env = RL_DroneEnv_GS_AltStep(false);
+            env.randomize_mission = false; env.randomize_delay = false;
+            env.randomize_thrust_exp = false; env.randomize_att_loop = false;
+            env.cfg.target_speed = 5.0; env.cfg.curvature = kap_ev; env.cfg.n_laps = 3;
+            env.cfg.height_step = 0.3; env.cfg.height_order = {'up'};
+            env.cfg.Z_Gain_Scheduling = true;
+            obs = reset(env);
 
-        N_max = env.max_steps;
-        t_h = zeros(1, N_max); h_h = zeros(1, N_max); hd_h = zeros(1, N_max);
-        exy_h = zeros(1, N_max); sat_h = zeros(1, N_max);
-        k_s = 0; done = false;
-        while ~done && k_s < N_max
-            k_s = k_s + 1;
-            a_o = getAction(ag_c, obs);
-            if iscell(a_o), act = a_o{1}; else, act = a_o; end
-            act = max(-1, min(1, double(act(:))));
-            [obs, ~, done] = step(env, act);
-            st = env.drone_px4.GetState();
-            [p_d, ~, ~, ~] = env.traj.get_position(env.drone_px4.t);
-            t_h(k_s) = env.drone_px4.t; h_h(k_s) = -st(3); hd_h(k_s) = -p_d(3);
-            exy_h(k_s) = norm(p_d(1:2) - st(1:2)); sat_h(k_s) = double(env.drone_px4.is_saturated);
+            N_max = env.max_steps;
+            t_h = zeros(1, N_max); h_h = zeros(1, N_max); hd_h = zeros(1, N_max);
+            exy_h = zeros(1, N_max); sat_h = zeros(1, N_max);
+            k_s = 0; done = false;
+            while ~done && k_s < N_max
+                k_s = k_s + 1;
+                a_o = getAction(ag_c, obs);
+                if iscell(a_o), act = a_o{1}; else, act = a_o; end
+                act = max(-1, min(1, double(act(:))));
+                [obs, ~, done] = step(env, act);
+                st = env.drone_px4.GetState();
+                [p_d, ~, ~, ~] = env.traj.get_position(env.drone_px4.t);
+                t_h(k_s) = env.drone_px4.t; h_h(k_s) = -st(3); hd_h(k_s) = -p_d(3);
+                exy_h(k_s) = norm(p_d(1:2) - st(1:2)); sat_h(k_s) = double(env.drone_px4.is_saturated);
+            end
+            t_h = t_h(1:k_s); h_h = h_h(1:k_s); hd_h = hd_h(1:k_s); exy_h = exy_h(1:k_s); sat_h = sat_h(1:k_s);
+            t_st = env.traj.t_steps(1);
+            idx_s = find(t_h >= t_st & t_h <= env.traj.t_circ1);
+            ts = t_h(idx_s) - t_st; hs = h_h(idx_s);
+            i10 = find(hs >= 6.03, 1, 'first'); i90 = find(hs >= 6.27, 1, 'first');
+            if ~isempty(i10) && ~isempty(i90), tr = ts(i90) - ts(i10); else, tr = NaN; end
+            os = max(0, (max(hs) - 6.3) / 0.3 * 100);
+            oi = find(abs(hs - 6.3) > 0.03, 1, 'last');
+            if isempty(oi), tset = 0; elseif oi < numel(ts), tset = ts(oi + 1); else, tset = NaN; end
+            idx_c = find(t_h >= env.traj.t_circ0 & t_h <= env.traj.t_circ1);
+            fprintf('Ep %4d    | Rise=%.2fs | OS=%5.1f%% | Settle(10%%)=%.2fs | Z_RMSE=%.4fm | XY_RMSE=%.4fm | Sat=%.1f%%\n', ...
+                ep_num, tr, os, tset, sqrt(mean((h_h(idx_c)-hd_h(idx_c)).^2)), sqrt(mean(exy_h(idx_c).^2)), mean(sat_h(idx_c))*100);
         end
-        t_h = t_h(1:k_s); h_h = h_h(1:k_s); hd_h = hd_h(1:k_s); exy_h = exy_h(1:k_s); sat_h = sat_h(1:k_s);
-        t_st = env.traj.t_steps(1);
-        idx_s = find(t_h >= t_st & t_h <= env.traj.t_circ1);
-        ts = t_h(idx_s) - t_st; hs = h_h(idx_s);
-        i10 = find(hs >= 6.03, 1, 'first'); i90 = find(hs >= 6.27, 1, 'first');
-        if ~isempty(i10) && ~isempty(i90), tr = ts(i90) - ts(i10); else, tr = NaN; end
-        os = max(0, (max(hs) - 6.3) / 0.3 * 100);
-        oi = find(abs(hs - 6.3) > 0.03, 1, 'last');
-        if isempty(oi), tset = 0; elseif oi < numel(ts), tset = ts(oi + 1); else, tset = NaN; end
-        idx_c = find(t_h >= env.traj.t_circ0 & t_h <= env.traj.t_circ1);
-        fprintf('Ep %4d    | Rise=%.2fs | OS=%5.1f%% | Settle(10%%)=%.2fs | Z_RMSE=%.4fm | XY_RMSE=%.4fm | Sat=%.1f%%\n', ...
-            ep_num, tr, os, tset, sqrt(mean((h_h(idx_c)-hd_h(idx_c)).^2)), sqrt(mean(exy_h(idx_c).^2)), mean(sat_h(idx_c))*100);
     end
 end
