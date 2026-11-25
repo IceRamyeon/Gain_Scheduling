@@ -94,6 +94,18 @@ function meta = run_px4_mission(link, cfg, ref, posCtrl, agent)
         pause(0.1); [x_ned, ~, ok] = link.getState();
     end
 
+    %% 제자리 시작 (cfg.px4.start_here): 지금 서 있는 곳을 프리롤 시작점으로 삼도록 경로 원점(수평)을 옮긴다
+    %  -> ② 에서 먼 거리를 이동하지 않음 (이전 실험의 착륙 지점에서 바로 시작). 고도 기준(원점 z)은 그대로.
+    %  복귀 목표(px4_return_to_start / hold_return)는 원래 경로 원점 기준의 프리롤 시작점으로 유지
+    p_home_ned = path_to_ned(p_pre, cfg);
+    if isfield(px, 'start_here') && ~isempty(px.start_here) && px.start_here
+        sh = x_ned(1:2); sh = sh(:) - p_home_ned(1:2);
+        cfg.px4.path_origin = cfg.px4.path_origin(:);
+        cfg.px4.path_origin(1:2) = cfg.px4.path_origin(1:2) + sh;
+        px = cfg.px4;
+        fprintf('제자리 시작: 경로 원점을 (N %+.1f, E %+.1f) m 옮김 (프리롤 시작점 = 현재 위치)\n', sh(1), sh(2));
+    end
+
     %% ① 이륙·상승 (PX4 위치제어)
     z_alt = path_to_ned(p_start, cfg); z_alt = z_alt(3);
     p_to = [x_ned(1); x_ned(2); z_alt];
@@ -120,7 +132,7 @@ function meta = run_px4_mission(link, cfg, ref, posCtrl, agent)
     t_pre = max(60, d_pre / v_tr + 30);
     fprintf('   프리롤 시작점까지 %.0f m (제한 시간 %.0f s)\n', d_pre, t_pre);
     hold_until(p_pre_ned, yaw0 + rot, 0.3, 2.0, t_pre);
-    meta.p_pre_ned = p_pre_ned; meta.yaw_pre = yaw0 + rot;   % 종료 후 복귀 목표 (px4_return_to_start)
+    meta.p_pre_ned = p_home_ned; meta.yaw_pre = yaw0 + rot;  % 종료 후 복귀 목표 (원래 경로 원점 기준 프리롤 시작점, px4_return_to_start)
 
     %% 호버 추력 측정 (② 호버 상태에서 1초 동안 PX4 추력 명령의 중앙값)
     if isnan(px.thr_hover)
@@ -279,12 +291,12 @@ function meta = run_px4_mission(link, cfg, ref, posCtrl, agent)
         case 'hold_return'
             disp('⑤ 프리롤 시작점 복귀 (PX4 Hold)');
             for k5 = 1:round(0.5 / Ts), hold_here(); pause(Ts); end
-            res = reposition_to(p_pre_ned, hold_here);
+            res = reposition_to(p_home_ned, hold_here);
             if res == 0
                 disp('PX4 Hold 모드로 프리롤 시작점 복귀 중 (MATLAB 은 결과 처리 진행)');
             else
                 warning('DO_REPOSITION 실패 (결과 %g) -> MATLAB 오프보드로 복귀합니다.', res);
-                return_to_point(p_pre_ned, yaw0 + rot);
+                return_to_point(p_home_ned, yaw0 + rot);
                 link.setHold();
             end
         otherwise
