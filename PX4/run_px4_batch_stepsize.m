@@ -1,16 +1,25 @@
-function run_px4_batch_stepsize()
-%RUN_PX4_BATCH_STEPSIZE  고도 계단 크기 비교 일괄 실험 (명령창에서 run_px4_batch_stepsize 한 번)
+function run_px4_batch_stepsize(steps)
+%RUN_PX4_BATCH_STEPSIZE  고도 계단 크기 비교 일괄 실험
+%   run_px4_batch_stepsize            % 0.3 m 세트 -> 0.7 m 세트 (총 96회)
+%   run_px4_batch_stepsize(0.3)       % 0.3 m 세트만 (48회)
+%   run_px4_batch_stepsize(0.7)       % 0.7 m 세트만 (48회)
 %
-%  구성: 계단 0.3 m 한 세트 + 0.7 m 한 세트 = 24회
-%    한 세트 = v = 10 / 9 / 8 x {직진, FF, GS, GS+PPO} = 12회, 지연 보상 Eq_Delay_Comp = false
-%  운용점: phi_eq = phi_deg (기본 30 deg) -> kappa = g tan(phi_eq) / v^2 (아래 표, 다른 각도는 phi_deg 만 바꾸면 됨)
-%     30 deg: v 10 -> 0.0566, v 9 -> 0.0699, v 8 -> 0.0885
-%  원 궤도: n_laps 를 고도 단계당 약 t_level = 30 s 가 되도록 자동 계산 (30 deg: 3바퀴)
+%  한 세트 = v = 10 / 9 / 8 x [직진 1회 + phi_eq 10/20/30/35/40 deg x {FF, GS, GS+PPO}] = 3 x 16 = 48회
+%    지연 보상 Eq_Delay_Comp = false
+%  kappa (이전 실험과 같은 값, phi_eq = atan(v^2 kappa / g))
+%            v = 10    v = 9     v = 8
+%     10 deg 0.0173    0.0214    0.0270
+%     20 deg 0.0357    0.0441    0.0558
+%     30 deg 0.0566    0.0699    0.0885
+%     35 deg 0.069     0.085     0.107
+%     40 deg 0.082     0.102     0.129
+%  원 궤도: n_laps 를 고도 단계당 약 t_level = 30 s 가 되도록 자동 계산 (10 deg 1 ~ 40 deg v8 5바퀴)
 %  직진   : 단계마다 straight_distance = 120 m (이전 직진 기준선과 같음), 끝나면 공중 복귀 후 착륙
 %  GS+PPO : cfg.mode = 'PPO' (기반 제어기 = GS 와 같은 법칙, 에이전트·on_mode 등은 px4_main 의 cfg.ppo 그대로)
 %  계단 순서: {up,down} x 4 (고도 단계 9개)
-%  순서: 0.3 m 세트 -> 0.7 m 세트, 세트 안에서 v = 10 -> 9 -> 8, 각 v 에서 직진 -> FF -> GS -> GS+PPO
-%  예상 시간 (30 deg): 세트당 경로 약 50분 + 이착륙·복귀 약 25분 = 약 75분, 두 세트 약 2시간 30분
+%  순서: 세트(계단 크기) -> v = 10, 9, 8 -> [직진, 그다음 phi_eq 10 -> 40 deg 마다 FF -> GS -> GS+PPO]
+%  예상 시간: 세트당 경로 약 3시간 50분 + 이착륙·복귀 약 1시간 50분 = 약 5시간 40분, 두 세트 약 11시간 20분
+%  주의: 0.7 m 계단은 40 deg 에서 추력 상한(약 29.5 N) 근처 (GS 피크 약 30.4 N, FF 약 29.5 N) -> 포화 가능
 %
 %  동작
 %   - 모든 실험은 원래 프리롤 시작점(원점)에서 시작하고, 끝나면 원점으로 복귀 (복귀는 최대 20 m/s, 사인 램프 가감속)
@@ -37,10 +46,15 @@ pause_between = 10;     % 실험 사이 대기 [s]
 continue_on_abort = true;   % 비행이 중단돼도(⑤ 착륙·복귀는 마침) 다음 실험 계속 (MATLAB 오류면 멈춤)
 
 %% 공통 설정
-phi_deg  = 30;           % 원 궤도 운용점 phi_eq [deg]
+if nargin < 1 || isempty(steps), steps = [0.3 0.7]; end   % 세트별 고도 계단 크기 [m]
 t_level  = 30;           % 원 궤도: 고도 단계 하나의 목표 시간 [s] -> n_laps 자동 계산
-steps    = [0.3 0.7];    % 세트별 고도 계단 크기 [m]
 vs       = [10 9 8];
+phis     = [10 20 30 35 40];
+K = [0.0173 0.0214 0.0270;      % 10 deg  (열: v = 10, 9, 8)
+     0.0357 0.0441 0.0558;      % 20 deg
+     0.0566 0.0699 0.0885;      % 30 deg
+     0.069  0.085  0.107 ;      % 35 deg
+     0.082  0.102  0.129 ];     % 40 deg
 L_str    = 120;          % 직진: 단계마다 직진 거리 [m]
 base = struct();
 base.path_type         = 'circle';
@@ -49,23 +63,25 @@ base.Eq_Delay_Comp     = false;
 base.height_order      = {"up","down","up","down","up","down","up","down"};
 
 %% 실험 목록 (순서대로 실행)
-g = 9.81;
 runs = cell(0, 2);
 for is = 1:numel(steps)
     for iv = 1:numel(vs)
         v = vs(iv);
-        k = round(g * tand(phi_deg) / v^2, 4);
-        nl = max(1, round(t_level / (2 * pi / (k * v))));
         b  = setf(base, 'height_step', steps(is), 'target_speed', v);
         tag = sprintf('s%.1f_v%d', steps(is), v);
         runs(end + 1, :) = {[tag '_straight'], setf(b, 'mode', 'MATLAB', 'curvature', 0.0, ...
             'straight_distance', L_str, 'n_laps', 1, 'Z_Gain_Scheduling', true)};                   %#ok<AGROW>
-        tagc = sprintf('%s_p%d_k%.4g_n%d', tag, phi_deg, k, nl);
-        runs(end + 1, :) = {[tagc '_FF'],     setf(b, 'mode', 'MATLAB', 'curvature', k, 'n_laps', nl, 'Z_Gain_Scheduling', false)};  %#ok<AGROW>
-        runs(end + 1, :) = {[tagc '_GS'],     setf(b, 'mode', 'MATLAB', 'curvature', k, 'n_laps', nl, 'Z_Gain_Scheduling', true )};  %#ok<AGROW>
-        runs(end + 1, :) = {[tagc '_GSPPO'],  setf(b, 'mode', 'PPO',    'curvature', k, 'n_laps', nl, 'Z_Gain_Scheduling', true )};  %#ok<AGROW>
+        for ip = 1:numel(phis)
+            k  = K(ip, iv);
+            nl = max(1, round(t_level / (2 * pi / (k * v))));
+            tagc = sprintf('%s_p%d_k%.4g_n%d', tag, phis(ip), k, nl);
+            runs(end + 1, :) = {[tagc '_FF'],    setf(b, 'mode', 'MATLAB', 'curvature', k, 'n_laps', nl, 'Z_Gain_Scheduling', false)};  %#ok<AGROW>
+            runs(end + 1, :) = {[tagc '_GS'],    setf(b, 'mode', 'MATLAB', 'curvature', k, 'n_laps', nl, 'Z_Gain_Scheduling', true )};  %#ok<AGROW>
+            runs(end + 1, :) = {[tagc '_GSPPO'], setf(b, 'mode', 'PPO',    'curvature', k, 'n_laps', nl, 'Z_Gain_Scheduling', true )};  %#ok<AGROW>
+        end
     end
 end
+fprintf('일괄 실험 %d개 구성 (계단 %s m)\n', size(runs, 1), num2str(steps));
 
 nRun = size(runs, 1);
 status = repmat({'건너뜀'}, nRun, 1);
@@ -124,9 +140,9 @@ end
 %% 결과 표 출력·저장
 lines = cell(nRun + 2, 1);
 lines{1} = sprintf('일괄 실험 (%s)', char(batch_time));
-lines{2} = sprintf('%-3s %-22s %-20s %-20s %s', '#', '실험', '시작', '종료', '상태');
+lines{2} = sprintf('%-3s %-34s %-20s %-20s %s', '#', '실험', '시작', '종료', '상태');
 for i = 1:nRun
-    lines{i + 2} = sprintf('%-3d %-22s %-20s %-20s %s', i, runs{i, 1}, ...
+    lines{i + 2} = sprintf('%-3d %-34s %-20s %-20s %s', i, runs{i, 1}, ...
         fmt_time(t_start(i)), fmt_time(t_end(i)), status{i});
 end
 fprintf('\n%s\n', strjoin(lines, newline));
