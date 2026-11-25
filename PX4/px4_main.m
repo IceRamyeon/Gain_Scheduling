@@ -172,7 +172,7 @@ cfg.ppo.ctrl.pos_Kd_z          = 4.0;
 cfg.ppo.ctrl.k_ff_v            = 1.0;      % 목표 속도 feedforward
 cfg.ppo.ctrl.k_ff_a            = 1.0;      % 목표 가속도 feedforward
 cfg.ppo.ctrl.Z_Gain_Scheduling = true;     % 기울기 보상 (1 / cos(phi) cos(theta))
-cfg.ppo.ctrl.max_angle_deg     = 50.0;
+cfg.ppo.ctrl.max_angle_deg     = cfg.max_angle_deg;
 cfg.ppo.ctrl.MPC_THR_HOVER     = 0.73;     % 임시값: run_px4_mission 이 ② 측정 호버 추력으로 덮어씀 (학습 환경 값은 0.6)
 
 %% 1-2. 일괄 실험 덮어쓰기 (run_px4_batch 에서 호출될 때만 적용, 직접 실행 시에는 비어 있음)
