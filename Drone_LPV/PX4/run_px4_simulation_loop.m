@@ -86,7 +86,7 @@ for i = 1:num_steps
     % [B] 센서 노이즈 (10Hz GPS 랜덤워크) + EKF2 위상 지연 (8Hz LPF) -> 50Hz LOCAL_POSITION_NED
     [p_est, v_est] = drone.sensorEKF.Update(state_true(1:3), state_true(4:6), is_50hz_tick);
 
-    % [B-1] 10 Hz PPO 잔차 게인 오프셋 추론 (Gazebo와 동일하게 EKF2 추정치 p_est, v_est 관측)
+    % [B-1] 10 Hz PPO 잔차 게인 오프셋 추론 (ChoeJae PX4/run_px4_mission.m 과 동일한 World NED 좌표계)
     if use_ppo && mod(i - 1, rl_ratio) == 0
         obs_vec = [
             traj_pos(1) - p_est(1);

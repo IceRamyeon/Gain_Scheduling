@@ -180,8 +180,8 @@ classdef PositionCtrl_PX4 < handle
             U1_raw = (obj.m * (obj.g - a_cmd(3))) / tilt_factor;
             U1_phys = max(0.0, U1_raw);
 
-            % 8. 정규화 추력 변환 및 [0.1, 0.9] 클리핑 + Z축 Anti-windup
-            thr_raw = obj.mpc_thr_hover * (U1_phys / (obj.m * obj.g));
+            % 8. 정규화 추력 변환 (Gazebo THR_MDL_FAC=0 제곱근 역보정: ChoeJae f8ccf1f와 동일) 및 [0.1, 0.9] 클리핑 + Z축 Anti-windup
+            thr_raw = obj.mpc_thr_hover * sqrt(U1_phys / (obj.m * obj.g));
             thr_cmd = max(0.1, min(thr_raw, 0.9));
 
             if thr_raw >= 0.1 && thr_raw <= 0.9

@@ -16,7 +16,8 @@ classdef Drone_PX4 < handle
         l               % 암 길이 L = 0.246 m
         l_xy            % 로터 X, Y 모멘트 팔 길이 = L / sqrt(2) = 0.174 m
         I               % 관성모멘트 행렬 (3x3)
-        mpc_thr_hover   % 호버링 정규화 추력 (0.6)
+        mpc_thr_hover   % 호버링 정규화 추력 (0.73)
+        thrust_exp      % Gazebo 추력 곡선 지수 (THR_MDL_FAC=0 -> T ~ (u/u_hover)^thrust_exp, 기본 2.0)
 
         % 모터 및 믹서 파라미터
         f_max_per_rotor % 로터당 최대 추력 (8.6 N, 4개 합산 34.4 N)
@@ -63,7 +64,12 @@ classdef Drone_PX4 < handle
             obj.l    = cfg.armLength;     % 0.246 m
             obj.l_xy = obj.l / sqrt(2);   % 0.174 m (±0.174, ±0.174)
             obj.I    = diag([cfg.Ixx, cfg.Iyy, cfg.Izz]);
-            obj.mpc_thr_hover = cfg.MPC_THR_HOVER; % 0.6
+            obj.mpc_thr_hover = cfg.MPC_THR_HOVER; % 0.73
+            if isfield(cfg, 'thrust_exp')
+                obj.thrust_exp = cfg.thrust_exp;
+            else
+                obj.thrust_exp = 2.0; % Gazebo THR_MDL_FAC=0 제곱 추력 곡선 (PositionCtrl_PX4의 sqrt 역보정과 정합)
+            end
 
             % 2. 믹서 및 비대칭 모터 시정수 설정
             obj.f_max_per_rotor = cfg.f_max_per_rotor; % 8.6 N
@@ -114,8 +120,9 @@ classdef Drone_PX4 < handle
             Mz_cmd  = ctrl_in(4);
 
             % 정규화 추력 명령을 목표 총 추력 [N]으로 변환
-            % thr_cmd == MPC_THR_HOVER(0.6) 일 때 정확히 m*g (20.248 N) 발생
-            T_cmd = (thr_cmd / obj.mpc_thr_hover) * (obj.m * obj.g);
+            % Gazebo(THR_MDL_FAC=0) 플랜트: T = m*g * (u / thr_hover)^thrust_exp (기본 thrust_exp = 2.0)
+            % PositionCtrl_PX4 / ChoeJae f8ccf1f 는 u = thr_hover * sqrt(U1 / mg) 로 역보정
+            T_cmd = ((thr_cmd / obj.mpc_thr_hover) ^ obj.thrust_exp) * (obj.m * obj.g);
 
             % 4-로터 X-Configuration 역믹서 할당 (Inverse Control Allocation)
             % Rotor 1: Front-Left  (+x, -y), CCW (+yaw torque)
@@ -132,7 +139,7 @@ classdef Drone_PX4 < handle
                 f_base + df_roll - df_pitch - df_yaw;
                 f_base - df_roll - df_pitch + df_yaw;
                 f_base - df_roll + df_pitch - df_yaw
-            ];
+                ];
 
             % 로터당 [0, 8.6 N] 하드 클리핑 (합산 최대 34.4 N)
             obj.is_saturated = any(f_raw < 0.0 | f_raw > obj.f_max_per_rotor);
@@ -182,8 +189,8 @@ classdef Drone_PX4 < handle
             sec_th = 1.0 / cos_th;
 
             W_mat = [1, sin(phi)*tan_th, cos(phi)*tan_th;
-                     0, cos(phi),        -sin(phi);
-                     0, sin(phi)*sec_th, cos(phi)*sec_th];
+                0, cos(phi),        -sin(phi);
+                0, sin(phi)*sec_th, cos(phi)*sec_th];
             obj.dx(7:9) = W_mat * obj.w;
 
             % 5. 회전 운동방정식

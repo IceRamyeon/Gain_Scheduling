@@ -65,9 +65,9 @@ classdef PX4_AttitudeCtrl < handle
             if isfield(cfg, 'K_att'),    obj.K_att    = cfg.K_att;    else, obj.K_att    = 4.0;  end
             if isfield(cfg, 'tau_rate'), obj.tau_rate = cfg.tau_rate; else, obj.tau_rate = 0.04; end
 
-            % Mode 2 외부 루프 P 게인
-            obj.MC_ROLL_P  = 4.0;
-            obj.MC_PITCH_P = 4.0;
+            % Mode 2 외부 루프 P 게인 (도메인 무작위화 지원)
+            if isfield(cfg, 'MC_ROLL_P'),  obj.MC_ROLL_P  = cfg.MC_ROLL_P;  else, obj.MC_ROLL_P  = 4.0; end
+            if isfield(cfg, 'MC_PITCH_P'), obj.MC_PITCH_P = cfg.MC_PITCH_P; else, obj.MC_PITCH_P = 4.0; end
             obj.MC_YAW_P   = 2.8;
 
             % 각속도 Saturation 제한: ±220 deg/s (3.84 rad/s)

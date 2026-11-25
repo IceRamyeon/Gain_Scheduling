@@ -1,0 +1,3650 @@
+========================================================================
+  [PX4 + Gazebo x500] PPO 잔차 제어기 학습 시작 (총 3,000 에피소드)
+  - Plant: Drone_PX4 (m=2.064kg, 4-로터 믹서, tau_up=12.5ms/down=25ms)
+  - Controller: PX4_AttitudeCtrl (250Hz) + PositionCtrl_PX4 (50Hz)
+  - Comm Delay: 0.04s (10 steps @ 250Hz) | Spatial Lookahead: L=2.0m
+========================================================================
+직선+원호(Arc) 궤적 총 길이: 258.12m
+비행 속력: 3.71m/s, 필요 비행 시간(tf): 69.61초
+직선+원호(Arc) 궤적 총 길이: 258.12m
+비행 속력: 3.71m/s, 필요 비행 시간(tf): 69.61초
+Episode:   1/3000 | Episode reward:  2448.33 | Episode steps:  697 | Average reward:  2448.33 | Step Count:  697 | Episode Q0:    -0.35
+직선+원호(Arc) 궤적 총 길이: 198.42m
+비행 속력: 2.60m/s, 필요 비행 시간(tf): 76.23초
+직선+원호(Arc) 궤적 총 길이: 198.42m
+비행 속력: 2.60m/s, 필요 비행 시간(tf): 76.23초
+Episode:   2/3000 | Episode reward:  3263.66 | Episode steps:  763 | Average reward:  2855.99 | Step Count: 1460 | Episode Q0:     3.65
+직선+원호(Arc) 궤적 총 길이: 134.26m
+비행 속력: 3.73m/s, 필요 비행 시간(tf): 35.96초
+직선+원호(Arc) 궤적 총 길이: 134.26m
+비행 속력: 3.73m/s, 필요 비행 시간(tf): 35.96초
+Episode:   3/3000 | Episode reward:  1795.04 | Episode steps:  360 | Average reward:  2502.34 | Step Count: 1820 | Episode Q0:    27.47
+직선+원호(Arc) 궤적 총 길이: 284.37m
+비행 속력: 3.54m/s, 필요 비행 시간(tf): 80.25초
+직선+원호(Arc) 궤적 총 길이: 284.37m
+비행 속력: 3.54m/s, 필요 비행 시간(tf): 80.25초
+Episode:   4/3000 | Episode reward:  2468.25 | Episode steps:  803 | Average reward:  2493.82 | Step Count: 2623 | Episode Q0:    26.18
+직선+원호(Arc) 궤적 총 길이: 233.12m
+비행 속력: 3.60m/s, 필요 비행 시간(tf): 64.70초
+직선+원호(Arc) 궤적 총 길이: 233.12m
+비행 속력: 3.60m/s, 필요 비행 시간(tf): 64.70초
+Episode:   5/3000 | Episode reward:  1481.97 | Episode steps:  648 | Average reward:  2291.45 | Step Count: 3271 | Episode Q0:    58.12
+직선+원호(Arc) 궤적 총 길이: 139.51m
+비행 속력: 2.53m/s, 필요 비행 시간(tf): 55.06초
+직선+원호(Arc) 궤적 총 길이: 139.51m
+비행 속력: 2.53m/s, 필요 비행 시간(tf): 55.06초
+Episode:   6/3000 | Episode reward:  2614.62 | Episode steps:  551 | Average reward:  2345.31 | Step Count: 3822 | Episode Q0:    59.89
+직선+원호(Arc) 궤적 총 길이: 128.79m
+비행 속력: 2.85m/s, 필요 비행 시간(tf): 45.25초
+직선+원호(Arc) 궤적 총 길이: 128.79m
+비행 속력: 2.85m/s, 필요 비행 시간(tf): 45.25초
+Episode:   7/3000 | Episode reward:  2459.09 | Episode steps:  453 | Average reward:  2361.57 | Step Count: 4275 | Episode Q0:    71.87
+직선+원호(Arc) 궤적 총 길이: 223.82m
+비행 속력: 3.51m/s, 필요 비행 시간(tf): 63.73초
+직선+원호(Arc) 궤적 총 길이: 223.82m
+비행 속력: 3.51m/s, 필요 비행 시간(tf): 63.73초
+Episode:   8/3000 | Episode reward:  2176.71 | Episode steps:  638 | Average reward:  2338.46 | Step Count: 4913 | Episode Q0:   163.58
+직선+원호(Arc) 궤적 총 길이: 309.78m
+비행 속력: 3.66m/s, 필요 비행 시간(tf): 84.68초
+직선+원호(Arc) 궤적 총 길이: 309.78m
+비행 속력: 3.66m/s, 필요 비행 시간(tf): 84.68초
+Episode:   9/3000 | Episode reward:  3226.30 | Episode steps:  847 | Average reward:  2437.11 | Step Count: 5760 | Episode Q0:   180.13
+직선+원호(Arc) 궤적 총 길이: 157.79m
+비행 속력: 3.11m/s, 필요 비행 시간(tf): 50.68초
+직선+원호(Arc) 궤적 총 길이: 157.79m
+비행 속력: 3.11m/s, 필요 비행 시간(tf): 50.68초
+Episode:  10/3000 | Episode reward:  2653.70 | Episode steps:  507 | Average reward:  2458.77 | Step Count: 6267 | Episode Q0:   185.09
+직선+원호(Arc) 궤적 총 길이: 196.34m
+비행 속력: 2.54m/s, 필요 비행 시간(tf): 77.20초
+직선+원호(Arc) 궤적 총 길이: 196.34m
+비행 속력: 2.54m/s, 필요 비행 시간(tf): 77.20초
+Episode:  11/3000 | Episode reward:  3503.53 | Episode steps:  773 | Average reward:  2553.75 | Step Count: 7040 | Episode Q0:   146.15
+직선+원호(Arc) 궤적 총 길이: 192.71m
+비행 속력: 2.68m/s, 필요 비행 시간(tf): 71.94초
+직선+원호(Arc) 궤적 총 길이: 192.71m
+비행 속력: 2.68m/s, 필요 비행 시간(tf): 71.94초
+Episode:  12/3000 | Episode reward:  3759.64 | Episode steps:  720 | Average reward:  2654.24 | Step Count: 7760 | Episode Q0:   196.79
+직선+원호(Arc) 궤적 총 길이: 262.83m
+비행 속력: 3.73m/s, 필요 비행 시간(tf): 70.40초
+직선+원호(Arc) 궤적 총 길이: 262.83m
+비행 속력: 3.73m/s, 필요 비행 시간(tf): 70.40초
+Episode:  13/3000 | Episode reward:  2422.40 | Episode steps:  705 | Average reward:  2636.40 | Step Count: 8465 | Episode Q0:   327.33
+직선+원호(Arc) 궤적 총 길이: 161.77m
+비행 속력: 2.86m/s, 필요 비행 시간(tf): 56.49초
+직선+원호(Arc) 궤적 총 길이: 161.77m
+비행 속력: 2.86m/s, 필요 비행 시간(tf): 56.49초
+Episode:  14/3000 | Episode reward:  2616.03 | Episode steps:  565 | Average reward:  2634.95 | Step Count: 9030 | Episode Q0:   234.50
+직선+원호(Arc) 궤적 총 길이: 358.60m
+비행 속력: 2.95m/s, 필요 비행 시간(tf): 121.64초
+직선+원호(Arc) 궤적 총 길이: 358.60m
+비행 속력: 2.95m/s, 필요 비행 시간(tf): 121.64초
+Episode:  15/3000 | Episode reward:  5897.08 | Episode steps: 1217 | Average reward:  2852.42 | Step Count: 10247 | Episode Q0:   247.12
+직선+원호(Arc) 궤적 총 길이: 152.21m
+비행 속력: 3.01m/s, 필요 비행 시간(tf): 50.62초
+직선+원호(Arc) 궤적 총 길이: 152.21m
+비행 속력: 3.01m/s, 필요 비행 시간(tf): 50.62초
+Episode:  16/3000 | Episode reward:  1588.15 | Episode steps:  507 | Average reward:  2773.41 | Step Count: 10754 | Episode Q0:   276.48
+직선+원호(Arc) 궤적 총 길이: 250.15m
+비행 속력: 2.52m/s, 필요 비행 시간(tf): 99.13초
+직선+원호(Arc) 궤적 총 길이: 250.15m
+비행 속력: 2.52m/s, 필요 비행 시간(tf): 99.13초
+Episode:  17/3000 | Episode reward:  4655.54 | Episode steps:  992 | Average reward:  2884.12 | Step Count: 11746 | Episode Q0:   242.21
+직선+원호(Arc) 궤적 총 길이: 292.71m
+비행 속력: 3.37m/s, 필요 비행 시간(tf): 86.73초
+직선+원호(Arc) 궤적 총 길이: 292.71m
+비행 속력: 3.37m/s, 필요 비행 시간(tf): 86.73초
+Episode:  18/3000 | Episode reward:  2350.35 | Episode steps:  868 | Average reward:  2854.47 | Step Count: 12614 | Episode Q0:   346.22
+직선+원호(Arc) 궤적 총 길이: 114.97m
+비행 속력: 3.68m/s, 필요 비행 시간(tf): 31.28초
+직선+원호(Arc) 궤적 총 길이: 114.97m
+비행 속력: 3.68m/s, 필요 비행 시간(tf): 31.28초
+Episode:  19/3000 | Episode reward:   650.62 | Episode steps:  313 | Average reward:  2738.47 | Step Count: 12927 | Episode Q0:   330.97
+직선+원호(Arc) 궤적 총 길이: 297.83m
+비행 속력: 2.57m/s, 필요 비행 시간(tf): 115.71초
+직선+원호(Arc) 궤적 총 길이: 297.83m
+비행 속력: 2.57m/s, 필요 비행 시간(tf): 115.71초
+Episode:  20/3000 | Episode reward:  5481.04 | Episode steps: 1158 | Average reward:  2875.60 | Step Count: 14085 | Episode Q0:   269.11
+직선+원호(Arc) 궤적 총 길이: 287.15m
+비행 속력: 3.59m/s, 필요 비행 시간(tf): 80.06초
+직선+원호(Arc) 궤적 총 길이: 287.15m
+비행 속력: 3.59m/s, 필요 비행 시간(tf): 80.06초
+Episode:  21/3000 | Episode reward:  2814.71 | Episode steps:  801 | Average reward:  2872.70 | Step Count: 14886 | Episode Q0:   344.71
+직선+원호(Arc) 궤적 총 길이: 211.00m
+비행 속력: 3.19m/s, 필요 비행 시간(tf): 66.11초
+직선+원호(Arc) 궤적 총 길이: 211.00m
+비행 속력: 3.19m/s, 필요 비행 시간(tf): 66.11초
+Episode:  22/3000 | Episode reward:  1781.27 | Episode steps:  662 | Average reward:  2823.09 | Step Count: 15548 | Episode Q0:   306.04
+직선+원호(Arc) 궤적 총 길이: 194.67m
+비행 속력: 2.78m/s, 필요 비행 시간(tf): 69.98초
+직선+원호(Arc) 궤적 총 길이: 194.67m
+비행 속력: 2.78m/s, 필요 비행 시간(tf): 69.98초
+Episode:  23/3000 | Episode reward:  3535.04 | Episode steps:  700 | Average reward:  2854.05 | Step Count: 16248 | Episode Q0:   264.93
+직선+원호(Arc) 궤적 총 길이: 180.21m
+비행 속력: 3.37m/s, 필요 비행 시간(tf): 53.52초
+직선+원호(Arc) 궤적 총 길이: 180.21m
+비행 속력: 3.37m/s, 필요 비행 시간(tf): 53.52초
+Episode:  24/3000 | Episode reward:  1561.92 | Episode steps:  536 | Average reward:  2800.21 | Step Count: 16784 | Episode Q0:   329.56
+직선+원호(Arc) 궤적 총 길이: 225.16m
+비행 속력: 3.10m/s, 필요 비행 시간(tf): 72.75초
+직선+원호(Arc) 궤적 총 길이: 225.16m
+비행 속력: 3.10m/s, 필요 비행 시간(tf): 72.75초
+Episode:  25/3000 | Episode reward:  3117.42 | Episode steps:  728 | Average reward:  2812.90 | Step Count: 17512 | Episode Q0:   326.14
+직선+원호(Arc) 궤적 총 길이: 143.38m
+비행 속력: 3.40m/s, 필요 비행 시간(tf): 42.15초
+직선+원호(Arc) 궤적 총 길이: 143.38m
+비행 속력: 3.40m/s, 필요 비행 시간(tf): 42.15초
+Episode:  26/3000 | Episode reward:  2188.80 | Episode steps:  422 | Average reward:  2788.89 | Step Count: 17934 | Episode Q0:   344.94
+직선+원호(Arc) 궤적 총 길이: 130.47m
+비행 속력: 2.97m/s, 필요 비행 시간(tf): 44.00초
+직선+원호(Arc) 궤적 총 길이: 130.47m
+비행 속력: 2.97m/s, 필요 비행 시간(tf): 44.00초
+Episode:  27/3000 | Episode reward:  2318.76 | Episode steps:  441 | Average reward:  2771.48 | Step Count: 18375 | Episode Q0:   308.98
+직선+원호(Arc) 궤적 총 길이: 288.05m
+비행 속력: 2.89m/s, 필요 비행 시간(tf): 99.65초
+직선+원호(Arc) 궤적 총 길이: 288.05m
+비행 속력: 2.89m/s, 필요 비행 시간(tf): 99.65초
+Episode:  28/3000 | Episode reward:  3609.55 | Episode steps:  997 | Average reward:  2801.41 | Step Count: 19372 | Episode Q0:   313.70
+직선+원호(Arc) 궤적 총 길이: 116.88m
+비행 속력: 3.09m/s, 필요 비행 시간(tf): 37.80초
+직선+원호(Arc) 궤적 총 길이: 116.88m
+비행 속력: 3.09m/s, 필요 비행 시간(tf): 37.80초
+Episode:  29/3000 | Episode reward:  1731.56 | Episode steps:  379 | Average reward:  2764.52 | Step Count: 19751 | Episode Q0:   300.75
+직선+원호(Arc) 궤적 총 길이: 337.95m
+비행 속력: 2.68m/s, 필요 비행 시간(tf): 126.00초
+직선+원호(Arc) 궤적 총 길이: 337.95m
+비행 속력: 2.68m/s, 필요 비행 시간(tf): 126.00초
+Episode:  30/3000 | Episode reward:  5703.51 | Episode steps: 1261 | Average reward:  2862.49 | Step Count: 21012 | Episode Q0:   295.89
+직선+원호(Arc) 궤적 총 길이: 291.28m
+비행 속력: 3.47m/s, 필요 비행 시간(tf): 83.99초
+직선+원호(Arc) 궤적 총 길이: 291.28m
+비행 속력: 3.47m/s, 필요 비행 시간(tf): 83.99초
+Episode:  31/3000 | Episode reward:  2450.08 | Episode steps:  840 | Average reward:  2849.18 | Step Count: 21852 | Episode Q0:   381.44
+직선+원호(Arc) 궤적 총 길이: 118.66m
+비행 속력: 2.84m/s, 필요 비행 시간(tf): 41.84초
+직선+원호(Arc) 궤적 총 길이: 118.66m
+비행 속력: 2.84m/s, 필요 비행 시간(tf): 41.84초
+Episode:  32/3000 | Episode reward:  2117.56 | Episode steps:  419 | Average reward:  2826.32 | Step Count: 22271 | Episode Q0:   302.78
+직선+원호(Arc) 궤적 총 길이: 145.05m
+비행 속력: 2.64m/s, 필요 비행 시간(tf): 54.94초
+직선+원호(Arc) 궤적 총 길이: 145.05m
+비행 속력: 2.64m/s, 필요 비행 시간(tf): 54.94초
+Episode:  33/3000 | Episode reward:  2990.75 | Episode steps:  550 | Average reward:  2831.30 | Step Count: 22821 | Episode Q0:   287.35
+직선+원호(Arc) 궤적 총 길이: 214.41m
+비행 속력: 2.54m/s, 필요 비행 시간(tf): 84.37초
+직선+원호(Arc) 궤적 총 길이: 214.41m
+비행 속력: 2.54m/s, 필요 비행 시간(tf): 84.37초
+Episode:  34/3000 | Episode reward:  3782.51 | Episode steps:  844 | Average reward:  2859.28 | Step Count: 23665 | Episode Q0:   287.86
+직선+원호(Arc) 궤적 총 길이: 193.70m
+비행 속력: 2.72m/s, 필요 비행 시간(tf): 71.19초
+직선+원호(Arc) 궤적 총 길이: 193.70m
+비행 속력: 2.72m/s, 필요 비행 시간(tf): 71.19초
+Episode:  35/3000 | Episode reward:  3266.19 | Episode steps:  712 | Average reward:  2870.90 | Step Count: 24377 | Episode Q0:   331.57
+직선+원호(Arc) 궤적 총 길이: 227.45m
+비행 속력: 2.90m/s, 필요 비행 시간(tf): 78.48초
+직선+원호(Arc) 궤적 총 길이: 227.45m
+비행 속력: 2.90m/s, 필요 비행 시간(tf): 78.48초
+Episode:  36/3000 | Episode reward:  3546.46 | Episode steps:  785 | Average reward:  2889.67 | Step Count: 25162 | Episode Q0:   370.63
+직선+원호(Arc) 궤적 총 길이: 235.86m
+비행 속력: 3.09m/s, 필요 비행 시간(tf): 76.33초
+직선+원호(Arc) 궤적 총 길이: 235.86m
+비행 속력: 3.09m/s, 필요 비행 시간(tf): 76.33초
+Episode:  37/3000 | Episode reward:  2466.52 | Episode steps:  764 | Average reward:  2878.23 | Step Count: 25926 | Episode Q0:   364.54
+직선+원호(Arc) 궤적 총 길이: 121.10m
+비행 속력: 3.20m/s, 필요 비행 시간(tf): 37.85초
+직선+원호(Arc) 궤적 총 길이: 121.10m
+비행 속력: 3.20m/s, 필요 비행 시간(tf): 37.85초
+Episode:  38/3000 | Episode reward:  1760.61 | Episode steps:  379 | Average reward:  2848.82 | Step Count: 26305 | Episode Q0:   375.55
+직선+원호(Arc) 궤적 총 길이: 295.06m
+비행 속력: 2.91m/s, 필요 비행 시간(tf): 101.47초
+직선+원호(Arc) 궤적 총 길이: 295.06m
+비행 속력: 2.91m/s, 필요 비행 시간(tf): 101.47초
+Episode:  39/3000 | Episode reward:  3759.46 | Episode steps: 1015 | Average reward:  2872.17 | Step Count: 27320 | Episode Q0:   342.43
+직선+원호(Arc) 궤적 총 길이: 244.05m
+비행 속력: 3.05m/s, 필요 비행 시간(tf): 80.12초
+직선+원호(Arc) 궤적 총 길이: 244.05m
+비행 속력: 3.05m/s, 필요 비행 시간(tf): 80.12초
+Episode:  40/3000 | Episode reward:  2739.73 | Episode steps:  802 | Average reward:  2868.86 | Step Count: 28122 | Episode Q0:   351.59
+직선+원호(Arc) 궤적 총 길이: 182.99m
+비행 속력: 3.57m/s, 필요 비행 시간(tf): 51.21초
+직선+원호(Arc) 궤적 총 길이: 182.99m
+비행 속력: 3.57m/s, 필요 비행 시간(tf): 51.21초
+Episode:  41/3000 | Episode reward:   505.48 | Episode steps:  513 | Average reward:  2811.22 | Step Count: 28635 | Episode Q0:   381.49
+직선+원호(Arc) 궤적 총 길이: 246.92m
+비행 속력: 3.67m/s, 필요 비행 시간(tf): 67.28초
+직선+원호(Arc) 궤적 총 길이: 246.92m
+비행 속력: 3.67m/s, 필요 비행 시간(tf): 67.28초
+Episode:  42/3000 | Episode reward:  1749.44 | Episode steps:  673 | Average reward:  2785.94 | Step Count: 29308 | Episode Q0:   378.83
+직선+원호(Arc) 궤적 총 길이: 172.18m
+비행 속력: 2.60m/s, 필요 비행 시간(tf): 66.11초
+직선+원호(Arc) 궤적 총 길이: 172.18m
+비행 속력: 2.60m/s, 필요 비행 시간(tf): 66.11초
+Episode:  43/3000 | Episode reward:  3120.64 | Episode steps:  662 | Average reward:  2793.72 | Step Count: 29970 | Episode Q0:   272.72
+직선+원호(Arc) 궤적 총 길이: 269.36m
+비행 속력: 3.44m/s, 필요 비행 시간(tf): 78.34초
+직선+원호(Arc) 궤적 총 길이: 269.36m
+비행 속력: 3.44m/s, 필요 비행 시간(tf): 78.34초
+Episode:  44/3000 | Episode reward:  1617.48 | Episode steps:  784 | Average reward:  2766.99 | Step Count: 30754 | Episode Q0:   368.01
+직선+원호(Arc) 궤적 총 길이: 251.83m
+비행 속력: 3.67m/s, 필요 비행 시간(tf): 68.64초
+직선+원호(Arc) 궤적 총 길이: 251.83m
+비행 속력: 3.67m/s, 필요 비행 시간(tf): 68.64초
+Episode:  45/3000 | Episode reward:  2387.67 | Episode steps:  687 | Average reward:  2758.56 | Step Count: 31441 | Episode Q0:   336.61
+직선+원호(Arc) 궤적 총 길이: 269.88m
+비행 속력: 2.87m/s, 필요 비행 시간(tf): 93.97초
+직선+원호(Arc) 궤적 총 길이: 269.88m
+비행 속력: 2.87m/s, 필요 비행 시간(tf): 93.97초
+Episode:  46/3000 | Episode reward:  4003.19 | Episode steps:  940 | Average reward:  2785.62 | Step Count: 32381 | Episode Q0:   288.92
+직선+원호(Arc) 궤적 총 길이: 98.65m
+비행 속력: 3.65m/s, 필요 비행 시간(tf): 27.05초
+직선+원호(Arc) 궤적 총 길이: 98.65m
+비행 속력: 3.65m/s, 필요 비행 시간(tf): 27.05초
+Episode:  47/3000 | Episode reward:   388.93 | Episode steps:  271 | Average reward:  2734.62 | Step Count: 32652 | Episode Q0:   362.60
+직선+원호(Arc) 궤적 총 길이: 111.69m
+비행 속력: 2.80m/s, 필요 비행 시간(tf): 39.92초
+직선+원호(Arc) 궤적 총 길이: 111.69m
+비행 속력: 2.80m/s, 필요 비행 시간(tf): 39.92초
+Episode:  48/3000 | Episode reward:  1681.20 | Episode steps:  400 | Average reward:  2712.68 | Step Count: 33052 | Episode Q0:   296.93
+직선+원호(Arc) 궤적 총 길이: 202.14m
+비행 속력: 3.45m/s, 필요 비행 시간(tf): 58.57초
+직선+원호(Arc) 궤적 총 길이: 202.14m
+비행 속력: 3.45m/s, 필요 비행 시간(tf): 58.57초
+Episode:  49/3000 | Episode reward:  1432.30 | Episode steps:  586 | Average reward:  2686.55 | Step Count: 33638 | Episode Q0:   341.51
+직선+원호(Arc) 궤적 총 길이: 353.41m
+비행 속력: 3.10m/s, 필요 비행 시간(tf): 114.01초
+직선+원호(Arc) 궤적 총 길이: 353.41m
+비행 속력: 3.10m/s, 필요 비행 시간(tf): 114.01초
+Episode:  50/3000 | Episode reward:  5660.73 | Episode steps: 1141 | Average reward:  2746.03 | Step Count: 34779 | Episode Q0:   274.19
+직선+원호(Arc) 궤적 총 길이: 314.02m
+비행 속력: 3.04m/s, 필요 비행 시간(tf): 103.33초
+직선+원호(Arc) 궤적 총 길이: 314.02m
+비행 속력: 3.04m/s, 필요 비행 시간(tf): 103.33초
+Episode:  51/3000 | Episode reward:  4261.69 | Episode steps: 1034 | Average reward:  2782.30 | Step Count: 35813 | Episode Q0:   315.73
+직선+원호(Arc) 궤적 총 길이: 111.26m
+비행 속력: 2.54m/s, 필요 비행 시간(tf): 43.84초
+직선+원호(Arc) 궤적 총 길이: 111.26m
+비행 속력: 2.54m/s, 필요 비행 시간(tf): 43.84초
+Episode:  52/3000 | Episode reward:  1998.57 | Episode steps:  439 | Average reward:  2757.00 | Step Count: 36252 | Episode Q0:   289.88
+직선+원호(Arc) 궤적 총 길이: 166.90m
+비행 속력: 3.37m/s, 필요 비행 시간(tf): 49.54초
+직선+원호(Arc) 궤적 총 길이: 166.90m
+비행 속력: 3.37m/s, 필요 비행 시간(tf): 49.54초
+Episode:  53/3000 | Episode reward:  2493.75 | Episode steps:  496 | Average reward:  2770.97 | Step Count: 36748 | Episode Q0:   323.33
+직선+원호(Arc) 궤적 총 길이: 209.69m
+비행 속력: 3.18m/s, 필요 비행 시간(tf): 65.94초
+직선+원호(Arc) 궤적 총 길이: 209.69m
+비행 속력: 3.18m/s, 필요 비행 시간(tf): 65.94초
+Episode:  54/3000 | Episode reward:  2510.71 | Episode steps:  660 | Average reward:  2771.82 | Step Count: 37408 | Episode Q0:   359.89
+직선+원호(Arc) 궤적 총 길이: 190.23m
+비행 속력: 2.89m/s, 필요 비행 시간(tf): 65.89초
+직선+원호(Arc) 궤적 총 길이: 190.23m
+비행 속력: 2.89m/s, 필요 비행 시간(tf): 65.89초
+Episode:  55/3000 | Episode reward:  2261.92 | Episode steps:  659 | Average reward:  2787.42 | Step Count: 38067 | Episode Q0:   330.17
+직선+원호(Arc) 궤적 총 길이: 136.01m
+비행 속력: 3.02m/s, 필요 비행 시간(tf): 45.08초
+직선+원호(Arc) 궤적 총 길이: 136.01m
+비행 속력: 3.02m/s, 필요 비행 시간(tf): 45.08초
+Episode:  56/3000 | Episode reward:  1930.71 | Episode steps:  451 | Average reward:  2773.74 | Step Count: 38518 | Episode Q0:   335.36
+직선+원호(Arc) 궤적 총 길이: 133.54m
+비행 속력: 3.40m/s, 필요 비행 시간(tf): 39.28초
+직선+원호(Arc) 궤적 총 길이: 133.54m
+비행 속력: 3.40m/s, 필요 비행 시간(tf): 39.28초
+Episode:  57/3000 | Episode reward:  1504.73 | Episode steps:  393 | Average reward:  2754.65 | Step Count: 38911 | Episode Q0:   366.44
+직선+원호(Arc) 궤적 총 길이: 246.63m
+비행 속력: 3.32m/s, 필요 비행 시간(tf): 74.28초
+직선+원호(Arc) 궤적 총 길이: 246.63m
+비행 속력: 3.32m/s, 필요 비행 시간(tf): 74.28초
+Episode:  58/3000 | Episode reward:  3040.62 | Episode steps:  743 | Average reward:  2771.93 | Step Count: 39654 | Episode Q0:   335.09
+직선+원호(Arc) 궤적 총 길이: 320.29m
+비행 속력: 3.33m/s, 필요 비행 시간(tf): 96.15초
+직선+원호(Arc) 궤적 총 길이: 320.29m
+비행 속력: 3.33m/s, 필요 비행 시간(tf): 96.15초
+Episode:  59/3000 | Episode reward:  3379.19 | Episode steps:  962 | Average reward:  2774.99 | Step Count: 40616 | Episode Q0:   364.64
+직선+원호(Arc) 궤적 총 길이: 117.63m
+비행 속력: 3.65m/s, 필요 비행 시간(tf): 32.25초
+직선+원호(Arc) 궤적 총 길이: 117.63m
+비행 속력: 3.65m/s, 필요 비행 시간(tf): 32.25초
+Episode:  60/3000 | Episode reward:   249.66 | Episode steps:  323 | Average reward:  2726.91 | Step Count: 40939 | Episode Q0:   380.41
+직선+원호(Arc) 궤적 총 길이: 247.44m
+비행 속력: 2.67m/s, 필요 비행 시간(tf): 92.58초
+직선+원호(Arc) 궤적 총 길이: 247.44m
+비행 속력: 2.67m/s, 필요 비행 시간(tf): 92.58초
+Episode:  61/3000 | Episode reward:  4683.85 | Episode steps:  926 | Average reward:  2750.51 | Step Count: 41865 | Episode Q0:   280.70
+직선+원호(Arc) 궤적 총 길이: 262.44m
+비행 속력: 3.33m/s, 필요 비행 시간(tf): 78.74초
+직선+원호(Arc) 궤적 총 길이: 262.44m
+비행 속력: 3.33m/s, 필요 비행 시간(tf): 78.74초
+Episode:  62/3000 | Episode reward:  2215.06 | Episode steps:  788 | Average reward:  2719.62 | Step Count: 42653 | Episode Q0:   346.28
+직선+원호(Arc) 궤적 총 길이: 215.06m
+비행 속력: 3.74m/s, 필요 비행 시간(tf): 57.47초
+직선+원호(Arc) 궤적 총 길이: 215.06m
+비행 속력: 3.74m/s, 필요 비행 시간(tf): 57.47초
+Episode:  63/3000 | Episode reward:  1380.59 | Episode steps:  575 | Average reward:  2698.79 | Step Count: 43228 | Episode Q0:   357.82
+직선+원호(Arc) 궤적 총 길이: 324.01m
+비행 속력: 3.47m/s, 필요 비행 시간(tf): 93.31초
+직선+원호(Arc) 궤적 총 길이: 324.01m
+비행 속력: 3.47m/s, 필요 비행 시간(tf): 93.31초
+Episode:  64/3000 | Episode reward:  3229.39 | Episode steps:  934 | Average reward:  2711.05 | Step Count: 44162 | Episode Q0:   338.36
+직선+원호(Arc) 궤적 총 길이: 292.34m
+비행 속력: 2.66m/s, 필요 비행 시간(tf): 109.95초
+직선+원호(Arc) 궤적 총 길이: 292.34m
+비행 속력: 2.66m/s, 필요 비행 시간(tf): 109.95초
+Episode:  65/3000 | Episode reward:  5240.11 | Episode steps: 1100 | Average reward:  2697.91 | Step Count: 45262 | Episode Q0:   267.90
+직선+원호(Arc) 궤적 총 길이: 266.66m
+비행 속력: 2.66m/s, 필요 비행 시간(tf): 100.42초
+직선+원호(Arc) 궤적 총 길이: 266.66m
+비행 속력: 2.66m/s, 필요 비행 시간(tf): 100.42초
+Episode:  66/3000 | Episode reward:  4729.64 | Episode steps: 1005 | Average reward:  2760.74 | Step Count: 46267 | Episode Q0:   278.62
+직선+원호(Arc) 궤적 총 길이: 284.30m
+비행 속력: 3.55m/s, 필요 비행 시간(tf): 80.05초
+직선+원호(Arc) 궤적 총 길이: 284.30m
+비행 속력: 3.55m/s, 필요 비행 시간(tf): 80.05초
+Episode:  67/3000 | Episode reward:  2209.33 | Episode steps:  801 | Average reward:  2711.82 | Step Count: 47068 | Episode Q0:   379.82
+직선+원호(Arc) 궤적 총 길이: 213.58m
+비행 속력: 3.42m/s, 필요 비행 시간(tf): 62.41초
+직선+원호(Arc) 궤적 총 길이: 213.58m
+비행 속력: 3.42m/s, 필요 비행 시간(tf): 62.41초
+Episode:  68/3000 | Episode reward:  2505.13 | Episode steps:  625 | Average reward:  2714.92 | Step Count: 47693 | Episode Q0:   329.20
+직선+원호(Arc) 궤적 총 길이: 125.66m
+비행 속력: 2.96m/s, 필요 비행 시간(tf): 42.41초
+직선+원호(Arc) 궤적 총 길이: 125.66m
+비행 속력: 2.96m/s, 필요 비행 시간(tf): 42.41초
+Episode:  69/3000 | Episode reward:  1789.79 | Episode steps:  425 | Average reward:  2737.70 | Step Count: 48118 | Episode Q0:   322.84
+직선+원호(Arc) 궤적 총 길이: 138.26m
+비행 속력: 3.49m/s, 필요 비행 시간(tf): 39.61초
+직선+원호(Arc) 궤적 총 길이: 138.26m
+비행 속력: 3.49m/s, 필요 비행 시간(tf): 39.61초
+Episode:  70/3000 | Episode reward:  1504.61 | Episode steps:  397 | Average reward:  2658.17 | Step Count: 48515 | Episode Q0:   357.74
+직선+원호(Arc) 궤적 총 길이: 203.38m
+비행 속력: 2.51m/s, 필요 비행 시간(tf): 81.14초
+직선+원호(Arc) 궤적 총 길이: 203.38m
+비행 속력: 2.51m/s, 필요 비행 시간(tf): 81.14초
+Episode:  71/3000 | Episode reward:  4035.17 | Episode steps:  812 | Average reward:  2682.58 | Step Count: 49327 | Episode Q0:   279.14
+직선+원호(Arc) 궤적 총 길이: 295.45m
+비행 속력: 3.73m/s, 필요 비행 시간(tf): 79.22초
+직선+원호(Arc) 궤적 총 길이: 295.45m
+비행 속력: 3.73m/s, 필요 비행 시간(tf): 79.22초
+Episode:  72/3000 | Episode reward:  1941.02 | Episode steps:  793 | Average reward:  2685.77 | Step Count: 50120 | Episode Q0:   368.59
+직선+원호(Arc) 궤적 총 길이: 271.09m
+비행 속력: 3.13m/s, 필요 비행 시간(tf): 86.60초
+직선+원호(Arc) 궤적 총 길이: 271.09m
+비행 속력: 3.13m/s, 필요 비행 시간(tf): 86.60초
+Episode:  73/3000 | Episode reward:  3538.49 | Episode steps:  866 | Average reward:  2685.84 | Step Count: 50986 | Episode Q0:   313.03
+직선+원호(Arc) 궤적 총 길이: 283.69m
+비행 속력: 3.30m/s, 필요 비행 시간(tf): 86.06초
+직선+원호(Arc) 궤적 총 길이: 283.69m
+비행 속력: 3.30m/s, 필요 비행 시간(tf): 86.06초
+Episode:  74/3000 | Episode reward:  3140.09 | Episode steps:  861 | Average reward:  2717.41 | Step Count: 51847 | Episode Q0:   335.56
+직선+원호(Arc) 궤적 총 길이: 138.28m
+비행 속력: 3.43m/s, 필요 비행 시간(tf): 40.32초
+직선+원호(Arc) 궤적 총 길이: 138.28m
+비행 속력: 3.43m/s, 필요 비행 시간(tf): 40.32초
+Episode:  75/3000 | Episode reward:  1543.71 | Episode steps:  404 | Average reward:  2685.93 | Step Count: 52251 | Episode Q0:   346.23
+직선+원호(Arc) 궤적 총 길이: 174.37m
+비행 속력: 2.80m/s, 필요 비행 시간(tf): 62.25초
+직선+원호(Arc) 궤적 총 길이: 174.37m
+비행 속력: 2.80m/s, 필요 비행 시간(tf): 62.25초
+Episode:  76/3000 | Episode reward:  2680.34 | Episode steps:  623 | Average reward:  2695.76 | Step Count: 52874 | Episode Q0:   296.26
+직선+원호(Arc) 궤적 총 길이: 124.86m
+비행 속력: 3.64m/s, 필요 비행 시간(tf): 34.30초
+직선+원호(Arc) 궤적 총 길이: 124.86m
+비행 속력: 3.64m/s, 필요 비행 시간(tf): 34.30초
+Episode:  77/3000 | Episode reward:   941.38 | Episode steps:  343 | Average reward:  2668.22 | Step Count: 53217 | Episode Q0:   359.13
+직선+원호(Arc) 궤적 총 길이: 191.15m
+비행 속력: 3.21m/s, 필요 비행 시간(tf): 59.52초
+직선+원호(Arc) 궤적 총 길이: 191.15m
+비행 속력: 3.21m/s, 필요 비행 시간(tf): 59.52초
+Episode:  78/3000 | Episode reward:  2458.77 | Episode steps:  596 | Average reward:  2645.20 | Step Count: 53813 | Episode Q0:   334.78
+직선+원호(Arc) 궤적 총 길이: 133.64m
+비행 속력: 2.99m/s, 필요 비행 시간(tf): 44.69초
+직선+원호(Arc) 궤적 총 길이: 133.64m
+비행 속력: 2.99m/s, 필요 비행 시간(tf): 44.69초
+Episode:  79/3000 | Episode reward:  2412.30 | Episode steps:  447 | Average reward:  2658.82 | Step Count: 54260 | Episode Q0:   263.74
+직선+원호(Arc) 궤적 총 길이: 181.59m
+비행 속력: 2.81m/s, 필요 비행 시간(tf): 64.53초
+직선+원호(Arc) 궤적 총 길이: 181.59m
+비행 속력: 2.81m/s, 필요 비행 시간(tf): 64.53초
+Episode:  80/3000 | Episode reward:  2349.21 | Episode steps:  646 | Average reward:  2591.73 | Step Count: 54906 | Episode Q0:   302.77
+직선+원호(Arc) 궤적 총 길이: 368.03m
+비행 속력: 3.46m/s, 필요 비행 시간(tf): 106.42초
+직선+원호(Arc) 궤적 총 길이: 368.03m
+비행 속력: 3.46m/s, 필요 비행 시간(tf): 106.42초
+Episode:  81/3000 | Episode reward:  3571.78 | Episode steps: 1065 | Average reward:  2614.16 | Step Count: 55971 | Episode Q0:   367.04
+직선+원호(Arc) 궤적 총 길이: 247.38m
+비행 속력: 3.52m/s, 필요 비행 시간(tf): 70.23초
+직선+원호(Arc) 궤적 총 길이: 247.38m
+비행 속력: 3.52m/s, 필요 비행 시간(tf): 70.23초
+Episode:  82/3000 | Episode reward:  2279.86 | Episode steps:  703 | Average reward:  2617.41 | Step Count: 56674 | Episode Q0:   307.62
+직선+원호(Arc) 궤적 총 길이: 210.96m
+비행 속력: 2.66m/s, 필요 비행 시간(tf): 79.27초
+직선+원호(Arc) 궤적 총 길이: 210.96m
+비행 속력: 2.66m/s, 필요 비행 시간(tf): 79.27초
+Episode:  83/3000 | Episode reward:  3783.70 | Episode steps:  793 | Average reward:  2633.27 | Step Count: 57467 | Episode Q0:   246.64
+직선+원호(Arc) 궤적 총 길이: 129.21m
+비행 속력: 2.51m/s, 필요 비행 시간(tf): 51.50초
+직선+원호(Arc) 궤적 총 길이: 129.21m
+비행 속력: 2.51m/s, 필요 비행 시간(tf): 51.50초
+Episode:  84/3000 | Episode reward:  2586.62 | Episode steps:  516 | Average reward:  2609.35 | Step Count: 57983 | Episode Q0:   276.09
+직선+원호(Arc) 궤적 총 길이: 121.64m
+비행 속력: 3.50m/s, 필요 비행 시간(tf): 34.72초
+직선+원호(Arc) 궤적 총 길이: 121.64m
+비행 속력: 3.50m/s, 필요 비행 시간(tf): 34.72초
+Episode:  85/3000 | Episode reward:  1271.81 | Episode steps:  348 | Average reward:  2569.46 | Step Count: 58331 | Episode Q0:   349.71
+직선+원호(Arc) 궤적 총 길이: 298.06m
+비행 속력: 2.72m/s, 필요 비행 시간(tf): 109.76초
+직선+원호(Arc) 궤적 총 길이: 298.06m
+비행 속력: 2.72m/s, 필요 비행 시간(tf): 109.76초
+Episode:  86/3000 | Episode reward:  4992.64 | Episode steps: 1098 | Average reward:  2598.39 | Step Count: 59429 | Episode Q0:   314.72
+직선+원호(Arc) 궤적 총 길이: 202.73m
+비행 속력: 3.17m/s, 필요 비행 시간(tf): 63.91초
+직선+원호(Arc) 궤적 총 길이: 202.73m
+비행 속력: 3.17m/s, 필요 비행 시간(tf): 63.91초
+Episode:  87/3000 | Episode reward:  2325.45 | Episode steps:  640 | Average reward:  2595.57 | Step Count: 60069 | Episode Q0:   363.26
+직선+원호(Arc) 궤적 총 길이: 111.81m
+비행 속력: 3.61m/s, 필요 비행 시간(tf): 31.00초
+직선+원호(Arc) 궤적 총 길이: 111.81m
+비행 속력: 3.61m/s, 필요 비행 시간(tf): 31.00초
+Episode:  88/3000 | Episode reward:   575.51 | Episode steps:  311 | Average reward:  2571.86 | Step Count: 60380 | Episode Q0:   396.15
+직선+원호(Arc) 궤적 총 길이: 106.67m
+비행 속력: 3.42m/s, 필요 비행 시간(tf): 31.16초
+직선+원호(Arc) 궤적 총 길이: 106.67m
+비행 속력: 3.42m/s, 필요 비행 시간(tf): 31.16초
+Episode:  89/3000 | Episode reward:  1136.52 | Episode steps:  312 | Average reward:  2519.40 | Step Count: 60692 | Episode Q0:   358.96
+직선+원호(Arc) 궤적 총 길이: 139.19m
+비행 속력: 2.77m/s, 필요 비행 시간(tf): 50.30초
+직선+원호(Arc) 궤적 총 길이: 139.19m
+비행 속력: 2.77m/s, 필요 비행 시간(tf): 50.30초
+Episode:  90/3000 | Episode reward:  2274.53 | Episode steps:  503 | Average reward:  2510.10 | Step Count: 61195 | Episode Q0:   329.91
+직선+원호(Arc) 궤적 총 길이: 243.26m
+비행 속력: 3.12m/s, 필요 비행 시간(tf): 78.01초
+직선+원호(Arc) 궤적 총 길이: 243.26m
+비행 속력: 3.12m/s, 필요 비행 시간(tf): 78.01초
+Episode:  91/3000 | Episode reward:  3441.45 | Episode steps:  781 | Average reward:  2568.82 | Step Count: 61976 | Episode Q0:   295.49
+직선+원호(Arc) 궤적 총 길이: 218.31m
+비행 속력: 3.39m/s, 필요 비행 시간(tf): 64.34초
+직선+원호(Arc) 궤적 총 길이: 218.31m
+비행 속력: 3.39m/s, 필요 비행 시간(tf): 64.34초
+Episode:  92/3000 | Episode reward:  1999.04 | Episode steps:  644 | Average reward:  2573.81 | Step Count: 62620 | Episode Q0:   360.57
+직선+원호(Arc) 궤적 총 길이: 141.49m
+비행 속력: 3.74m/s, 필요 비행 시간(tf): 37.83초
+직선+원호(Arc) 궤적 총 길이: 141.49m
+비행 속력: 3.74m/s, 필요 비행 시간(tf): 37.83초
+Episode:  93/3000 | Episode reward:  1260.60 | Episode steps:  379 | Average reward:  2536.61 | Step Count: 62999 | Episode Q0:   369.02
+직선+원호(Arc) 궤적 총 길이: 259.63m
+비행 속력: 2.56m/s, 필요 비행 시간(tf): 101.48초
+직선+원호(Arc) 궤적 총 길이: 259.63m
+비행 속력: 2.56m/s, 필요 비행 시간(tf): 101.48초
+Episode:  94/3000 | Episode reward:  4342.87 | Episode steps: 1015 | Average reward:  2591.12 | Step Count: 64014 | Episode Q0:   289.44
+직선+원호(Arc) 궤적 총 길이: 341.26m
+비행 속력: 3.30m/s, 필요 비행 시간(tf): 103.41초
+직선+원호(Arc) 궤적 총 길이: 341.26m
+비행 속력: 3.30m/s, 필요 비행 시간(tf): 103.41초
+Episode:  95/3000 | Episode reward:  4547.16 | Episode steps: 1035 | Average reward:  2634.31 | Step Count: 65049 | Episode Q0:   326.34
+직선+원호(Arc) 궤적 총 길이: 279.36m
+비행 속력: 3.01m/s, 필요 비행 시간(tf): 92.96초
+직선+원호(Arc) 궤적 총 길이: 279.36m
+비행 속력: 3.01m/s, 필요 비행 시간(tf): 92.96초
+Episode:  96/3000 | Episode reward:  3608.89 | Episode steps:  930 | Average reward:  2626.42 | Step Count: 65979 | Episode Q0:   336.34
+직선+원호(Arc) 궤적 총 길이: 239.21m
+비행 속력: 3.57m/s, 필요 비행 시간(tf): 66.99초
+직선+원호(Arc) 궤적 총 길이: 239.21m
+비행 속력: 3.57m/s, 필요 비행 시간(tf): 66.99초
+Episode:  97/3000 | Episode reward:  1825.61 | Episode steps:  670 | Average reward:  2655.16 | Step Count: 66649 | Episode Q0:   380.96
+직선+원호(Arc) 궤적 총 길이: 235.02m
+비행 속력: 3.45m/s, 필요 비행 시간(tf): 68.15초
+직선+원호(Arc) 궤적 총 길이: 235.02m
+비행 속력: 3.45m/s, 필요 비행 시간(tf): 68.15초
+Episode:  98/3000 | Episode reward:  2838.23 | Episode steps:  682 | Average reward:  2678.30 | Step Count: 67331 | Episode Q0:   363.22
+직선+원호(Arc) 궤적 총 길이: 154.88m
+비행 속력: 3.23m/s, 필요 비행 시간(tf): 47.91초
+직선+원호(Arc) 궤적 총 길이: 154.88m
+비행 속력: 3.23m/s, 필요 비행 시간(tf): 47.91초
+Episode:  99/3000 | Episode reward:  1525.93 | Episode steps:  480 | Average reward:  2680.17 | Step Count: 67811 | Episode Q0:   352.55
+직선+원호(Arc) 궤적 총 길이: 214.51m
+비행 속력: 3.64m/s, 필요 비행 시간(tf): 59.01초
+직선+원호(Arc) 궤적 총 길이: 214.51m
+비행 속력: 3.64m/s, 필요 비행 시간(tf): 59.01초
+Episode: 100/3000 | Episode reward:   957.79 | Episode steps:  591 | Average reward:  2586.11 | Step Count: 68402 | Episode Q0:   368.08
+직선+원호(Arc) 궤적 총 길이: 270.20m
+비행 속력: 3.68m/s, 필요 비행 시간(tf): 73.37초
+직선+원호(Arc) 궤적 총 길이: 270.20m
+비행 속력: 3.68m/s, 필요 비행 시간(tf): 73.37초
+Episode: 101/3000 | Episode reward:  1759.90 | Episode steps:  734 | Average reward:  2536.08 | Step Count: 69136 | Episode Q0:   335.39
+직선+원호(Arc) 궤적 총 길이: 224.40m
+비행 속력: 2.56m/s, 필요 비행 시간(tf): 87.58초
+직선+원호(Arc) 궤적 총 길이: 224.40m
+비행 속력: 2.56m/s, 필요 비행 시간(tf): 87.58초
+Episode: 102/3000 | Episode reward:  3878.70 | Episode steps:  876 | Average reward:  2573.68 | Step Count: 70012 | Episode Q0:   247.22
+직선+원호(Arc) 궤적 총 길이: 230.18m
+비행 속력: 3.78m/s, 필요 비행 시간(tf): 60.93초
+직선+원호(Arc) 궤적 총 길이: 230.18m
+비행 속력: 3.78m/s, 필요 비행 시간(tf): 60.93초
+Episode: 103/3000 | Episode reward:  1472.22 | Episode steps:  610 | Average reward:  2553.25 | Step Count: 70622 | Episode Q0:   342.49
+직선+원호(Arc) 궤적 총 길이: 304.50m
+비행 속력: 2.90m/s, 필요 비행 시간(tf): 104.99초
+직선+원호(Arc) 궤적 총 길이: 304.50m
+비행 속력: 2.90m/s, 필요 비행 시간(tf): 104.99초
+Episode: 104/3000 | Episode reward:  4322.04 | Episode steps: 1050 | Average reward:  2589.47 | Step Count: 71672 | Episode Q0:   286.46
+직선+원호(Arc) 궤적 총 길이: 189.98m
+비행 속력: 3.41m/s, 필요 비행 시간(tf): 55.67초
+직선+원호(Arc) 궤적 총 길이: 189.98m
+비행 속력: 3.41m/s, 필요 비행 시간(tf): 55.67초
+Episode: 105/3000 | Episode reward:  1648.23 | Episode steps:  557 | Average reward:  2577.20 | Step Count: 72229 | Episode Q0:   318.43
+직선+원호(Arc) 궤적 총 길이: 230.27m
+비행 속력: 2.58m/s, 필요 비행 시간(tf): 89.28초
+직선+원호(Arc) 궤적 총 길이: 230.27m
+비행 속력: 2.58m/s, 필요 비행 시간(tf): 89.28초
+Episode: 106/3000 | Episode reward:  3793.56 | Episode steps:  893 | Average reward:  2614.46 | Step Count: 73122 | Episode Q0:   266.08
+직선+원호(Arc) 궤적 총 길이: 203.79m
+비행 속력: 3.30m/s, 필요 비행 시간(tf): 61.74초
+직선+원호(Arc) 궤적 총 길이: 203.79m
+비행 속력: 3.30m/s, 필요 비행 시간(tf): 61.74초
+Episode: 107/3000 | Episode reward:  1822.66 | Episode steps:  618 | Average reward:  2620.82 | Step Count: 73740 | Episode Q0:   329.05
+직선+원호(Arc) 궤적 총 길이: 136.79m
+비행 속력: 3.09m/s, 필요 비행 시간(tf): 44.31초
+직선+원호(Arc) 궤적 총 길이: 136.79m
+비행 속력: 3.09m/s, 필요 비행 시간(tf): 44.31초
+Episode: 108/3000 | Episode reward:  1901.59 | Episode steps:  444 | Average reward:  2598.04 | Step Count: 74184 | Episode Q0:   304.58
+직선+원호(Arc) 궤적 총 길이: 142.41m
+비행 속력: 2.57m/s, 필요 비행 시간(tf): 55.51초
+직선+원호(Arc) 궤적 총 길이: 142.41m
+비행 속력: 2.57m/s, 필요 비행 시간(tf): 55.51초
+Episode: 109/3000 | Episode reward:  2649.70 | Episode steps:  556 | Average reward:  2583.45 | Step Count: 74740 | Episode Q0:   278.89
+직선+원호(Arc) 궤적 총 길이: 209.44m
+비행 속력: 3.44m/s, 필요 비행 시간(tf): 60.81초
+직선+원호(Arc) 궤적 총 길이: 209.44m
+비행 속력: 3.44m/s, 필요 비행 시간(tf): 60.81초
+Episode: 110/3000 | Episode reward:  2044.50 | Episode steps:  609 | Average reward:  2619.34 | Step Count: 75349 | Episode Q0:   333.26
+직선+원호(Arc) 궤적 총 길이: 364.76m
+비행 속력: 3.00m/s, 필요 비행 시간(tf): 121.52초
+직선+원호(Arc) 궤적 총 길이: 364.76m
+비행 속력: 3.00m/s, 필요 비행 시간(tf): 121.52초
+Episode: 111/3000 | Episode reward:  5227.49 | Episode steps: 1216 | Average reward:  2630.21 | Step Count: 76565 | Episode Q0:   312.52
+직선+원호(Arc) 궤적 총 길이: 248.71m
+비행 속력: 2.78m/s, 필요 비행 시간(tf): 89.40초
+직선+원호(Arc) 궤적 총 길이: 248.71m
+비행 속력: 2.78m/s, 필요 비행 시간(tf): 89.40초
+Episode: 112/3000 | Episode reward:  3444.09 | Episode steps:  894 | Average reward:  2654.80 | Step Count: 77459 | Episode Q0:   307.27
+직선+원호(Arc) 궤적 총 길이: 228.66m
+비행 속력: 2.76m/s, 필요 비행 시간(tf): 82.75초
+직선+원호(Arc) 궤적 총 길이: 228.66m
+비행 속력: 2.76m/s, 필요 비행 시간(tf): 82.75초
+Episode: 113/3000 | Episode reward:  3331.06 | Episode steps:  828 | Average reward:  2693.80 | Step Count: 78287 | Episode Q0:   311.78
+직선+원호(Arc) 궤적 총 길이: 123.54m
+비행 속력: 2.99m/s, 필요 비행 시간(tf): 41.25초
+직선+원호(Arc) 궤적 총 길이: 123.54m
+비행 속력: 2.99m/s, 필요 비행 시간(tf): 41.25초
+Episode: 114/3000 | Episode reward:  2157.43 | Episode steps:  413 | Average reward:  2672.37 | Step Count: 78700 | Episode Q0:   296.88
+직선+원호(Arc) 궤적 총 길이: 187.66m
+비행 속력: 2.62m/s, 필요 비행 시간(tf): 71.70초
+직선+원호(Arc) 궤적 총 길이: 187.66m
+비행 속력: 2.62m/s, 필요 비행 시간(tf): 71.70초
+Episode: 115/3000 | Episode reward:  3529.36 | Episode steps:  717 | Average reward:  2638.15 | Step Count: 79417 | Episode Q0:   305.83
+직선+원호(Arc) 궤적 총 길이: 116.76m
+비행 속력: 3.53m/s, 필요 비행 시간(tf): 33.05초
+직선+원호(Arc) 궤적 총 길이: 116.76m
+비행 속력: 3.53m/s, 필요 비행 시간(tf): 33.05초
+Episode: 116/3000 | Episode reward:  1115.17 | Episode steps:  331 | Average reward:  2565.86 | Step Count: 79748 | Episode Q0:   403.40
+직선+원호(Arc) 궤적 총 길이: 295.42m
+비행 속력: 3.28m/s, 필요 비행 시간(tf): 90.01초
+직선+원호(Arc) 궤적 총 길이: 295.42m
+비행 속력: 3.28m/s, 필요 비행 시간(tf): 90.01초
+Episode: 117/3000 | Episode reward:  3346.22 | Episode steps:  901 | Average reward:  2588.60 | Step Count: 80649 | Episode Q0:   384.39
+직선+원호(Arc) 궤적 총 길이: 287.71m
+비행 속력: 3.66m/s, 필요 비행 시간(tf): 78.64초
+직선+원호(Arc) 궤적 총 길이: 287.71m
+비행 속력: 3.66m/s, 필요 비행 시간(tf): 78.64초
+Episode: 118/3000 | Episode reward:  2268.49 | Episode steps:  787 | Average reward:  2583.87 | Step Count: 81436 | Episode Q0:   364.29
+직선+원호(Arc) 궤적 총 길이: 270.69m
+비행 속력: 2.75m/s, 필요 비행 시간(tf): 98.26초
+직선+원호(Arc) 궤적 총 길이: 270.69m
+비행 속력: 2.75m/s, 필요 비행 시간(tf): 98.26초
+Episode: 119/3000 | Episode reward:  4459.05 | Episode steps:  983 | Average reward:  2637.25 | Step Count: 82419 | Episode Q0:   309.52
+직선+원호(Arc) 궤적 총 길이: 186.51m
+비행 속력: 3.15m/s, 필요 비행 시간(tf): 59.17초
+직선+원호(Arc) 궤적 총 길이: 186.51m
+비행 속력: 3.15m/s, 필요 비행 시간(tf): 59.17초
+Episode: 120/3000 | Episode reward:  2675.92 | Episode steps:  592 | Average reward:  2660.68 | Step Count: 83011 | Episode Q0:   334.87
+직선+원호(Arc) 궤적 총 길이: 208.56m
+비행 속력: 3.37m/s, 필요 비행 시간(tf): 61.87초
+직선+원호(Arc) 궤적 총 길이: 208.56m
+비행 속력: 3.37m/s, 필요 비행 시간(tf): 61.87초
+Episode: 121/3000 | Episode reward:  2588.90 | Episode steps:  619 | Average reward:  2631.75 | Step Count: 83630 | Episode Q0:   320.82
+직선+원호(Arc) 궤적 총 길이: 274.78m
+비행 속력: 3.14m/s, 필요 비행 시간(tf): 87.65초
+직선+원호(Arc) 궤적 총 길이: 274.78m
+비행 속력: 3.14m/s, 필요 비행 시간(tf): 87.65초
+Episode: 122/3000 | Episode reward:  3155.64 | Episode steps:  877 | Average reward:  2656.04 | Step Count: 84507 | Episode Q0:   347.88
+직선+원호(Arc) 궤적 총 길이: 192.35m
+비행 속력: 3.56m/s, 필요 비행 시간(tf): 54.09초
+직선+원호(Arc) 궤적 총 길이: 192.35m
+비행 속력: 3.56m/s, 필요 비행 시간(tf): 54.09초
+Episode: 123/3000 | Episode reward:  1599.53 | Episode steps:  541 | Average reward:  2617.26 | Step Count: 85048 | Episode Q0:   357.00
+직선+원호(Arc) 궤적 총 길이: 270.35m
+비행 속력: 3.58m/s, 필요 비행 시간(tf): 75.51초
+직선+원호(Arc) 궤적 총 길이: 270.35m
+비행 속력: 3.58m/s, 필요 비행 시간(tf): 75.51초
+Episode: 124/3000 | Episode reward:  1958.28 | Episode steps:  756 | Average reward:  2593.63 | Step Count: 85804 | Episode Q0:   363.38
+직선+원호(Arc) 궤적 총 길이: 112.78m
+비행 속력: 3.43m/s, 필요 비행 시간(tf): 32.88초
+직선+원호(Arc) 궤적 총 길이: 112.78m
+비행 속력: 3.43m/s, 필요 비행 시간(tf): 32.88초
+Episode: 125/3000 | Episode reward:   789.74 | Episode steps:  329 | Average reward:  2578.55 | Step Count: 86133 | Episode Q0:   326.80
+직선+원호(Arc) 궤적 총 길이: 240.97m
+비행 속력: 2.83m/s, 필요 비행 시간(tf): 85.19초
+직선+원호(Arc) 궤적 총 길이: 240.97m
+비행 속력: 2.83m/s, 필요 비행 시간(tf): 85.19초
+Episode: 126/3000 | Episode reward:  3761.71 | Episode steps:  852 | Average reward:  2600.18 | Step Count: 86985 | Episode Q0:   289.52
+직선+원호(Arc) 궤적 총 길이: 222.72m
+비행 속력: 3.34m/s, 필요 비행 시간(tf): 66.76초
+직선+원호(Arc) 궤적 총 길이: 222.72m
+비행 속력: 3.34m/s, 필요 비행 시간(tf): 66.76초
+Episode: 127/3000 | Episode reward:  1986.34 | Episode steps:  668 | Average reward:  2621.08 | Step Count: 87653 | Episode Q0:   321.11
+직선+원호(Arc) 궤적 총 길이: 267.25m
+비행 속력: 2.54m/s, 필요 비행 시간(tf): 105.36초
+직선+원호(Arc) 궤적 총 길이: 267.25m
+비행 속력: 2.54m/s, 필요 비행 시간(tf): 105.36초
+Episode: 128/3000 | Episode reward:  5085.80 | Episode steps: 1054 | Average reward:  2673.62 | Step Count: 88707 | Episode Q0:   266.12
+직선+원호(Arc) 궤적 총 길이: 267.46m
+비행 속력: 3.56m/s, 필요 비행 시간(tf): 75.18초
+직선+원호(Arc) 궤적 총 길이: 267.46m
+비행 속력: 3.56m/s, 필요 비행 시간(tf): 75.18초
+Episode: 129/3000 | Episode reward:  2430.64 | Episode steps:  752 | Average reward:  2673.98 | Step Count: 89459 | Episode Q0:   364.09
+직선+원호(Arc) 궤적 총 길이: 245.49m
+비행 속력: 3.37m/s, 필요 비행 시간(tf): 72.94초
+직선+원호(Arc) 궤적 총 길이: 245.49m
+비행 속력: 3.37m/s, 필요 비행 시간(tf): 72.94초
+Episode: 130/3000 | Episode reward:  2176.08 | Episode steps:  730 | Average reward:  2670.52 | Step Count: 90189 | Episode Q0:   341.54
+직선+원호(Arc) 궤적 총 길이: 210.34m
+비행 속력: 3.71m/s, 필요 비행 시간(tf): 56.70초
+직선+원호(Arc) 궤적 총 길이: 210.34m
+비행 속력: 3.71m/s, 필요 비행 시간(tf): 56.70초
+Episode: 131/3000 | Episode reward:  1124.78 | Episode steps:  567 | Average reward:  2621.58 | Step Count: 90756 | Episode Q0:   337.74
+직선+원호(Arc) 궤적 총 길이: 186.62m
+비행 속력: 3.18m/s, 필요 비행 시간(tf): 58.74초
+직선+원호(Arc) 궤적 총 길이: 186.62m
+비행 속력: 3.18m/s, 필요 비행 시간(tf): 58.74초
+Episode: 132/3000 | Episode reward:  2691.75 | Episode steps:  588 | Average reward:  2629.82 | Step Count: 91344 | Episode Q0:   317.00
+직선+원호(Arc) 궤적 총 길이: 251.91m
+비행 속력: 3.65m/s, 필요 비행 시간(tf): 68.98초
+직선+원호(Arc) 궤적 총 길이: 251.91m
+비행 속력: 3.65m/s, 필요 비행 시간(tf): 68.98초
+Episode: 133/3000 | Episode reward:  1871.29 | Episode steps:  690 | Average reward:  2591.57 | Step Count: 92034 | Episode Q0:   331.39
+직선+원호(Arc) 궤적 총 길이: 188.75m
+비행 속력: 2.75m/s, 필요 비행 시간(tf): 68.73초
+직선+원호(Arc) 궤적 총 길이: 188.75m
+비행 속력: 2.75m/s, 필요 비행 시간(tf): 68.73초
+Episode: 134/3000 | Episode reward:  3663.65 | Episode steps:  688 | Average reward:  2613.11 | Step Count: 92722 | Episode Q0:   260.83
+직선+원호(Arc) 궤적 총 길이: 150.53m
+비행 속력: 2.87m/s, 필요 비행 시간(tf): 52.48초
+직선+원호(Arc) 궤적 총 길이: 150.53m
+비행 속력: 2.87m/s, 필요 비행 시간(tf): 52.48초
+Episode: 135/3000 | Episode reward:  2279.40 | Episode steps:  525 | Average reward:  2633.26 | Step Count: 93247 | Episode Q0:   304.73
+직선+원호(Arc) 궤적 총 길이: 278.45m
+비행 속력: 3.17m/s, 필요 비행 시간(tf): 87.92초
+직선+원호(Arc) 궤적 총 길이: 278.45m
+비행 속력: 3.17m/s, 필요 비행 시간(tf): 87.92초
+Episode: 136/3000 | Episode reward:  3137.49 | Episode steps:  880 | Average reward:  2596.16 | Step Count: 94127 | Episode Q0:   323.38
+직선+원호(Arc) 궤적 총 길이: 253.25m
+비행 속력: 3.00m/s, 필요 비행 시간(tf): 84.50초
+직선+원호(Arc) 궤적 총 길이: 253.25m
+비행 속력: 3.00m/s, 필요 비행 시간(tf): 84.50초
+Episode: 137/3000 | Episode reward:  3702.87 | Episode steps:  846 | Average reward:  2623.71 | Step Count: 94973 | Episode Q0:   319.78
+직선+원호(Arc) 궤적 총 길이: 268.06m
+비행 속력: 2.64m/s, 필요 비행 시간(tf): 101.61초
+직선+원호(Arc) 궤적 총 길이: 268.06m
+비행 속력: 2.64m/s, 필요 비행 시간(tf): 101.61초
+Episode: 138/3000 | Episode reward:  4392.05 | Episode steps: 1017 | Average reward:  2700.04 | Step Count: 95990 | Episode Q0:   303.43
+직선+원호(Arc) 궤적 총 길이: 220.77m
+비행 속력: 3.56m/s, 필요 비행 시간(tf): 62.08초
+직선+원호(Arc) 궤적 총 길이: 220.77m
+비행 속력: 3.56m/s, 필요 비행 시간(tf): 62.08초
+Episode: 139/3000 | Episode reward:  1653.57 | Episode steps:  621 | Average reward:  2710.38 | Step Count: 96611 | Episode Q0:   390.67
+직선+원호(Arc) 궤적 총 길이: 229.23m
+비행 속력: 3.64m/s, 필요 비행 시간(tf): 63.00초
+직선+원호(Arc) 궤적 총 길이: 229.23m
+비행 속력: 3.64m/s, 필요 비행 시간(tf): 63.00초
+Episode: 140/3000 | Episode reward:  2279.83 | Episode steps:  631 | Average reward:  2710.49 | Step Count: 97242 | Episode Q0:   401.70
+직선+원호(Arc) 궤적 총 길이: 203.51m
+비행 속력: 3.32m/s, 필요 비행 시간(tf): 61.30초
+직선+원호(Arc) 궤적 총 길이: 203.51m
+비행 속력: 3.32m/s, 필요 비행 시간(tf): 61.30초
+Episode: 141/3000 | Episode reward:  2390.49 | Episode steps:  613 | Average reward:  2689.47 | Step Count: 97855 | Episode Q0:   354.12
+직선+원호(Arc) 궤적 총 길이: 138.24m
+비행 속력: 3.34m/s, 필요 비행 시간(tf): 41.41초
+직선+원호(Arc) 궤적 총 길이: 138.24m
+비행 속력: 3.34m/s, 필요 비행 시간(tf): 41.41초
+Episode: 142/3000 | Episode reward:  1644.64 | Episode steps:  415 | Average reward:  2682.38 | Step Count: 98270 | Episode Q0:   346.80
+직선+원호(Arc) 궤적 총 길이: 316.43m
+비행 속력: 2.60m/s, 필요 비행 시간(tf): 121.66초
+직선+원호(Arc) 궤적 총 길이: 316.43m
+비행 속력: 2.60m/s, 필요 비행 시간(tf): 121.66초
+Episode: 143/3000 | Episode reward:  5452.58 | Episode steps: 1217 | Average reward:  2766.22 | Step Count: 99487 | Episode Q0:   294.70
+직선+원호(Arc) 궤적 총 길이: 185.96m
+비행 속력: 3.02m/s, 필요 비행 시간(tf): 61.49초
+직선+원호(Arc) 궤적 총 길이: 185.96m
+비행 속력: 3.02m/s, 필요 비행 시간(tf): 61.49초
+Episode: 144/3000 | Episode reward:  2412.33 | Episode steps:  615 | Average reward:  2727.61 | Step Count: 100102 | Episode Q0:   345.87
+직선+원호(Arc) 궤적 총 길이: 372.51m
+비행 속력: 3.38m/s, 필요 비행 시간(tf): 110.09초
+직선+원호(Arc) 궤적 총 길이: 372.51m
+비행 속력: 3.38m/s, 필요 비행 시간(tf): 110.09초
+Episode: 145/3000 | Episode reward:  4695.98 | Episode steps: 1101 | Average reward:  2730.58 | Step Count: 101203 | Episode Q0:   367.16
+직선+원호(Arc) 궤적 총 길이: 259.99m
+비행 속력: 3.32m/s, 필요 비행 시간(tf): 78.21초
+직선+원호(Arc) 궤적 총 길이: 259.99m
+비행 속력: 3.32m/s, 필요 비행 시간(tf): 78.21초
+Episode: 146/3000 | Episode reward:  2897.99 | Episode steps:  783 | Average reward:  2716.37 | Step Count: 101986 | Episode Q0:   369.30
+직선+원호(Arc) 궤적 총 길이: 245.12m
+비행 속력: 3.34m/s, 필요 비행 시간(tf): 73.49초
+직선+원호(Arc) 궤적 총 길이: 245.12m
+비행 속력: 3.34m/s, 필요 비행 시간(tf): 73.49초
+Episode: 147/3000 | Episode reward:  2756.76 | Episode steps:  735 | Average reward:  2734.99 | Step Count: 102721 | Episode Q0:   354.73
+직선+원호(Arc) 궤적 총 길이: 287.88m
+비행 속력: 3.18m/s, 필요 비행 시간(tf): 90.57초
+직선+원호(Arc) 궤적 총 길이: 287.88m
+비행 속력: 3.18m/s, 필요 비행 시간(tf): 90.57초
+Episode: 148/3000 | Episode reward:  3485.44 | Episode steps:  906 | Average reward:  2747.93 | Step Count: 103627 | Episode Q0:   338.15
+직선+원호(Arc) 궤적 총 길이: 182.78m
+비행 속력: 3.19m/s, 필요 비행 시간(tf): 57.35초
+직선+원호(Arc) 궤적 총 길이: 182.78m
+비행 속력: 3.19m/s, 필요 비행 시간(tf): 57.35초
+Episode: 149/3000 | Episode reward:  2481.34 | Episode steps:  574 | Average reward:  2767.04 | Step Count: 104201 | Episode Q0:   331.40
+직선+원호(Arc) 궤적 총 길이: 232.39m
+비행 속력: 2.85m/s, 필요 비행 시간(tf): 81.46초
+직선+원호(Arc) 궤적 총 길이: 232.39m
+비행 속력: 2.85m/s, 필요 비행 시간(tf): 81.46초
+Episode: 150/3000 | Episode reward:  3071.02 | Episode steps:  815 | Average reward:  2809.31 | Step Count: 105016 | Episode Q0:   309.98
+직선+원호(Arc) 궤적 총 길이: 272.26m
+비행 속력: 2.69m/s, 필요 비행 시간(tf): 101.22초
+직선+원호(Arc) 궤적 총 길이: 272.26m
+비행 속력: 2.69m/s, 필요 비행 시간(tf): 101.22초
+Episode: 151/3000 | Episode reward:  4477.60 | Episode steps: 1013 | Average reward:  2863.66 | Step Count: 106029 | Episode Q0:   309.39
+직선+원호(Arc) 궤적 총 길이: 155.34m
+비행 속력: 3.17m/s, 필요 비행 시간(tf): 49.06초
+직선+원호(Arc) 궤적 총 길이: 155.34m
+비행 속력: 3.17m/s, 필요 비행 시간(tf): 49.06초
+Episode: 152/3000 | Episode reward:  1980.08 | Episode steps:  491 | Average reward:  2825.69 | Step Count: 106520 | Episode Q0:   360.55
+직선+원호(Arc) 궤적 총 길이: 163.29m
+비행 속력: 3.28m/s, 필요 비행 시간(tf): 49.72초
+직선+원호(Arc) 궤적 총 길이: 163.29m
+비행 속력: 3.28m/s, 필요 비행 시간(tf): 49.72초
+Episode: 153/3000 | Episode reward:  2033.46 | Episode steps:  498 | Average reward:  2836.91 | Step Count: 107018 | Episode Q0:   368.85
+직선+원호(Arc) 궤적 총 길이: 150.90m
+비행 속력: 3.02m/s, 필요 비행 시간(tf): 49.90초
+직선+원호(Arc) 궤적 총 길이: 150.90m
+비행 속력: 3.02m/s, 필요 비행 시간(tf): 49.90초
+Episode: 154/3000 | Episode reward:  2284.16 | Episode steps:  500 | Average reward:  2796.15 | Step Count: 107518 | Episode Q0:   346.47
+직선+원호(Arc) 궤적 총 길이: 162.80m
+비행 속력: 3.65m/s, 필요 비행 시간(tf): 44.66초
+직선+원호(Arc) 궤적 총 길이: 162.80m
+비행 속력: 3.65m/s, 필요 비행 시간(tf): 44.66초
+Episode: 155/3000 | Episode reward:   209.45 | Episode steps:  447 | Average reward:  2767.38 | Step Count: 107965 | Episode Q0:   398.54
+직선+원호(Arc) 궤적 총 길이: 155.85m
+비행 속력: 2.71m/s, 필요 비행 시간(tf): 57.53초
+직선+원호(Arc) 궤적 총 길이: 155.85m
+비행 속력: 2.71m/s, 필요 비행 시간(tf): 57.53초
+Episode: 156/3000 | Episode reward:  3123.12 | Episode steps:  576 | Average reward:  2753.97 | Step Count: 108541 | Episode Q0:   276.58
+직선+원호(Arc) 궤적 총 길이: 311.50m
+비행 속력: 3.42m/s, 필요 비행 시간(tf): 91.10초
+직선+원호(Arc) 궤적 총 길이: 311.50m
+비행 속력: 3.42m/s, 필요 비행 시간(tf): 91.10초
+Episode: 157/3000 | Episode reward:  3462.69 | Episode steps:  912 | Average reward:  2786.77 | Step Count: 109453 | Episode Q0:   348.11
+직선+원호(Arc) 궤적 총 길이: 100.38m
+비행 속력: 2.78m/s, 필요 비행 시간(tf): 36.17초
+직선+원호(Arc) 궤적 총 길이: 100.38m
+비행 속력: 2.78m/s, 필요 비행 시간(tf): 36.17초
+Episode: 158/3000 | Episode reward:  1348.14 | Episode steps:  362 | Average reward:  2775.70 | Step Count: 109815 | Episode Q0:   312.04
+직선+원호(Arc) 궤적 총 길이: 312.54m
+비행 속력: 3.00m/s, 필요 비행 시간(tf): 104.07초
+직선+원호(Arc) 궤적 총 길이: 312.54m
+비행 속력: 3.00m/s, 필요 비행 시간(tf): 104.07초
+Episode: 159/3000 | Episode reward:  4287.71 | Episode steps: 1041 | Average reward:  2808.46 | Step Count: 110856 | Episode Q0:   316.50
+직선+원호(Arc) 궤적 총 길이: 274.98m
+비행 속력: 3.53m/s, 필요 비행 시간(tf): 77.90초
+직선+원호(Arc) 궤적 총 길이: 274.98m
+비행 속력: 3.53m/s, 필요 비행 시간(tf): 77.90초
+Episode: 160/3000 | Episode reward:  2031.30 | Episode steps:  779 | Average reward:  2808.20 | Step Count: 111635 | Episode Q0:   368.30
+직선+원호(Arc) 궤적 총 길이: 233.41m
+비행 속력: 2.84m/s, 필요 비행 시간(tf): 82.08초
+직선+원호(Arc) 궤적 총 길이: 233.41m
+비행 속력: 2.84m/s, 필요 비행 시간(tf): 82.08초
+Episode: 161/3000 | Episode reward:  2807.27 | Episode steps:  821 | Average reward:  2759.79 | Step Count: 112456 | Episode Q0:   308.10
+직선+원호(Arc) 궤적 총 길이: 330.17m
+비행 속력: 3.14m/s, 필요 비행 시간(tf): 105.30초
+직선+원호(Arc) 궤적 총 길이: 330.17m
+비행 속력: 3.14m/s, 필요 비행 시간(tf): 105.30초
+Episode: 162/3000 | Episode reward:  4496.57 | Episode steps: 1054 | Average reward:  2780.84 | Step Count: 113510 | Episode Q0:   325.03
+직선+원호(Arc) 궤적 총 길이: 235.27m
+비행 속력: 3.51m/s, 필요 비행 시간(tf): 67.04초
+직선+원호(Arc) 궤적 총 길이: 235.27m
+비행 속력: 3.51m/s, 필요 비행 시간(tf): 67.04초
+Episode: 163/3000 | Episode reward:  2496.83 | Episode steps:  671 | Average reward:  2764.16 | Step Count: 114181 | Episode Q0:   343.92
+직선+원호(Arc) 궤적 총 길이: 127.81m
+비행 속력: 2.77m/s, 필요 비행 시간(tf): 46.16초
+직선+원호(Arc) 궤적 총 길이: 127.81m
+비행 속력: 2.77m/s, 필요 비행 시간(tf): 46.16초
+Episode: 164/3000 | Episode reward:  2066.49 | Episode steps:  462 | Average reward:  2762.34 | Step Count: 114643 | Episode Q0:   305.04
+직선+원호(Arc) 궤적 총 길이: 283.06m
+비행 속력: 3.13m/s, 필요 비행 시간(tf): 90.31초
+직선+원호(Arc) 궤적 총 길이: 283.06m
+비행 속력: 3.13m/s, 필요 비행 시간(tf): 90.31초
+Episode: 165/3000 | Episode reward:  3809.31 | Episode steps:  904 | Average reward:  2767.94 | Step Count: 115547 | Episode Q0:   327.24
+직선+원호(Arc) 궤적 총 길이: 212.59m
+비행 속력: 2.76m/s, 필요 비행 시간(tf): 77.01초
+직선+원호(Arc) 궤적 총 길이: 212.59m
+비행 속력: 2.76m/s, 필요 비행 시간(tf): 77.01초
+Episode: 166/3000 | Episode reward:  3273.16 | Episode steps:  771 | Average reward:  2811.10 | Step Count: 116318 | Episode Q0:   306.01
+직선+원호(Arc) 궤적 총 길이: 233.84m
+비행 속력: 3.70m/s, 필요 비행 시간(tf): 63.27초
+직선+원호(Arc) 궤적 총 길이: 233.84m
+비행 속력: 3.70m/s, 필요 비행 시간(tf): 63.27초
+Episode: 167/3000 | Episode reward:   908.45 | Episode steps:  633 | Average reward:  2762.34 | Step Count: 116951 | Episode Q0:   385.40
+직선+원호(Arc) 궤적 총 길이: 259.66m
+비행 속력: 3.34m/s, 필요 비행 시간(tf): 77.73초
+직선+원호(Arc) 궤적 총 길이: 259.66m
+비행 속력: 3.34m/s, 필요 비행 시간(tf): 77.73초
+Episode: 168/3000 | Episode reward:  2601.43 | Episode steps:  778 | Average reward:  2769.00 | Step Count: 117729 | Episode Q0:   325.76
+직선+원호(Arc) 궤적 총 길이: 195.18m
+비행 속력: 3.00m/s, 필요 비행 시간(tf): 65.00초
+직선+원호(Arc) 궤적 총 길이: 195.18m
+비행 속력: 3.00m/s, 필요 비행 시간(tf): 65.00초
+Episode: 169/3000 | Episode reward:  1743.74 | Episode steps:  650 | Average reward:  2714.70 | Step Count: 118379 | Episode Q0:   310.24
+직선+원호(Arc) 궤적 총 길이: 115.92m
+비행 속력: 3.62m/s, 필요 비행 시간(tf): 31.99초
+직선+원호(Arc) 궤적 총 길이: 115.92m
+비행 속력: 3.62m/s, 필요 비행 시간(tf): 31.99초
+Episode: 170/3000 | Episode reward:  1277.26 | Episode steps:  320 | Average reward:  2686.72 | Step Count: 118699 | Episode Q0:   305.89
+직선+원호(Arc) 궤적 총 길이: 252.32m
+비행 속력: 3.04m/s, 필요 비행 시간(tf): 82.95초
+직선+원호(Arc) 궤적 총 길이: 252.32m
+비행 속력: 3.04m/s, 필요 비행 시간(tf): 82.95초
+Episode: 171/3000 | Episode reward:  3800.17 | Episode steps:  830 | Average reward:  2710.95 | Step Count: 119529 | Episode Q0:   274.57
+직선+원호(Arc) 궤적 총 길이: 103.93m
+비행 속력: 3.58m/s, 필요 비행 시간(tf): 29.06초
+직선+원호(Arc) 궤적 총 길이: 103.93m
+비행 속력: 3.58m/s, 필요 비행 시간(tf): 29.06초
+Episode: 172/3000 | Episode reward:   767.93 | Episode steps:  291 | Average reward:  2663.19 | Step Count: 119820 | Episode Q0:   313.61
+직선+원호(Arc) 궤적 총 길이: 149.23m
+비행 속력: 2.81m/s, 필요 비행 시간(tf): 53.04초
+직선+원호(Arc) 궤적 총 길이: 149.23m
+비행 속력: 2.81m/s, 필요 비행 시간(tf): 53.04초
+Episode: 173/3000 | Episode reward:  2782.13 | Episode steps:  531 | Average reward:  2686.85 | Step Count: 120351 | Episode Q0:   270.10
+직선+원호(Arc) 궤적 총 길이: 269.41m
+비행 속력: 2.57m/s, 필요 비행 시간(tf): 104.82초
+직선+원호(Arc) 궤적 총 길이: 269.41m
+비행 속력: 2.57m/s, 필요 비행 시간(tf): 104.82초
+Episode: 174/3000 | Episode reward:  5008.05 | Episode steps: 1049 | Average reward:  2747.84 | Step Count: 121400 | Episode Q0:   282.66
+직선+원호(Arc) 궤적 총 길이: 280.27m
+비행 속력: 3.53m/s, 필요 비행 시간(tf): 79.39초
+직선+원호(Arc) 궤적 총 길이: 280.27m
+비행 속력: 3.53m/s, 필요 비행 시간(tf): 79.39초
+Episode: 175/3000 | Episode reward:  2438.67 | Episode steps:  794 | Average reward:  2780.82 | Step Count: 122194 | Episode Q0:   375.33
+직선+원호(Arc) 궤적 총 길이: 211.78m
+비행 속력: 3.80m/s, 필요 비행 시간(tf): 55.77초
+직선+원호(Arc) 궤적 총 길이: 211.78m
+비행 속력: 3.80m/s, 필요 비행 시간(tf): 55.77초
+Episode: 176/3000 | Episode reward:  1552.45 | Episode steps:  558 | Average reward:  2736.64 | Step Count: 122752 | Episode Q0:   357.32
+직선+원호(Arc) 궤적 총 길이: 200.85m
+비행 속력: 2.66m/s, 필요 비행 시간(tf): 75.57초
+직선+원호(Arc) 궤적 총 길이: 200.85m
+비행 속력: 2.66m/s, 필요 비행 시간(tf): 75.57초
+Episode: 177/3000 | Episode reward:  3020.07 | Episode steps:  756 | Average reward:  2757.31 | Step Count: 123508 | Episode Q0:   296.24
+직선+원호(Arc) 궤적 총 길이: 338.28m
+비행 속력: 3.32m/s, 필요 비행 시간(tf): 101.76초
+직선+원호(Arc) 궤적 총 길이: 338.28m
+비행 속력: 3.32m/s, 필요 비행 시간(tf): 101.76초
+Episode: 178/3000 | Episode reward:  4172.90 | Episode steps: 1018 | Average reward:  2739.05 | Step Count: 124526 | Episode Q0:   328.62
+직선+원호(Arc) 궤적 총 길이: 244.17m
+비행 속력: 3.18m/s, 필요 비행 시간(tf): 76.77초
+직선+원호(Arc) 궤적 총 길이: 244.17m
+비행 속력: 3.18m/s, 필요 비행 시간(tf): 76.77초
+Episode: 179/3000 | Episode reward:  2457.94 | Episode steps:  768 | Average reward:  2739.60 | Step Count: 125294 | Episode Q0:   326.56
+직선+원호(Arc) 궤적 총 길이: 269.41m
+비행 속력: 3.34m/s, 필요 비행 시간(tf): 80.59초
+직선+원호(Arc) 궤적 총 길이: 269.41m
+비행 속력: 3.34m/s, 필요 비행 시간(tf): 80.59초
+Episode: 180/3000 | Episode reward:  2793.80 | Episode steps:  806 | Average reward:  2751.95 | Step Count: 126100 | Episode Q0:   324.03
+직선+원호(Arc) 궤적 총 길이: 280.48m
+비행 속력: 2.95m/s, 필요 비행 시간(tf): 95.13초
+직선+원호(Arc) 궤적 총 길이: 280.48m
+비행 속력: 2.95m/s, 필요 비행 시간(tf): 95.13초
+Episode: 181/3000 | Episode reward:  3971.32 | Episode steps:  952 | Average reward:  2808.88 | Step Count: 127052 | Episode Q0:   313.42
+직선+원호(Arc) 궤적 총 길이: 133.18m
+비행 속력: 2.51m/s, 필요 비행 시간(tf): 53.10초
+직선+원호(Arc) 궤적 총 길이: 133.18m
+비행 속력: 2.51m/s, 필요 비행 시간(tf): 53.10초
+Episode: 182/3000 | Episode reward:  2528.03 | Episode steps:  531 | Average reward:  2805.61 | Step Count: 127583 | Episode Q0:   279.24
+직선+원호(Arc) 궤적 총 길이: 182.37m
+비행 속력: 3.48m/s, 필요 비행 시간(tf): 52.36초
+직선+원호(Arc) 궤적 총 길이: 182.37m
+비행 속력: 3.48m/s, 필요 비행 시간(tf): 52.36초
+Episode: 183/3000 | Episode reward:  1683.30 | Episode steps:  524 | Average reward:  2801.85 | Step Count: 128107 | Episode Q0:   333.60
+직선+원호(Arc) 궤적 총 길이: 179.23m
+비행 속력: 3.73m/s, 필요 비행 시간(tf): 48.00초
+직선+원호(Arc) 궤적 총 길이: 179.23m
+비행 속력: 3.73m/s, 필요 비행 시간(tf): 48.00초
+Episode: 184/3000 | Episode reward:  1779.97 | Episode steps:  480 | Average reward:  2764.18 | Step Count: 128587 | Episode Q0:   355.17
+직선+원호(Arc) 궤적 총 길이: 229.94m
+비행 속력: 3.59m/s, 필요 비행 시간(tf): 64.02초
+직선+원호(Arc) 궤적 총 길이: 229.94m
+비행 속력: 3.59m/s, 필요 비행 시간(tf): 64.02초
+Episode: 185/3000 | Episode reward:  1445.47 | Episode steps:  641 | Average reward:  2747.50 | Step Count: 129228 | Episode Q0:   351.43
+직선+원호(Arc) 궤적 총 길이: 112.68m
+비행 속력: 3.72m/s, 필요 비행 시간(tf): 30.29초
+직선+원호(Arc) 궤적 총 길이: 112.68m
+비행 속력: 3.72m/s, 필요 비행 시간(tf): 30.29초
+Episode: 186/3000 | Episode reward:   733.94 | Episode steps:  303 | Average reward:  2699.43 | Step Count: 129531 | Episode Q0:   330.54
+직선+원호(Arc) 궤적 총 길이: 218.92m
+비행 속력: 3.25m/s, 필요 비행 시간(tf): 67.34초
+직선+원호(Arc) 궤적 총 길이: 218.92m
+비행 속력: 3.25m/s, 필요 비행 시간(tf): 67.34초
+Episode: 187/3000 | Episode reward:  2260.16 | Episode steps:  674 | Average reward:  2670.57 | Step Count: 130205 | Episode Q0:   310.74
+직선+원호(Arc) 궤적 총 길이: 133.08m
+비행 속력: 3.33m/s, 필요 비행 시간(tf): 39.98초
+직선+원호(Arc) 궤적 총 길이: 133.08m
+비행 속력: 3.33m/s, 필요 비행 시간(tf): 39.98초
+Episode: 188/3000 | Episode reward:  1488.95 | Episode steps:  400 | Average reward:  2612.51 | Step Count: 130605 | Episode Q0:   300.44
+직선+원호(Arc) 궤적 총 길이: 168.08m
+비행 속력: 3.40m/s, 필요 비행 시간(tf): 49.46초
+직선+원호(Arc) 궤적 총 길이: 168.08m
+비행 속력: 3.40m/s, 필요 비행 시간(tf): 49.46초
+Episode: 189/3000 | Episode reward:  1284.82 | Episode steps:  495 | Average reward:  2605.13 | Step Count: 131100 | Episode Q0:   303.89
+직선+원호(Arc) 궤적 총 길이: 143.60m
+비행 속력: 3.19m/s, 필요 비행 시간(tf): 45.02초
+직선+원호(Arc) 궤적 총 길이: 143.60m
+비행 속력: 3.19m/s, 필요 비행 시간(tf): 45.02초
+Episode: 190/3000 | Episode reward:  1839.93 | Episode steps:  451 | Average reward:  2596.34 | Step Count: 131551 | Episode Q0:   287.43
+직선+원호(Arc) 궤적 총 길이: 229.69m
+비행 속력: 2.94m/s, 필요 비행 시간(tf): 78.25초
+직선+원호(Arc) 궤적 총 길이: 229.69m
+비행 속력: 2.94m/s, 필요 비행 시간(tf): 78.25초
+Episode: 191/3000 | Episode reward:  2972.66 | Episode steps:  783 | Average reward:  2607.98 | Step Count: 132334 | Episode Q0:   275.04
+직선+원호(Arc) 궤적 총 길이: 215.09m
+비행 속력: 3.24m/s, 필요 비행 시간(tf): 66.43초
+직선+원호(Arc) 궤적 총 길이: 215.09m
+비행 속력: 3.24m/s, 필요 비행 시간(tf): 66.43초
+Episode: 192/3000 | Episode reward:  2540.93 | Episode steps:  665 | Average reward:  2625.91 | Step Count: 132999 | Episode Q0:   294.96
+직선+원호(Arc) 궤적 총 길이: 267.34m
+비행 속력: 2.99m/s, 필요 비행 시간(tf): 89.46초
+직선+원호(Arc) 궤적 총 길이: 267.34m
+비행 속력: 2.99m/s, 필요 비행 시간(tf): 89.46초
+Episode: 193/3000 | Episode reward:  3312.94 | Episode steps:  895 | Average reward:  2583.11 | Step Count: 133894 | Episode Q0:   285.72
+직선+원호(Arc) 궤적 총 길이: 127.88m
+비행 속력: 3.43m/s, 필요 비행 시간(tf): 37.31초
+직선+원호(Arc) 궤적 총 길이: 127.88m
+비행 속력: 3.43m/s, 필요 비행 시간(tf): 37.31초
+Episode: 194/3000 | Episode reward:  1492.48 | Episode steps:  374 | Average reward:  2564.72 | Step Count: 134268 | Episode Q0:   305.46
+직선+원호(Arc) 궤적 총 길이: 273.63m
+비행 속력: 3.18m/s, 필요 비행 시간(tf): 86.02초
+직선+원호(Arc) 궤적 총 길이: 273.63m
+비행 속력: 3.18m/s, 필요 비행 시간(tf): 86.02초
+Episode: 195/3000 | Episode reward:  3272.04 | Episode steps:  861 | Average reward:  2536.24 | Step Count: 135129 | Episode Q0:   299.81
+직선+원호(Arc) 궤적 총 길이: 273.55m
+비행 속력: 2.61m/s, 필요 비행 시간(tf): 104.75초
+직선+원호(Arc) 궤적 총 길이: 273.55m
+비행 속력: 2.61m/s, 필요 비행 시간(tf): 104.75초
+Episode: 196/3000 | Episode reward:  5389.99 | Episode steps: 1048 | Average reward:  2586.08 | Step Count: 136177 | Episode Q0:   259.30
+직선+원호(Arc) 궤적 총 길이: 326.98m
+비행 속력: 2.87m/s, 필요 비행 시간(tf): 114.07초
+직선+원호(Arc) 궤적 총 길이: 326.98m
+비행 속력: 2.87m/s, 필요 비행 시간(tf): 114.07초
+Episode: 197/3000 | Episode reward:  5295.23 | Episode steps: 1141 | Average reward:  2636.85 | Step Count: 137318 | Episode Q0:   318.84
+직선+원호(Arc) 궤적 총 길이: 118.68m
+비행 속력: 3.05m/s, 필요 비행 시간(tf): 38.96초
+직선+원호(Arc) 궤적 총 길이: 118.68m
+비행 속력: 3.05m/s, 필요 비행 시간(tf): 38.96초
+Episode: 198/3000 | Episode reward:  1685.26 | Episode steps:  390 | Average reward:  2600.84 | Step Count: 137708 | Episode Q0:   338.19
+직선+원호(Arc) 궤적 총 길이: 149.21m
+비행 속력: 3.33m/s, 필요 비행 시간(tf): 44.76초
+직선+원호(Arc) 궤적 총 길이: 149.21m
+비행 속력: 3.33m/s, 필요 비행 시간(tf): 44.76초
+Episode: 199/3000 | Episode reward:  1984.70 | Episode steps:  448 | Average reward:  2590.91 | Step Count: 138156 | Episode Q0:   360.01
+직선+원호(Arc) 궤적 총 길이: 280.40m
+비행 속력: 3.39m/s, 필요 비행 시간(tf): 82.68초
+직선+원호(Arc) 궤적 총 길이: 280.40m
+비행 속력: 3.39m/s, 필요 비행 시간(tf): 82.68초
+Episode: 200/3000 | Episode reward:  1775.60 | Episode steps:  827 | Average reward:  2565.00 | Step Count: 138983 | Episode Q0:   366.49
+직선+원호(Arc) 궤적 총 길이: 286.78m
+비행 속력: 2.82m/s, 필요 비행 시간(tf): 101.71초
+직선+원호(Arc) 궤적 총 길이: 286.78m
+비행 속력: 2.82m/s, 필요 비행 시간(tf): 101.71초
+Episode: 201/3000 | Episode reward:  5105.89 | Episode steps: 1018 | Average reward:  2577.57 | Step Count: 140001 | Episode Q0:   298.46
+직선+원호(Arc) 궤적 총 길이: 222.99m
+비행 속력: 2.82m/s, 필요 비행 시간(tf): 79.20초
+직선+원호(Arc) 궤적 총 길이: 222.99m
+비행 속력: 2.82m/s, 필요 비행 시간(tf): 79.20초
+Episode: 202/3000 | Episode reward:  2669.69 | Episode steps:  792 | Average reward:  2591.36 | Step Count: 140793 | Episode Q0:   328.10
+직선+원호(Arc) 궤적 총 길이: 219.60m
+비행 속력: 3.39m/s, 필요 비행 시간(tf): 64.74초
+직선+원호(Arc) 궤적 총 길이: 219.60m
+비행 속력: 3.39m/s, 필요 비행 시간(tf): 64.74초
+Episode: 203/3000 | Episode reward:  1909.89 | Episode steps:  648 | Average reward:  2588.89 | Step Count: 141441 | Episode Q0:   357.56
+직선+원호(Arc) 궤적 총 길이: 291.61m
+비행 속력: 2.55m/s, 필요 비행 시간(tf): 114.48초
+직선+원호(Arc) 궤적 총 길이: 291.61m
+비행 속력: 2.55m/s, 필요 비행 시간(tf): 114.48초
+Episode: 204/3000 | Episode reward:  5361.48 | Episode steps: 1145 | Average reward:  2650.43 | Step Count: 142586 | Episode Q0:   295.32
+직선+원호(Arc) 궤적 총 길이: 336.78m
+비행 속력: 3.21m/s, 필요 비행 시간(tf): 104.92초
+직선+원호(Arc) 궤적 총 길이: 336.78m
+비행 속력: 3.21m/s, 필요 비행 시간(tf): 104.92초
+Episode: 205/3000 | Episode reward:  4101.14 | Episode steps: 1050 | Average reward:  2728.27 | Step Count: 143636 | Episode Q0:   352.72
+직선+원호(Arc) 궤적 총 길이: 203.58m
+비행 속력: 2.68m/s, 필요 비행 시간(tf): 76.09초
+직선+원호(Arc) 궤적 총 길이: 203.58m
+비행 속력: 2.68m/s, 필요 비행 시간(tf): 76.09초
+Episode: 206/3000 | Episode reward:  2707.47 | Episode steps:  761 | Average reward:  2719.96 | Step Count: 144397 | Episode Q0:   328.79
+직선+원호(Arc) 궤적 총 길이: 256.66m
+비행 속력: 3.33m/s, 필요 비행 시간(tf): 77.01초
+직선+원호(Arc) 궤적 총 길이: 256.66m
+비행 속력: 3.33m/s, 필요 비행 시간(tf): 77.01초
+Episode: 207/3000 | Episode reward:  2833.30 | Episode steps:  771 | Average reward:  2707.37 | Step Count: 145168 | Episode Q0:   367.32
+직선+원호(Arc) 궤적 총 길이: 243.81m
+비행 속력: 2.99m/s, 필요 비행 시간(tf): 81.48초
+직선+원호(Arc) 궤적 총 길이: 243.81m
+비행 속력: 2.99m/s, 필요 비행 시간(tf): 81.48초
+Episode: 208/3000 | Episode reward:  3787.12 | Episode steps:  815 | Average reward:  2756.15 | Step Count: 145983 | Episode Q0:   338.74
+직선+원호(Arc) 궤적 총 길이: 316.20m
+비행 속력: 3.68m/s, 필요 비행 시간(tf): 85.88초
+직선+원호(Arc) 궤적 총 길이: 316.20m
+비행 속력: 3.68m/s, 필요 비행 시간(tf): 85.88초
+Episode: 209/3000 | Episode reward:  2812.65 | Episode steps:  859 | Average reward:  2726.65 | Step Count: 146842 | Episode Q0:   407.76
+직선+원호(Arc) 궤적 총 길이: 182.07m
+비행 속력: 3.07m/s, 필요 비행 시간(tf): 59.36초
+직선+원호(Arc) 궤적 총 길이: 182.07m
+비행 속력: 3.07m/s, 필요 비행 시간(tf): 59.36초
+Episode: 210/3000 | Episode reward:  2256.61 | Episode steps:  594 | Average reward:  2731.15 | Step Count: 147436 | Episode Q0:   351.37
+직선+원호(Arc) 궤적 총 길이: 266.15m
+비행 속력: 2.62m/s, 필요 비행 시간(tf): 101.73초
+직선+원호(Arc) 궤적 총 길이: 266.15m
+비행 속력: 2.62m/s, 필요 비행 시간(tf): 101.73초
+Episode: 211/3000 | Episode reward:  4296.36 | Episode steps: 1018 | Average reward:  2760.93 | Step Count: 148454 | Episode Q0:   308.98
+직선+원호(Arc) 궤적 총 길이: 149.08m
+비행 속력: 3.26m/s, 필요 비행 시간(tf): 45.72초
+직선+원호(Arc) 궤적 총 길이: 149.08m
+비행 속력: 3.26m/s, 필요 비행 시간(tf): 45.72초
+Episode: 212/3000 | Episode reward:  2291.23 | Episode steps:  458 | Average reward:  2716.83 | Step Count: 148912 | Episode Q0:   357.56
+직선+원호(Arc) 궤적 총 길이: 222.74m
+비행 속력: 2.71m/s, 필요 비행 시간(tf): 82.25초
+직선+원호(Arc) 궤적 총 길이: 222.74m
+비행 속력: 2.71m/s, 필요 비행 시간(tf): 82.25초
+Episode: 213/3000 | Episode reward:  3052.09 | Episode steps:  823 | Average reward:  2727.93 | Step Count: 149735 | Episode Q0:   318.29
+직선+원호(Arc) 궤적 총 길이: 196.60m
+비행 속력: 3.27m/s, 필요 비행 시간(tf): 60.03초
+직선+원호(Arc) 궤적 총 길이: 196.60m
+비행 속력: 3.27m/s, 필요 비행 시간(tf): 60.03초
+Episode: 214/3000 | Episode reward:  1962.00 | Episode steps:  601 | Average reward:  2725.84 | Step Count: 150336 | Episode Q0:   351.87
+직선+원호(Arc) 궤적 총 길이: 224.03m
+비행 속력: 3.06m/s, 필요 비행 시간(tf): 73.26초
+직선+원호(Arc) 궤적 총 길이: 224.03m
+비행 속력: 3.06m/s, 필요 비행 시간(tf): 73.26초
+Episode: 215/3000 | Episode reward:  2870.41 | Episode steps:  733 | Average reward:  2707.06 | Step Count: 151069 | Episode Q0:   340.75
+직선+원호(Arc) 궤적 총 길이: 132.65m
+비행 속력: 2.75m/s, 필요 비행 시간(tf): 48.27초
+직선+원호(Arc) 궤적 총 길이: 132.65m
+비행 속력: 2.75m/s, 필요 비행 시간(tf): 48.27초
+Episode: 216/3000 | Episode reward:  2196.41 | Episode steps:  483 | Average reward:  2685.53 | Step Count: 151552 | Episode Q0:   316.25
+직선+원호(Arc) 궤적 총 길이: 137.22m
+비행 속력: 2.55m/s, 필요 비행 시간(tf): 53.89초
+직선+원호(Arc) 궤적 총 길이: 137.22m
+비행 속력: 2.55m/s, 필요 비행 시간(tf): 53.89초
+Episode: 217/3000 | Episode reward:  2583.35 | Episode steps:  539 | Average reward:  2719.03 | Step Count: 152091 | Episode Q0:   303.55
+직선+원호(Arc) 궤적 총 길이: 242.72m
+비행 속력: 3.73m/s, 필요 비행 시간(tf): 65.12초
+직선+원호(Arc) 궤적 총 길이: 242.72m
+비행 속력: 3.73m/s, 필요 비행 시간(tf): 65.12초
+Episode: 218/3000 | Episode reward:  1442.22 | Episode steps:  652 | Average reward:  2695.84 | Step Count: 152743 | Episode Q0:   405.08
+직선+원호(Arc) 궤적 총 길이: 246.35m
+비행 속력: 3.00m/s, 필요 비행 시간(tf): 82.10초
+직선+원호(Arc) 궤적 총 길이: 246.35m
+비행 속력: 3.00m/s, 필요 비행 시간(tf): 82.10초
+Episode: 219/3000 | Episode reward:  4041.68 | Episode steps:  821 | Average reward:  2741.80 | Step Count: 153564 | Episode Q0:   303.15
+직선+원호(Arc) 궤적 총 길이: 258.34m
+비행 속력: 2.89m/s, 필요 비행 시간(tf): 89.28초
+직선+원호(Arc) 궤적 총 길이: 258.34m
+비행 속력: 2.89m/s, 필요 비행 시간(tf): 89.28초
+Episode: 220/3000 | Episode reward:  3884.61 | Episode steps:  893 | Average reward:  2793.95 | Step Count: 154457 | Episode Q0:   333.22
+직선+원호(Arc) 궤적 총 길이: 260.32m
+비행 속력: 3.74m/s, 필요 비행 시간(tf): 69.68초
+직선+원호(Arc) 궤적 총 길이: 260.32m
+비행 속력: 3.74m/s, 필요 비행 시간(tf): 69.68초
+Episode: 221/3000 | Episode reward:   908.19 | Episode steps:  697 | Average reward:  2736.11 | Step Count: 155154 | Episode Q0:   389.72
+직선+원호(Arc) 궤적 총 길이: 272.93m
+비행 속력: 3.29m/s, 필요 비행 시간(tf): 83.05초
+직선+원호(Arc) 궤적 총 길이: 272.93m
+비행 속력: 3.29m/s, 필요 비행 시간(tf): 83.05초
+Episode: 222/3000 | Episode reward:  3023.91 | Episode steps:  831 | Average reward:  2781.23 | Step Count: 155985 | Episode Q0:   322.75
+직선+원호(Arc) 궤적 총 길이: 259.95m
+비행 속력: 2.70m/s, 필요 비행 시간(tf): 96.28초
+직선+원호(Arc) 궤적 총 길이: 259.95m
+비행 속력: 2.70m/s, 필요 비행 시간(tf): 96.28초
+Episode: 223/3000 | Episode reward:  4560.32 | Episode steps:  963 | Average reward:  2816.79 | Step Count: 156948 | Episode Q0:   282.56
+직선+원호(Arc) 궤적 총 길이: 342.65m
+비행 속력: 3.17m/s, 필요 비행 시간(tf): 108.10초
+직선+원호(Arc) 궤적 총 길이: 342.65m
+비행 속력: 3.17m/s, 필요 비행 시간(tf): 108.10초
+Episode: 224/3000 | Episode reward:  5108.66 | Episode steps: 1081 | Average reward:  2818.80 | Step Count: 158029 | Episode Q0:   355.56
+직선+원호(Arc) 궤적 총 길이: 171.28m
+비행 속력: 3.15m/s, 필요 비행 시간(tf): 54.43초
+직선+원호(Arc) 궤적 총 길이: 171.28m
+비행 속력: 3.15m/s, 필요 비행 시간(tf): 54.43초
+Episode: 225/3000 | Episode reward:  2348.37 | Episode steps:  545 | Average reward:  2817.00 | Step Count: 158574 | Episode Q0:   345.42
+직선+원호(Arc) 궤적 총 길이: 248.64m
+비행 속력: 2.53m/s, 필요 비행 시간(tf): 98.21초
+직선+원호(Arc) 궤적 총 길이: 248.64m
+비행 속력: 2.53m/s, 필요 비행 시간(tf): 98.21초
+Episode: 226/3000 | Episode reward:  5178.58 | Episode steps:  983 | Average reward:  2889.52 | Step Count: 159557 | Episode Q0:   316.65
+직선+원호(Arc) 궤적 총 길이: 132.74m
+비행 속력: 2.69m/s, 필요 비행 시간(tf): 49.35초
+직선+원호(Arc) 궤적 총 길이: 132.74m
+비행 속력: 2.69m/s, 필요 비행 시간(tf): 49.35초
+Episode: 227/3000 | Episode reward:  2681.56 | Episode steps:  494 | Average reward:  2882.75 | Step Count: 160051 | Episode Q0:   332.70
+직선+원호(Arc) 궤적 총 길이: 145.48m
+비행 속력: 3.36m/s, 필요 비행 시간(tf): 43.34초
+직선+원호(Arc) 궤적 총 길이: 145.48m
+비행 속력: 3.36m/s, 필요 비행 시간(tf): 43.34초
+Episode: 228/3000 | Episode reward:  1721.14 | Episode steps:  434 | Average reward:  2833.72 | Step Count: 160485 | Episode Q0:   373.35
+직선+원호(Arc) 궤적 총 길이: 277.46m
+비행 속력: 3.61m/s, 필요 비행 시간(tf): 76.86초
+직선+원호(Arc) 궤적 총 길이: 277.46m
+비행 속력: 3.61m/s, 필요 비행 시간(tf): 76.86초
+Episode: 229/3000 | Episode reward:  2069.48 | Episode steps:  769 | Average reward:  2825.95 | Step Count: 161254 | Episode Q0:   407.02
+직선+원호(Arc) 궤적 총 길이: 338.31m
+비행 속력: 2.67m/s, 필요 비행 시간(tf): 126.61초
+직선+원호(Arc) 궤적 총 길이: 338.31m
+비행 속력: 2.67m/s, 필요 비행 시간(tf): 126.61초
+Episode: 230/3000 | Episode reward:  5968.51 | Episode steps: 1267 | Average reward:  2889.44 | Step Count: 162521 | Episode Q0:   317.37
+직선+원호(Arc) 궤적 총 길이: 236.57m
+비행 속력: 2.94m/s, 필요 비행 시간(tf): 80.39초
+직선+원호(Arc) 궤적 총 길이: 236.57m
+비행 속력: 2.94m/s, 필요 비행 시간(tf): 80.39초
+Episode: 231/3000 | Episode reward:  3373.19 | Episode steps:  804 | Average reward:  2877.48 | Step Count: 163325 | Episode Q0:   353.69
+직선+원호(Arc) 궤적 총 길이: 211.26m
+비행 속력: 3.21m/s, 필요 비행 시간(tf): 65.80초
+직선+원호(Arc) 궤적 총 길이: 211.26m
+비행 속력: 3.21m/s, 필요 비행 시간(tf): 65.80초
+Episode: 232/3000 | Episode reward:  2245.85 | Episode steps:  659 | Average reward:  2871.83 | Step Count: 163984 | Episode Q0:   362.36
+직선+원호(Arc) 궤적 총 길이: 105.38m
+비행 속력: 2.63m/s, 필요 비행 시간(tf): 40.08초
+직선+원호(Arc) 궤적 총 길이: 105.38m
+비행 속력: 2.63m/s, 필요 비행 시간(tf): 40.08초
+Episode: 233/3000 | Episode reward:  1695.53 | Episode steps:  401 | Average reward:  2872.08 | Step Count: 164385 | Episode Q0:   315.91
+직선+원호(Arc) 궤적 총 길이: 222.72m
+비행 속력: 3.24m/s, 필요 비행 시간(tf): 68.69초
+직선+원호(Arc) 궤적 총 길이: 222.72m
+비행 속력: 3.24m/s, 필요 비행 시간(tf): 68.69초
+Episode: 234/3000 | Episode reward:  2076.68 | Episode steps:  687 | Average reward:  2878.01 | Step Count: 165072 | Episode Q0:   349.45
+직선+원호(Arc) 궤적 총 길이: 275.17m
+비행 속력: 2.64m/s, 필요 비행 시간(tf): 104.39초
+직선+원호(Arc) 궤적 총 길이: 275.17m
+비행 속력: 2.64m/s, 필요 비행 시간(tf): 104.39초
+Episode: 235/3000 | Episode reward:  4388.77 | Episode steps: 1044 | Average reward:  2936.88 | Step Count: 166116 | Episode Q0:   313.19
+직선+원호(Arc) 궤적 총 길이: 219.61m
+비행 속력: 3.33m/s, 필요 비행 시간(tf): 66.00초
+직선+원호(Arc) 궤적 총 길이: 219.61m
+비행 속력: 3.33m/s, 필요 비행 시간(tf): 66.00초
+Episode: 236/3000 | Episode reward:  2682.50 | Episode steps:  661 | Average reward:  2975.85 | Step Count: 166777 | Episode Q0:   362.13
+직선+원호(Arc) 궤적 총 길이: 230.22m
+비행 속력: 3.02m/s, 필요 비행 시간(tf): 76.11초
+직선+원호(Arc) 궤적 총 길이: 230.22m
+비행 속력: 3.02m/s, 필요 비행 시간(tf): 76.11초
+Episode: 237/3000 | Episode reward:  3174.41 | Episode steps:  762 | Average reward:  2994.14 | Step Count: 167539 | Episode Q0:   338.76
+직선+원호(Arc) 궤적 총 길이: 208.77m
+비행 속력: 3.10m/s, 필요 비행 시간(tf): 67.38초
+직선+원호(Arc) 궤적 총 길이: 208.77m
+비행 속력: 3.10m/s, 필요 비행 시간(tf): 67.38초
+Episode: 238/3000 | Episode reward:  2652.28 | Episode steps:  674 | Average reward:  3017.40 | Step Count: 168213 | Episode Q0:   347.30
+직선+원호(Arc) 궤적 총 길이: 323.44m
+비행 속력: 3.12m/s, 필요 비행 시간(tf): 103.76초
+직선+원호(Arc) 궤적 총 길이: 323.44m
+비행 속력: 3.12m/s, 필요 비행 시간(tf): 103.76초
+Episode: 239/3000 | Episode reward:  4034.69 | Episode steps: 1038 | Average reward:  3072.40 | Step Count: 169251 | Episode Q0:   352.14
+직선+원호(Arc) 궤적 총 길이: 306.72m
+비행 속력: 2.70m/s, 필요 비행 시간(tf): 113.44초
+직선+원호(Arc) 궤적 총 길이: 306.72m
+비행 속력: 2.70m/s, 필요 비행 시간(tf): 113.44초
+Episode: 240/3000 | Episode reward:  4716.66 | Episode steps: 1135 | Average reward:  3129.93 | Step Count: 170386 | Episode Q0:   329.02
+직선+원호(Arc) 궤적 총 길이: 115.19m
+비행 속력: 2.67m/s, 필요 비행 시간(tf): 43.10초
+직선+원호(Arc) 궤적 총 길이: 115.19m
+비행 속력: 2.67m/s, 필요 비행 시간(tf): 43.10초
+Episode: 241/3000 | Episode reward:  1943.53 | Episode steps:  432 | Average reward:  3109.35 | Step Count: 170818 | Episode Q0:   335.93
+직선+원호(Arc) 궤적 총 길이: 267.22m
+비행 속력: 2.60m/s, 필요 비행 시간(tf): 102.60초
+직선+원호(Arc) 궤적 총 길이: 267.22m
+비행 속력: 2.60m/s, 필요 비행 시간(tf): 102.60초
+Episode: 242/3000 | Episode reward:  4366.02 | Episode steps: 1027 | Average reward:  3145.85 | Step Count: 171845 | Episode Q0:   330.52
+직선+원호(Arc) 궤적 총 길이: 234.51m
+비행 속력: 3.31m/s, 필요 비행 시간(tf): 70.89초
+직선+원호(Arc) 궤적 총 길이: 234.51m
+비행 속력: 3.31m/s, 필요 비행 시간(tf): 70.89초
+Episode: 243/3000 | Episode reward:  2450.31 | Episode steps:  709 | Average reward:  3128.60 | Step Count: 172554 | Episode Q0:   389.20
+직선+원호(Arc) 궤적 총 길이: 186.92m
+비행 속력: 3.76m/s, 필요 비행 시간(tf): 49.72초
+직선+원호(Arc) 궤적 총 길이: 186.92m
+비행 속력: 3.76m/s, 필요 비행 시간(tf): 49.72초
+Episode: 244/3000 | Episode reward:  2129.09 | Episode steps:  498 | Average reward:  3141.33 | Step Count: 173052 | Episode Q0:   409.48
+직선+원호(Arc) 궤적 총 길이: 234.77m
+비행 속력: 3.00m/s, 필요 비행 시간(tf): 78.21초
+직선+원호(Arc) 궤적 총 길이: 234.77m
+비행 속력: 3.00m/s, 필요 비행 시간(tf): 78.21초
+Episode: 245/3000 | Episode reward:  2671.63 | Episode steps:  783 | Average reward:  3129.32 | Step Count: 173835 | Episode Q0:   356.18
+직선+원호(Arc) 궤적 총 길이: 286.42m
+비행 속력: 3.36m/s, 필요 비행 시간(tf): 85.22초
+직선+원호(Arc) 궤적 총 길이: 286.42m
+비행 속력: 3.36m/s, 필요 비행 시간(tf): 85.22초
+Episode: 246/3000 | Episode reward:  2625.50 | Episode steps:  853 | Average reward:  3074.04 | Step Count: 174688 | Episode Q0:   369.61
+직선+원호(Arc) 궤적 총 길이: 264.34m
+비행 속력: 3.30m/s, 필요 비행 시간(tf): 80.20초
+직선+원호(Arc) 궤적 총 길이: 264.34m
+비행 속력: 3.30m/s, 필요 비행 시간(tf): 80.20초
+Episode: 247/3000 | Episode reward:  3285.75 | Episode steps:  802 | Average reward:  3033.85 | Step Count: 175490 | Episode Q0:   336.47
+직선+원호(Arc) 궤적 총 길이: 164.29m
+비행 속력: 2.95m/s, 필요 비행 시간(tf): 55.65초
+직선+원호(Arc) 궤적 총 길이: 164.29m
+비행 속력: 2.95m/s, 필요 비행 시간(tf): 55.65초
+Episode: 248/3000 | Episode reward:  1954.70 | Episode steps:  557 | Average reward:  3039.23 | Step Count: 176047 | Episode Q0:   314.44
+직선+원호(Arc) 궤적 총 길이: 320.48m
+비행 속력: 2.74m/s, 필요 비행 시간(tf): 117.14초
+직선+원호(Arc) 궤적 총 길이: 320.48m
+비행 속력: 2.74m/s, 필요 비행 시간(tf): 117.14초
+Episode: 249/3000 | Episode reward:  5811.84 | Episode steps: 1172 | Average reward:  3115.78 | Step Count: 177219 | Episode Q0:   309.75
+직선+원호(Arc) 궤적 총 길이: 173.34m
+비행 속력: 3.26m/s, 필요 비행 시간(tf): 53.15초
+직선+원호(Arc) 궤적 총 길이: 173.34m
+비행 속력: 3.26m/s, 필요 비행 시간(tf): 53.15초
+Episode: 250/3000 | Episode reward:  2179.63 | Episode steps:  532 | Average reward:  3123.86 | Step Count: 177751 | Episode Q0:   359.64
+직선+원호(Arc) 궤적 총 길이: 169.70m
+비행 속력: 2.88m/s, 필요 비행 시간(tf): 59.00초
+직선+원호(Arc) 궤적 총 길이: 169.70m
+비행 속력: 2.88m/s, 필요 비행 시간(tf): 59.00초
+Episode: 251/3000 | Episode reward:  3087.99 | Episode steps:  590 | Average reward:  3083.50 | Step Count: 178341 | Episode Q0:   344.48
+직선+원호(Arc) 궤적 총 길이: 114.31m
+비행 속력: 3.25m/s, 필요 비행 시간(tf): 35.20초
+직선+원호(Arc) 궤적 총 길이: 114.31m
+비행 속력: 3.25m/s, 필요 비행 시간(tf): 35.20초
+Episode: 252/3000 | Episode reward:   798.51 | Episode steps:  353 | Average reward:  3046.08 | Step Count: 178694 | Episode Q0:   371.22
+직선+원호(Arc) 궤적 총 길이: 274.78m
+비행 속력: 2.64m/s, 필요 비행 시간(tf): 104.09초
+직선+원호(Arc) 궤적 총 길이: 274.78m
+비행 속력: 2.64m/s, 필요 비행 시간(tf): 104.09초
+Episode: 253/3000 | Episode reward:  4831.61 | Episode steps: 1041 | Average reward:  3104.51 | Step Count: 179735 | Episode Q0:   335.35
+직선+원호(Arc) 궤적 총 길이: 115.39m
+비행 속력: 3.32m/s, 필요 비행 시간(tf): 34.76초
+직선+원호(Arc) 궤적 총 길이: 115.39m
+비행 속력: 3.32m/s, 필요 비행 시간(tf): 34.76초
+Episode: 254/3000 | Episode reward:  1610.19 | Episode steps:  348 | Average reward:  3029.48 | Step Count: 180083 | Episode Q0:   336.85
+직선+원호(Arc) 궤적 총 길이: 191.65m
+비행 속력: 2.62m/s, 필요 비행 시간(tf): 73.26초
+직선+원호(Arc) 궤적 총 길이: 191.65m
+비행 속력: 2.62m/s, 필요 비행 시간(tf): 73.26초
+Episode: 255/3000 | Episode reward:  3965.24 | Episode steps:  733 | Average reward:  3026.77 | Step Count: 180816 | Episode Q0:   310.99
+직선+원호(Arc) 궤적 총 길이: 240.70m
+비행 속력: 2.98m/s, 필요 비행 시간(tf): 80.82초
+직선+원호(Arc) 궤적 총 길이: 240.70m
+비행 속력: 2.98m/s, 필요 비행 시간(tf): 80.82초
+Episode: 256/3000 | Episode reward:  3402.51 | Episode steps:  809 | Average reward:  3040.67 | Step Count: 181625 | Episode Q0:   333.67
+직선+원호(Arc) 궤적 총 길이: 248.81m
+비행 속력: 2.71m/s, 필요 비행 시간(tf): 91.86초
+직선+원호(Arc) 궤적 총 길이: 248.81m
+비행 속력: 2.71m/s, 필요 비행 시간(tf): 91.86초
+Episode: 257/3000 | Episode reward:  4152.25 | Episode steps:  919 | Average reward:  3067.05 | Step Count: 182544 | Episode Q0:   357.64
+직선+원호(Arc) 궤적 총 길이: 253.36m
+비행 속력: 3.30m/s, 필요 비행 시간(tf): 76.66초
+직선+원호(Arc) 궤적 총 길이: 253.36m
+비행 속력: 3.30m/s, 필요 비행 시간(tf): 76.66초
+Episode: 258/3000 | Episode reward:  2648.14 | Episode steps:  767 | Average reward:  3044.27 | Step Count: 183311 | Episode Q0:   404.78
+직선+원호(Arc) 궤적 총 길이: 112.88m
+비행 속력: 2.67m/s, 필요 비행 시간(tf): 42.35초
+직선+원호(Arc) 궤적 총 길이: 112.88m
+비행 속력: 2.67m/s, 필요 비행 시간(tf): 42.35초
+Episode: 259/3000 | Episode reward:  1844.28 | Episode steps:  424 | Average reward:  3024.90 | Step Count: 183735 | Episode Q0:   348.62
+직선+원호(Arc) 궤적 총 길이: 256.74m
+비행 속력: 3.21m/s, 필요 비행 시간(tf): 80.00초
+직선+원호(Arc) 궤적 총 길이: 256.74m
+비행 속력: 3.21m/s, 필요 비행 시간(tf): 80.00초
+Episode: 260/3000 | Episode reward:  2977.96 | Episode steps:  801 | Average reward:  3039.33 | Step Count: 184536 | Episode Q0:   342.32
+직선+원호(Arc) 궤적 총 길이: 290.04m
+비행 속력: 3.75m/s, 필요 비행 시간(tf): 77.39초
+직선+원호(Arc) 궤적 총 길이: 290.04m
+비행 속력: 3.75m/s, 필요 비행 시간(tf): 77.39초
+Episode: 261/3000 | Episode reward:  1774.49 | Episode steps:  774 | Average reward:  2988.89 | Step Count: 185310 | Episode Q0:   403.62
+직선+원호(Arc) 궤적 총 길이: 183.00m
+비행 속력: 2.86m/s, 필요 비행 시간(tf): 63.92초
+직선+원호(Arc) 궤적 총 길이: 183.00m
+비행 속력: 2.86m/s, 필요 비행 시간(tf): 63.92초
+Episode: 262/3000 | Episode reward:  2937.66 | Episode steps:  640 | Average reward:  3001.82 | Step Count: 185950 | Episode Q0:   300.02
+직선+원호(Arc) 궤적 총 길이: 160.98m
+비행 속력: 3.42m/s, 필요 비행 시간(tf): 47.13초
+직선+원호(Arc) 궤적 총 길이: 160.98m
+비행 속력: 3.42m/s, 필요 비행 시간(tf): 47.13초
+Episode: 263/3000 | Episode reward:  2432.15 | Episode steps:  472 | Average reward:  2989.42 | Step Count: 186422 | Episode Q0:   361.72
+직선+원호(Arc) 궤적 총 길이: 110.09m
+비행 속력: 3.75m/s, 필요 비행 시간(tf): 29.40초
+직선+원호(Arc) 궤적 총 길이: 110.09m
+비행 속력: 3.75m/s, 필요 비행 시간(tf): 29.40초
+Episode: 264/3000 | Episode reward:   746.51 | Episode steps:  294 | Average reward:  2965.11 | Step Count: 186716 | Episode Q0:   380.94
+직선+원호(Arc) 궤적 총 길이: 182.06m
+비행 속력: 3.53m/s, 필요 비행 시간(tf): 51.60초
+직선+원호(Arc) 궤적 총 길이: 182.06m
+비행 속력: 3.53m/s, 필요 비행 시간(tf): 51.60초
+Episode: 265/3000 | Episode reward:  2163.50 | Episode steps:  516 | Average reward:  2950.97 | Step Count: 187232 | Episode Q0:   338.66
+직선+원호(Arc) 궤적 총 길이: 264.67m
+비행 속력: 2.87m/s, 필요 비행 시간(tf): 92.29초
+직선+원호(Arc) 궤적 총 길이: 264.67m
+비행 속력: 2.87m/s, 필요 비행 시간(tf): 92.29초
+Episode: 266/3000 | Episode reward:  4278.47 | Episode steps:  923 | Average reward:  2992.61 | Step Count: 188155 | Episode Q0:   314.53
+직선+원호(Arc) 궤적 총 길이: 145.53m
+비행 속력: 3.30m/s, 필요 비행 시간(tf): 44.17초
+직선+원호(Arc) 궤적 총 길이: 145.53m
+비행 속력: 3.30m/s, 필요 비행 시간(tf): 44.17초
+Episode: 267/3000 | Episode reward:  1716.73 | Episode steps:  442 | Average reward:  2975.28 | Step Count: 188597 | Episode Q0:   353.67
+직선+원호(Arc) 궤적 총 길이: 198.95m
+비행 속력: 2.73m/s, 필요 비행 시간(tf): 72.96초
+직선+원호(Arc) 궤적 총 길이: 198.95m
+비행 속력: 2.73m/s, 필요 비행 시간(tf): 72.96초
+Episode: 268/3000 | Episode reward:  3551.25 | Episode steps:  730 | Average reward:  3017.46 | Step Count: 189327 | Episode Q0:   323.61
+직선+원호(Arc) 궤적 총 길이: 304.55m
+비행 속력: 3.01m/s, 필요 비행 시간(tf): 101.15초
+직선+원호(Arc) 궤적 총 길이: 304.55m
+비행 속력: 3.01m/s, 필요 비행 시간(tf): 101.15초
+Episode: 269/3000 | Episode reward:  3425.76 | Episode steps: 1012 | Average reward:  3005.14 | Step Count: 190339 | Episode Q0:   333.91
+직선+원호(Arc) 궤적 총 길이: 143.09m
+비행 속력: 2.75m/s, 필요 비행 시간(tf): 52.02초
+직선+원호(Arc) 궤적 총 길이: 143.09m
+비행 속력: 2.75m/s, 필요 비행 시간(tf): 52.02초
+Episode: 270/3000 | Episode reward:  2437.11 | Episode steps:  521 | Average reward:  2976.19 | Step Count: 190860 | Episode Q0:   326.27
+직선+원호(Arc) 궤적 총 길이: 146.95m
+비행 속력: 3.27m/s, 필요 비행 시간(tf): 44.92초
+직선+원호(Arc) 궤적 총 길이: 146.95m
+비행 속력: 3.27m/s, 필요 비행 시간(tf): 44.92초
+Episode: 271/3000 | Episode reward:  2357.61 | Episode steps:  450 | Average reward:  3005.18 | Step Count: 191310 | Episode Q0:   353.02
+직선+원호(Arc) 궤적 총 길이: 306.81m
+비행 속력: 2.61m/s, 필요 비행 시간(tf): 117.48초
+직선+원호(Arc) 궤적 총 길이: 306.81m
+비행 속력: 2.61m/s, 필요 비행 시간(tf): 117.48초
+Episode: 272/3000 | Episode reward:  5349.24 | Episode steps: 1175 | Average reward:  3051.69 | Step Count: 192485 | Episode Q0:   333.42
+직선+원호(Arc) 궤적 총 길이: 199.81m
+비행 속력: 3.25m/s, 필요 비행 시간(tf): 61.48초
+직선+원호(Arc) 궤적 총 길이: 199.81m
+비행 속력: 3.25m/s, 필요 비행 시간(tf): 61.48초
+Episode: 273/3000 | Episode reward:  3125.68 | Episode steps:  615 | Average reward:  3022.99 | Step Count: 193100 | Episode Q0:   365.29
+직선+원호(Arc) 궤적 총 길이: 123.64m
+비행 속력: 3.28m/s, 필요 비행 시간(tf): 37.68초
+직선+원호(Arc) 궤적 총 길이: 123.64m
+비행 속력: 3.28m/s, 필요 비행 시간(tf): 37.68초
+Episode: 274/3000 | Episode reward:  1342.56 | Episode steps:  377 | Average reward:  2947.67 | Step Count: 193477 | Episode Q0:   382.73
+직선+원호(Arc) 궤적 총 길이: 266.81m
+비행 속력: 3.21m/s, 필요 비행 시간(tf): 83.12초
+직선+원호(Arc) 궤적 총 길이: 266.81m
+비행 속력: 3.21m/s, 필요 비행 시간(tf): 83.12초
+Episode: 275/3000 | Episode reward:  2694.33 | Episode steps:  832 | Average reward:  2954.59 | Step Count: 194309 | Episode Q0:   370.96
+직선+원호(Arc) 궤적 총 길이: 189.07m
+비행 속력: 3.40m/s, 필요 비행 시간(tf): 55.59초
+직선+원호(Arc) 궤적 총 길이: 189.07m
+비행 속력: 3.40m/s, 필요 비행 시간(tf): 55.59초
+Episode: 276/3000 | Episode reward:  2540.15 | Episode steps:  556 | Average reward:  2901.82 | Step Count: 194865 | Episode Q0:   351.16
+직선+원호(Arc) 궤적 총 길이: 244.88m
+비행 속력: 2.78m/s, 필요 비행 시간(tf): 88.18초
+직선+원호(Arc) 궤적 총 길이: 244.88m
+비행 속력: 2.78m/s, 필요 비행 시간(tf): 88.18초
+Episode: 277/3000 | Episode reward:  4521.50 | Episode steps:  882 | Average reward:  2938.62 | Step Count: 195747 | Episode Q0:   312.50
+직선+원호(Arc) 궤적 총 길이: 159.79m
+비행 속력: 2.59m/s, 필요 비행 시간(tf): 61.79초
+직선+원호(Arc) 궤적 총 길이: 159.79m
+비행 속력: 2.59m/s, 필요 비행 시간(tf): 61.79초
+Episode: 278/3000 | Episode reward:  3293.83 | Episode steps:  618 | Average reward:  2970.07 | Step Count: 196365 | Episode Q0:   313.98
+직선+원호(Arc) 궤적 총 길이: 181.26m
+비행 속력: 3.13m/s, 필요 비행 시간(tf): 57.93초
+직선+원호(Arc) 궤적 총 길이: 181.26m
+비행 속력: 3.13m/s, 필요 비행 시간(tf): 57.93초
+Episode: 279/3000 | Episode reward:  1193.57 | Episode steps:  580 | Average reward:  2952.56 | Step Count: 196945 | Episode Q0:   360.88
+직선+원호(Arc) 궤적 총 길이: 202.27m
+비행 속력: 3.72m/s, 필요 비행 시간(tf): 54.30초
+직선+원호(Arc) 궤적 총 길이: 202.27m
+비행 속력: 3.72m/s, 필요 비행 시간(tf): 54.30초
+Episode: 280/3000 | Episode reward:   976.51 | Episode steps:  544 | Average reward:  2852.72 | Step Count: 197489 | Episode Q0:   381.04
+직선+원호(Arc) 궤적 총 길이: 108.65m
+비행 속력: 3.56m/s, 필요 비행 시간(tf): 30.52초
+직선+원호(Arc) 궤적 총 길이: 108.65m
+비행 속력: 3.56m/s, 필요 비행 시간(tf): 30.52초
+Episode: 281/3000 | Episode reward:   127.76 | Episode steps:  306 | Average reward:  2787.81 | Step Count: 197795 | Episode Q0:   372.77
+직선+원호(Arc) 궤적 총 길이: 112.13m
+비행 속력: 3.12m/s, 필요 비행 시간(tf): 36.00초
+직선+원호(Arc) 궤적 총 길이: 112.13m
+비행 속력: 3.12m/s, 필요 비행 시간(tf): 36.00초
+Episode: 282/3000 | Episode reward:  1770.12 | Episode steps:  360 | Average reward:  2778.29 | Step Count: 198155 | Episode Q0:   300.50
+직선+원호(Arc) 궤적 총 길이: 269.96m
+비행 속력: 2.57m/s, 필요 비행 시간(tf): 105.02초
+직선+원호(Arc) 궤적 총 길이: 269.96m
+비행 속력: 2.57m/s, 필요 비행 시간(tf): 105.02초
+Episode: 283/3000 | Episode reward:  5329.50 | Episode steps: 1051 | Average reward:  2850.97 | Step Count: 199206 | Episode Q0:   281.19
+직선+원호(Arc) 궤적 총 길이: 217.24m
+비행 속력: 3.76m/s, 필요 비행 시간(tf): 57.73초
+직선+원호(Arc) 궤적 총 길이: 217.24m
+비행 속력: 3.76m/s, 필요 비행 시간(tf): 57.73초
+Episode: 284/3000 | Episode reward:  1254.29 | Episode steps:  578 | Average reward:  2834.53 | Step Count: 199784 | Episode Q0:   347.22
+직선+원호(Arc) 궤적 총 길이: 300.51m
+비행 속력: 2.87m/s, 필요 비행 시간(tf): 104.69초
+직선+원호(Arc) 궤적 총 길이: 300.51m
+비행 속력: 2.87m/s, 필요 비행 시간(tf): 104.69초
+Episode: 285/3000 | Episode reward:  4053.33 | Episode steps: 1047 | Average reward:  2827.82 | Step Count: 200831 | Episode Q0:   321.14
+직선+원호(Arc) 궤적 총 길이: 193.94m
+비행 속력: 3.15m/s, 필요 비행 시간(tf): 61.49초
+직선+원호(Arc) 궤적 총 길이: 193.94m
+비행 속력: 3.15m/s, 필요 비행 시간(tf): 61.49초
+Episode: 286/3000 | Episode reward:  2199.33 | Episode steps:  615 | Average reward:  2818.15 | Step Count: 201446 | Episode Q0:   322.69
+직선+원호(Arc) 궤적 총 길이: 240.69m
+비행 속력: 3.77m/s, 필요 비행 시간(tf): 63.85초
+직선+원호(Arc) 궤적 총 길이: 240.69m
+비행 속력: 3.77m/s, 필요 비행 시간(tf): 63.85초
+Episode: 287/3000 | Episode reward:   410.26 | Episode steps:  639 | Average reward:  2762.87 | Step Count: 202085 | Episode Q0:   349.57
+직선+원호(Arc) 궤적 총 길이: 204.57m
+비행 속력: 2.75m/s, 필요 비행 시간(tf): 74.46초
+직선+원호(Arc) 궤적 총 길이: 204.57m
+비행 속력: 2.75m/s, 필요 비행 시간(tf): 74.46초
+Episode: 288/3000 | Episode reward:  3465.67 | Episode steps:  745 | Average reward:  2779.14 | Step Count: 202830 | Episode Q0:   276.94
+직선+원호(Arc) 궤적 총 길이: 310.58m
+비행 속력: 2.82m/s, 필요 비행 시간(tf): 109.96초
+직선+원호(Arc) 궤적 총 길이: 310.58m
+비행 속력: 2.82m/s, 필요 비행 시간(tf): 109.96초
+Episode: 289/3000 | Episode reward:  5101.59 | Episode steps: 1100 | Average reward:  2800.48 | Step Count: 203930 | Episode Q0:   301.72
+직선+원호(Arc) 궤적 총 길이: 191.71m
+비행 속력: 3.22m/s, 필요 비행 시간(tf): 59.50초
+직선+원호(Arc) 궤적 총 길이: 191.71m
+비행 속력: 3.22m/s, 필요 비행 시간(tf): 59.50초
+Episode: 290/3000 | Episode reward:  2478.43 | Episode steps:  595 | Average reward:  2755.71 | Step Count: 204525 | Episode Q0:   327.94
+직선+원호(Arc) 궤적 총 길이: 211.56m
+비행 속력: 2.63m/s, 필요 비행 시간(tf): 80.47초
+직선+원호(Arc) 궤적 총 길이: 211.56m
+비행 속력: 2.63m/s, 필요 비행 시간(tf): 80.47초
+Episode: 291/3000 | Episode reward:  4109.25 | Episode steps:  805 | Average reward:  2799.03 | Step Count: 205330 | Episode Q0:   302.96
+직선+원호(Arc) 궤적 총 길이: 172.44m
+비행 속력: 3.52m/s, 필요 비행 시간(tf): 49.00초
+직선+원호(Arc) 궤적 총 길이: 172.44m
+비행 속력: 3.52m/s, 필요 비행 시간(tf): 49.00초
+Episode: 292/3000 | Episode reward:  1860.95 | Episode steps:  491 | Average reward:  2748.92 | Step Count: 205821 | Episode Q0:   357.16
+직선+원호(Arc) 궤적 총 길이: 266.06m
+비행 속력: 3.02m/s, 필요 비행 시간(tf): 88.03초
+직선+원호(Arc) 궤적 총 길이: 266.06m
+비행 속력: 3.02m/s, 필요 비행 시간(tf): 88.03초
+Episode: 293/3000 | Episode reward:  3520.21 | Episode steps:  881 | Average reward:  2770.32 | Step Count: 206702 | Episode Q0:   336.58
+직선+원호(Arc) 궤적 총 길이: 246.39m
+비행 속력: 3.67m/s, 필요 비행 시간(tf): 67.05초
+직선+원호(Arc) 궤적 총 길이: 246.39m
+비행 속력: 3.67m/s, 필요 비행 시간(tf): 67.05초
+Episode: 294/3000 | Episode reward:   716.59 | Episode steps:  671 | Average reward:  2742.07 | Step Count: 207373 | Episode Q0:   348.26
+직선+원호(Arc) 궤적 총 길이: 126.81m
+비행 속력: 3.57m/s, 필요 비행 시간(tf): 35.54초
+직선+원호(Arc) 궤적 총 길이: 126.81m
+비행 속력: 3.57m/s, 필요 비행 시간(tf): 35.54초
+Episode: 295/3000 | Episode reward:  1013.47 | Episode steps:  356 | Average reward:  2708.91 | Step Count: 207729 | Episode Q0:   310.64
+직선+원호(Arc) 궤적 총 길이: 246.95m
+비행 속력: 3.77m/s, 필요 비행 시간(tf): 65.54초
+직선+원호(Arc) 궤적 총 길이: 246.95m
+비행 속력: 3.77m/s, 필요 비행 시간(tf): 65.54초
+Episode: 296/3000 | Episode reward:  1596.11 | Episode steps:  656 | Average reward:  2688.32 | Step Count: 208385 | Episode Q0:   317.41
+직선+원호(Arc) 궤적 총 길이: 106.03m
+비행 속력: 3.32m/s, 필요 비행 시간(tf): 31.93초
+직선+원호(Arc) 궤적 총 길이: 106.03m
+비행 속력: 3.32m/s, 필요 비행 시간(tf): 31.93초
+Episode: 297/3000 | Episode reward:   446.88 | Episode steps:  320 | Average reward:  2631.54 | Step Count: 208705 | Episode Q0:   286.27
+직선+원호(Arc) 궤적 총 길이: 288.71m
+비행 속력: 2.69m/s, 필요 비행 시간(tf): 107.51초
+직선+원호(Arc) 궤적 총 길이: 288.71m
+비행 속력: 2.69m/s, 필요 비행 시간(tf): 107.51초
+Episode: 298/3000 | Episode reward:  4661.04 | Episode steps: 1076 | Average reward:  2685.67 | Step Count: 209781 | Episode Q0:   266.87
+직선+원호(Arc) 궤적 총 길이: 342.40m
+비행 속력: 3.11m/s, 필요 비행 시간(tf): 110.21초
+직선+원호(Arc) 궤적 총 길이: 342.40m
+비행 속력: 3.11m/s, 필요 비행 시간(tf): 110.21초
+Episode: 299/3000 | Episode reward:  3875.28 | Episode steps: 1103 | Average reward:  2646.94 | Step Count: 210884 | Episode Q0:   293.15
+직선+원호(Arc) 궤적 총 길이: 247.27m
+비행 속력: 3.50m/s, 필요 비행 시간(tf): 70.73초
+직선+원호(Arc) 궤적 총 길이: 247.27m
+비행 속력: 3.50m/s, 필요 비행 시간(tf): 70.73초
+Episode: 300/3000 | Episode reward:  2525.23 | Episode steps:  708 | Average reward:  2653.85 | Step Count: 211592 | Episode Q0:   304.43
+직선+원호(Arc) 궤적 총 길이: 165.85m
+비행 속력: 2.51m/s, 필요 비행 시간(tf): 66.14초
+직선+원호(Arc) 궤적 총 길이: 165.85m
+비행 속력: 2.51m/s, 필요 비행 시간(tf): 66.14초
+Episode: 301/3000 | Episode reward:  3561.49 | Episode steps:  662 | Average reward:  2663.32 | Step Count: 212254 | Episode Q0:   285.38
+직선+원호(Arc) 궤적 총 길이: 303.15m
+비행 속력: 3.46m/s, 필요 비행 시간(tf): 87.69초
+직선+원호(Arc) 궤적 총 길이: 303.15m
+비행 속력: 3.46m/s, 필요 비행 시간(tf): 87.69초
+Episode: 302/3000 | Episode reward:  3118.67 | Episode steps:  877 | Average reward:  2709.72 | Step Count: 213131 | Episode Q0:   352.15
+직선+원호(Arc) 궤적 총 길이: 226.72m
+비행 속력: 3.31m/s, 필요 비행 시간(tf): 68.40초
+직선+원호(Arc) 궤적 총 길이: 226.72m
+비행 속력: 3.31m/s, 필요 비행 시간(tf): 68.40초
+Episode: 303/3000 | Episode reward:  2878.59 | Episode steps:  684 | Average reward:  2670.66 | Step Count: 213815 | Episode Q0:   331.47
+직선+원호(Arc) 궤적 총 길이: 120.05m
+비행 속력: 2.56m/s, 필요 비행 시간(tf): 46.90초
+직선+원호(Arc) 궤적 총 길이: 120.05m
+비행 속력: 2.56m/s, 필요 비행 시간(tf): 46.90초
+Episode: 304/3000 | Episode reward:  2493.37 | Episode steps:  470 | Average reward:  2688.33 | Step Count: 214285 | Episode Q0:   325.47
+직선+원호(Arc) 궤적 총 길이: 248.97m
+비행 속력: 2.83m/s, 필요 비행 시간(tf): 88.00초
+직선+원호(Arc) 궤적 총 길이: 248.97m
+비행 속력: 2.83m/s, 필요 비행 시간(tf): 88.00초
+Episode: 305/3000 | Episode reward:  3600.04 | Episode steps:  880 | Average reward:  2681.02 | Step Count: 215165 | Episode Q0:   304.41
+직선+원호(Arc) 궤적 총 길이: 247.43m
+비행 속력: 2.66m/s, 필요 비행 시간(tf): 92.92초
+직선+원호(Arc) 궤적 총 길이: 247.43m
+비행 속력: 2.66m/s, 필요 비행 시간(tf): 92.92초
+Episode: 306/3000 | Episode reward:  4383.78 | Episode steps:  930 | Average reward:  2700.65 | Step Count: 216095 | Episode Q0:   328.98
+직선+원호(Arc) 궤적 총 길이: 226.59m
+비행 속력: 3.25m/s, 필요 비행 시간(tf): 69.77초
+직선+원호(Arc) 궤적 총 길이: 226.59m
+비행 속력: 3.25m/s, 필요 비행 시간(tf): 69.77초
+Episode: 307/3000 | Episode reward:  1622.42 | Episode steps:  698 | Average reward:  2650.05 | Step Count: 216793 | Episode Q0:   353.51
+직선+원호(Arc) 궤적 총 길이: 298.18m
+비행 속력: 3.52m/s, 필요 비행 시간(tf): 84.74초
+직선+원호(Arc) 궤적 총 길이: 298.18m
+비행 속력: 3.52m/s, 필요 비행 시간(tf): 84.74초
+Episode: 308/3000 | Episode reward:  2742.28 | Episode steps:  848 | Average reward:  2651.94 | Step Count: 217641 | Episode Q0:   337.55
+직선+원호(Arc) 궤적 총 길이: 295.23m
+비행 속력: 2.58m/s, 필요 비행 시간(tf): 114.26초
+직선+원호(Arc) 궤적 총 길이: 295.23m
+비행 속력: 2.58m/s, 필요 비행 시간(tf): 114.26초
+Episode: 309/3000 | Episode reward:  5501.23 | Episode steps: 1143 | Average reward:  2725.07 | Step Count: 218784 | Episode Q0:   294.84
+직선+원호(Arc) 궤적 총 길이: 100.38m
+비행 속력: 3.48m/s, 필요 비행 시간(tf): 28.85초
+직선+원호(Arc) 궤적 총 길이: 100.38m
+비행 속력: 3.48m/s, 필요 비행 시간(tf): 28.85초
+Episode: 310/3000 | Episode reward:   626.48 | Episode steps:  289 | Average reward:  2678.05 | Step Count: 219073 | Episode Q0:   351.58
+직선+원호(Arc) 궤적 총 길이: 96.84m
+비행 속력: 3.38m/s, 필요 비행 시간(tf): 28.69초
+직선+원호(Arc) 궤적 총 길이: 96.84m
+비행 속력: 3.38m/s, 필요 비행 시간(tf): 28.69초
+Episode: 311/3000 | Episode reward:   468.89 | Episode steps:  287 | Average reward:  2651.93 | Step Count: 219360 | Episode Q0:   347.32
+직선+원호(Arc) 궤적 총 길이: 267.25m
+비행 속력: 3.47m/s, 필요 비행 시간(tf): 76.98초
+직선+원호(Arc) 궤적 총 길이: 267.25m
+비행 속력: 3.47m/s, 필요 비행 시간(tf): 76.98초
+Episode: 312/3000 | Episode reward:  2017.57 | Episode steps:  770 | Average reward:  2633.53 | Step Count: 220130 | Episode Q0:   351.11
+직선+원호(Arc) 궤적 총 길이: 288.07m
+비행 속력: 3.57m/s, 필요 비행 시간(tf): 80.60초
+직선+원호(Arc) 궤적 총 길이: 288.07m
+비행 속력: 3.57m/s, 필요 비행 시간(tf): 80.60초
+Episode: 313/3000 | Episode reward:  2279.15 | Episode steps:  807 | Average reward:  2630.47 | Step Count: 220937 | Episode Q0:   318.00
+직선+원호(Arc) 궤적 총 길이: 268.25m
+비행 속력: 3.35m/s, 필요 비행 시간(tf): 79.99초
+직선+원호(Arc) 궤적 총 길이: 268.25m
+비행 속력: 3.35m/s, 필요 비행 시간(tf): 79.99초
+Episode: 314/3000 | Episode reward:  2527.38 | Episode steps:  800 | Average reward:  2666.09 | Step Count: 221737 | Episode Q0:   305.65
+직선+원호(Arc) 궤적 총 길이: 208.22m
+비행 속력: 2.80m/s, 필요 비행 시간(tf): 74.39초
+직선+원호(Arc) 궤적 총 길이: 208.22m
+비행 속력: 2.80m/s, 필요 비행 시간(tf): 74.39초
+Episode: 315/3000 | Episode reward:  3587.31 | Episode steps:  744 | Average reward:  2694.57 | Step Count: 222481 | Episode Q0:   262.30
+직선+원호(Arc) 궤적 총 길이: 359.20m
+비행 속력: 2.86m/s, 필요 비행 시간(tf): 125.52초
+직선+원호(Arc) 궤적 총 길이: 359.20m
+비행 속력: 2.86m/s, 필요 비행 시간(tf): 125.52초
+Episode: 316/3000 | Episode reward:  6320.75 | Episode steps: 1256 | Average reward:  2735.41 | Step Count: 223737 | Episode Q0:   298.78
+직선+원호(Arc) 궤적 총 길이: 141.11m
+비행 속력: 3.18m/s, 필요 비행 시간(tf): 44.33초
+직선+원호(Arc) 궤적 총 길이: 141.11m
+비행 속력: 3.18m/s, 필요 비행 시간(tf): 44.33초
+Episode: 317/3000 | Episode reward:  2347.05 | Episode steps:  444 | Average reward:  2748.02 | Step Count: 224181 | Episode Q0:   354.08
+직선+원호(Arc) 궤적 총 길이: 164.55m
+비행 속력: 2.86m/s, 필요 비행 시간(tf): 57.57초
+직선+원호(Arc) 궤적 총 길이: 164.55m
+비행 속력: 2.86m/s, 필요 비행 시간(tf): 57.57초
+Episode: 318/3000 | Episode reward:  3020.80 | Episode steps:  576 | Average reward:  2737.41 | Step Count: 224757 | Episode Q0:   338.01
+직선+원호(Arc) 궤적 총 길이: 204.43m
+비행 속력: 3.47m/s, 필요 비행 시간(tf): 58.95초
+직선+원호(Arc) 궤적 총 길이: 204.43m
+비행 속력: 3.47m/s, 필요 비행 시간(tf): 58.95초
+Episode: 319/3000 | Episode reward:  2060.71 | Episode steps:  590 | Average reward:  2710.11 | Step Count: 225347 | Episode Q0:   357.60
+직선+원호(Arc) 궤적 총 길이: 304.45m
+비행 속력: 2.50m/s, 필요 비행 시간(tf): 121.68초
+직선+원호(Arc) 궤적 총 길이: 304.45m
+비행 속력: 2.50m/s, 필요 비행 시간(tf): 121.68초
+Episode: 320/3000 | Episode reward:  6049.35 | Episode steps: 1217 | Average reward:  2782.35 | Step Count: 226564 | Episode Q0:   316.29
+직선+원호(Arc) 궤적 총 길이: 271.12m
+비행 속력: 2.98m/s, 필요 비행 시간(tf): 90.90초
+직선+원호(Arc) 궤적 총 길이: 271.12m
+비행 속력: 2.98m/s, 필요 비행 시간(tf): 90.90초
+Episode: 321/3000 | Episode reward:  4081.04 | Episode steps:  910 | Average reward:  2816.82 | Step Count: 227474 | Episode Q0:   356.58
+직선+원호(Arc) 궤적 총 길이: 240.28m
+비행 속력: 2.63m/s, 필요 비행 시간(tf): 91.44초
+직선+원호(Arc) 궤적 총 길이: 240.28m
+비행 속력: 2.63m/s, 필요 비행 시간(tf): 91.44초
+Episode: 322/3000 | Episode reward:  4371.27 | Episode steps:  915 | Average reward:  2797.26 | Step Count: 228389 | Episode Q0:   345.22
+직선+원호(Arc) 궤적 총 길이: 129.42m
+비행 속력: 2.70m/s, 필요 비행 시간(tf): 47.87초
+직선+원호(Arc) 궤적 총 길이: 129.42m
+비행 속력: 2.70m/s, 필요 비행 시간(tf): 47.87초
+Episode: 323/3000 | Episode reward:  2634.43 | Episode steps:  479 | Average reward:  2787.44 | Step Count: 228868 | Episode Q0:   379.14
+직선+원호(Arc) 궤적 총 길이: 298.32m
+비행 속력: 3.61m/s, 필요 비행 시간(tf): 82.59초
+직선+원호(Arc) 궤적 총 길이: 298.32m
+비행 속력: 3.61m/s, 필요 비행 시간(tf): 82.59초
+Episode: 324/3000 | Episode reward:  2620.00 | Episode steps:  826 | Average reward:  2812.99 | Step Count: 229694 | Episode Q0:   422.47
+직선+원호(Arc) 궤적 총 길이: 302.86m
+비행 속력: 3.43m/s, 필요 비행 시간(tf): 88.31초
+직선+원호(Arc) 궤적 총 길이: 302.86m
+비행 속력: 3.43m/s, 필요 비행 시간(tf): 88.31초
+Episode: 325/3000 | Episode reward:  2500.30 | Episode steps:  884 | Average reward:  2809.10 | Step Count: 230578 | Episode Q0:   393.07
+직선+원호(Arc) 궤적 총 길이: 222.67m
+비행 속력: 2.73m/s, 필요 비행 시간(tf): 81.51초
+직선+원호(Arc) 궤적 총 길이: 222.67m
+비행 속력: 2.73m/s, 필요 비행 시간(tf): 81.51초
+Episode: 326/3000 | Episode reward:  3527.77 | Episode steps:  816 | Average reward:  2828.86 | Step Count: 231394 | Episode Q0:   324.59
+직선+원호(Arc) 궤적 총 길이: 111.15m
+비행 속력: 2.73m/s, 필요 비행 시간(tf): 40.73초
+직선+원호(Arc) 궤적 총 길이: 111.15m
+비행 속력: 2.73m/s, 필요 비행 시간(tf): 40.73초
+Episode: 327/3000 | Episode reward:  2217.96 | Episode steps:  408 | Average reward:  2782.79 | Step Count: 231802 | Episode Q0:   355.47
+직선+원호(Arc) 궤적 총 길이: 197.40m
+비행 속력: 3.24m/s, 필요 비행 시간(tf): 61.00초
+직선+원호(Arc) 궤적 총 길이: 197.40m
+비행 속력: 3.24m/s, 필요 비행 시간(tf): 61.00초
+Episode: 328/3000 | Episode reward:  1686.58 | Episode steps:  611 | Average reward:  2750.64 | Step Count: 232413 | Episode Q0:   349.99
+직선+원호(Arc) 궤적 총 길이: 168.03m
+비행 속력: 2.97m/s, 필요 비행 시간(tf): 56.67초
+직선+원호(Arc) 궤적 총 길이: 168.03m
+비행 속력: 2.97m/s, 필요 비행 시간(tf): 56.67초
+Episode: 329/3000 | Episode reward:  1935.08 | Episode steps:  567 | Average reward:  2765.47 | Step Count: 232980 | Episode Q0:   341.70
+직선+원호(Arc) 궤적 총 길이: 258.31m
+비행 속력: 3.62m/s, 필요 비행 시간(tf): 71.39초
+직선+원호(Arc) 궤적 총 길이: 258.31m
+비행 속력: 3.62m/s, 필요 비행 시간(tf): 71.39초
+Episode: 330/3000 | Episode reward:  1799.46 | Episode steps:  714 | Average reward:  2781.93 | Step Count: 233694 | Episode Q0:   368.58
+직선+원호(Arc) 궤적 총 길이: 216.46m
+비행 속력: 2.86m/s, 필요 비행 시간(tf): 75.78초
+직선+원호(Arc) 궤적 총 길이: 216.46m
+비행 속력: 2.86m/s, 필요 비행 시간(tf): 75.78초
+Episode: 331/3000 | Episode reward:  3187.75 | Episode steps:  758 | Average reward:  2843.13 | Step Count: 234452 | Episode Q0:   327.25
+직선+원호(Arc) 궤적 총 길이: 304.42m
+비행 속력: 3.25m/s, 필요 비행 시간(tf): 93.66초
+직선+원호(Arc) 궤적 총 길이: 304.42m
+비행 속력: 3.25m/s, 필요 비행 시간(tf): 93.66초
+Episode: 332/3000 | Episode reward:  3707.69 | Episode steps:  937 | Average reward:  2881.88 | Step Count: 235389 | Episode Q0:   332.20
+직선+원호(Arc) 궤적 총 길이: 198.99m
+비행 속력: 3.05m/s, 필요 비행 시간(tf): 65.14초
+직선+원호(Arc) 궤적 총 길이: 198.99m
+비행 속력: 3.05m/s, 필요 비행 시간(tf): 65.14초
+Episode: 333/3000 | Episode reward:  2622.25 | Episode steps:  652 | Average reward:  2827.74 | Step Count: 236041 | Episode Q0:   333.94
+직선+원호(Arc) 궤적 총 길이: 170.02m
+비행 속력: 2.78m/s, 필요 비행 시간(tf): 61.05초
+직선+원호(Arc) 궤적 총 길이: 170.02m
+비행 속력: 2.78m/s, 필요 비행 시간(tf): 61.05초
+Episode: 334/3000 | Episode reward:  2791.28 | Episode steps:  611 | Average reward:  2858.48 | Step Count: 236652 | Episode Q0:   328.03
+직선+원호(Arc) 궤적 총 길이: 124.77m
+비행 속력: 3.30m/s, 필요 비행 시간(tf): 37.82초
+직선+원호(Arc) 궤적 총 길이: 124.77m
+비행 속력: 3.30m/s, 필요 비행 시간(tf): 37.82초
+Episode: 335/3000 | Episode reward:  1581.75 | Episode steps:  379 | Average reward:  2809.04 | Step Count: 237031 | Episode Q0:   351.47
+직선+원호(Arc) 궤적 총 길이: 179.87m
+비행 속력: 2.62m/s, 필요 비행 시간(tf): 68.72초
+직선+원호(Arc) 궤적 총 길이: 179.87m
+비행 속력: 2.62m/s, 필요 비행 시간(tf): 68.72초
+Episode: 336/3000 | Episode reward:  3285.43 | Episode steps:  688 | Average reward:  2830.77 | Step Count: 237719 | Episode Q0:   329.97
+직선+원호(Arc) 궤적 총 길이: 312.80m
+비행 속력: 3.20m/s, 필요 비행 시간(tf): 97.64초
+직선+원호(Arc) 궤적 총 길이: 312.80m
+비행 속력: 3.20m/s, 필요 비행 시간(tf): 97.64초
+Episode: 337/3000 | Episode reward:  3823.88 | Episode steps:  977 | Average reward:  2899.04 | Step Count: 238696 | Episode Q0:   369.55
+직선+원호(Arc) 궤적 총 길이: 307.71m
+비행 속력: 3.26m/s, 필요 비행 시간(tf): 94.38초
+직선+원호(Arc) 궤적 총 길이: 307.71m
+비행 속력: 3.26m/s, 필요 비행 시간(tf): 94.38초
+Episode: 338/3000 | Episode reward:  4023.22 | Episode steps:  944 | Average reward:  2910.19 | Step Count: 239640 | Episode Q0:   345.10
+직선+원호(Arc) 궤적 총 길이: 184.13m
+비행 속력: 2.61m/s, 필요 비행 시간(tf): 70.58초
+직선+원호(Arc) 궤적 총 길이: 184.13m
+비행 속력: 2.61m/s, 필요 비행 시간(tf): 70.58초
+Episode: 339/3000 | Episode reward:  2807.59 | Episode steps:  706 | Average reward:  2864.31 | Step Count: 240346 | Episode Q0:   328.25
+직선+원호(Arc) 궤적 총 길이: 275.84m
+비행 속력: 2.59m/s, 필요 비행 시간(tf): 106.39초
+직선+원호(Arc) 궤적 총 길이: 275.84m
+비행 속력: 2.59m/s, 필요 비행 시간(tf): 106.39초
+Episode: 340/3000 | Episode reward:  5046.52 | Episode steps: 1064 | Average reward:  2915.67 | Step Count: 241410 | Episode Q0:   327.92
+직선+원호(Arc) 궤적 총 길이: 174.90m
+비행 속력: 3.49m/s, 필요 비행 시간(tf): 50.12초
+직선+원호(Arc) 궤적 총 길이: 174.90m
+비행 속력: 3.49m/s, 필요 비행 시간(tf): 50.12초
+Episode: 341/3000 | Episode reward:  1943.33 | Episode steps:  502 | Average reward:  2872.35 | Step Count: 241912 | Episode Q0:   381.87
+직선+원호(Arc) 궤적 총 길이: 183.30m
+비행 속력: 3.32m/s, 필요 비행 시간(tf): 55.18초
+직선+원호(Arc) 궤적 총 길이: 183.30m
+비행 속력: 3.32m/s, 필요 비행 시간(tf): 55.18초
+Episode: 342/3000 | Episode reward:  1806.23 | Episode steps:  552 | Average reward:  2871.26 | Step Count: 242464 | Episode Q0:   374.23
+직선+원호(Arc) 궤적 총 길이: 108.64m
+비행 속력: 3.39m/s, 필요 비행 시간(tf): 32.03초
+직선+원호(Arc) 궤적 총 길이: 108.64m
+비행 속력: 3.39m/s, 필요 비행 시간(tf): 32.03초
+Episode: 343/3000 | Episode reward:   837.80 | Episode steps:  321 | Average reward:  2817.61 | Step Count: 242785 | Episode Q0:   358.61
+직선+원호(Arc) 궤적 총 길이: 146.93m
+비행 속력: 3.39m/s, 필요 비행 시간(tf): 43.33초
+직선+원호(Arc) 궤적 총 길이: 146.93m
+비행 속력: 3.39m/s, 필요 비행 시간(tf): 43.33초
+Episode: 344/3000 | Episode reward:  1844.39 | Episode steps:  434 | Average reward:  2840.17 | Step Count: 243219 | Episode Q0:   358.16
+직선+원호(Arc) 궤적 총 길이: 273.12m
+비행 속력: 2.86m/s, 필요 비행 시간(tf): 95.33초
+직선+원호(Arc) 궤적 총 길이: 273.12m
+비행 속력: 2.86m/s, 필요 비행 시간(tf): 95.33초
+Episode: 345/3000 | Episode reward:  4622.22 | Episode steps:  954 | Average reward:  2912.34 | Step Count: 244173 | Episode Q0:   314.99
+직선+원호(Arc) 궤적 총 길이: 224.87m
+비행 속력: 3.68m/s, 필요 비행 시간(tf): 61.11초
+직선+원호(Arc) 궤적 총 길이: 224.87m
+비행 속력: 3.68m/s, 필요 비행 시간(tf): 61.11초
+Episode: 346/3000 | Episode reward:  1361.66 | Episode steps:  612 | Average reward:  2907.65 | Step Count: 244785 | Episode Q0:   364.81
+직선+원호(Arc) 궤적 총 길이: 189.71m
+비행 속력: 2.54m/s, 필요 비행 시간(tf): 74.78초
+직선+원호(Arc) 궤적 총 길이: 189.71m
+비행 속력: 2.54m/s, 필요 비행 시간(tf): 74.78초
+Episode: 347/3000 | Episode reward:  2726.77 | Episode steps:  748 | Average reward:  2953.25 | Step Count: 245533 | Episode Q0:   320.67
+직선+원호(Arc) 궤적 총 길이: 211.35m
+비행 속력: 3.18m/s, 필요 비행 시간(tf): 66.38초
+직선+원호(Arc) 궤적 총 길이: 211.35m
+비행 속력: 3.18m/s, 필요 비행 시간(tf): 66.38초
+Episode: 348/3000 | Episode reward:  2740.35 | Episode steps:  664 | Average reward:  2914.84 | Step Count: 246197 | Episode Q0:   338.26
+직선+원호(Arc) 궤적 총 길이: 288.00m
+비행 속력: 3.02m/s, 필요 비행 시간(tf): 95.43초
+직선+원호(Arc) 궤적 총 길이: 288.00m
+비행 속력: 3.02m/s, 필요 비행 시간(tf): 95.43초
+Episode: 349/3000 | Episode reward:  3595.81 | Episode steps:  955 | Average reward:  2909.25 | Step Count: 247152 | Episode Q0:   338.68
+직선+원호(Arc) 궤적 총 길이: 148.50m
+비행 속력: 3.67m/s, 필요 비행 시간(tf): 40.49초
+직선+원호(Arc) 궤적 총 길이: 148.50m
+비행 속력: 3.67m/s, 필요 비행 시간(tf): 40.49초
+Episode: 350/3000 | Episode reward:  1503.76 | Episode steps:  405 | Average reward:  2888.82 | Step Count: 247557 | Episode Q0:   338.73
+직선+원호(Arc) 궤적 총 길이: 249.57m
+비행 속력: 3.23m/s, 필요 비행 시간(tf): 77.15초
+직선+원호(Arc) 궤적 총 길이: 249.57m
+비행 속력: 3.23m/s, 필요 비행 시간(tf): 77.15초
+Episode: 351/3000 | Episode reward:  2893.98 | Episode steps:  772 | Average reward:  2875.47 | Step Count: 248329 | Episode Q0:   323.17
+직선+원호(Arc) 궤적 총 길이: 246.23m
+비행 속력: 2.65m/s, 필요 비행 시간(tf): 92.84초
+직선+원호(Arc) 궤적 총 길이: 246.23m
+비행 속력: 2.65m/s, 필요 비행 시간(tf): 92.84초
+Episode: 352/3000 | Episode reward:  4457.39 | Episode steps:  929 | Average reward:  2902.24 | Step Count: 249258 | Episode Q0:   297.51
+직선+원호(Arc) 궤적 총 길이: 182.51m
+비행 속력: 2.75m/s, 필요 비행 시간(tf): 66.47초
+직선+원호(Arc) 궤적 총 길이: 182.51m
+비행 속력: 2.75m/s, 필요 비행 시간(tf): 66.47초
+Episode: 353/3000 | Episode reward:  2664.54 | Episode steps:  665 | Average reward:  2897.96 | Step Count: 249923 | Episode Q0:   318.48
+직선+원호(Arc) 궤적 총 길이: 96.84m
+비행 속력: 3.42m/s, 필요 비행 시간(tf): 28.28초
+직선+원호(Arc) 궤적 총 길이: 96.84m
+비행 속력: 3.42m/s, 필요 비행 시간(tf): 28.28초
+Episode: 354/3000 | Episode reward:   596.47 | Episode steps:  283 | Average reward:  2860.02 | Step Count: 250206 | Episode Q0:   342.99
+직선+원호(Arc) 궤적 총 길이: 287.14m
+비행 속력: 2.99m/s, 필요 비행 시간(tf): 96.08초
+직선+원호(Arc) 궤적 총 길이: 287.14m
+비행 속력: 2.99m/s, 필요 비행 시간(tf): 96.08초
+Episode: 355/3000 | Episode reward:  3666.81 | Episode steps:  961 | Average reward:  2861.36 | Step Count: 251167 | Episode Q0:   326.97
+직선+원호(Arc) 궤적 총 길이: 145.79m
+비행 속력: 3.21m/s, 필요 비행 시간(tf): 45.48초
+직선+원호(Arc) 궤적 총 길이: 145.79m
+비행 속력: 3.21m/s, 필요 비행 시간(tf): 45.48초
+Episode: 356/3000 | Episode reward:  2391.56 | Episode steps:  455 | Average reward:  2821.51 | Step Count: 251622 | Episode Q0:   309.66
+직선+원호(Arc) 궤적 총 길이: 258.82m
+비행 속력: 3.31m/s, 필요 비행 시간(tf): 78.17초
+직선+원호(Arc) 궤적 총 길이: 258.82m
+비행 속력: 3.31m/s, 필요 비행 시간(tf): 78.17초
+Episode: 357/3000 | Episode reward:  3259.90 | Episode steps:  782 | Average reward:  2854.26 | Step Count: 252404 | Episode Q0:   311.88
+직선+원호(Arc) 궤적 총 길이: 302.91m
+비행 속력: 3.39m/s, 필요 비행 시간(tf): 89.47초
+직선+원호(Arc) 궤적 총 길이: 302.91m
+비행 속력: 3.39m/s, 필요 비행 시간(tf): 89.47초
+Episode: 358/3000 | Episode reward:  3381.11 | Episode steps:  895 | Average reward:  2867.04 | Step Count: 253299 | Episode Q0:   319.54
+직선+원호(Arc) 궤적 총 길이: 322.43m
+비행 속력: 2.84m/s, 필요 비행 시간(tf): 113.62초
+직선+원호(Arc) 궤적 총 길이: 322.43m
+비행 속력: 2.84m/s, 필요 비행 시간(tf): 113.62초
+Episode: 359/3000 | Episode reward:  4946.89 | Episode steps: 1137 | Average reward:  2855.95 | Step Count: 254436 | Episode Q0:   311.68
+직선+원호(Arc) 궤적 총 길이: 139.79m
+비행 속력: 3.20m/s, 필요 비행 시간(tf): 43.68초
+직선+원호(Arc) 궤적 총 길이: 139.79m
+비행 속력: 3.20m/s, 필요 비행 시간(tf): 43.68초
+Episode: 360/3000 | Episode reward:  1813.57 | Episode steps:  437 | Average reward:  2879.70 | Step Count: 254873 | Episode Q0:   337.46
+직선+원호(Arc) 궤적 총 길이: 108.73m
+비행 속력: 2.90m/s, 필요 비행 시간(tf): 37.55초
+직선+원호(Arc) 궤적 총 길이: 108.73m
+비행 속력: 2.90m/s, 필요 비행 시간(tf): 37.55초
+Episode: 361/3000 | Episode reward:  1797.92 | Episode steps:  376 | Average reward:  2906.28 | Step Count: 255249 | Episode Q0:   342.77
+직선+원호(Arc) 궤적 총 길이: 213.39m
+비행 속력: 2.92m/s, 필요 비행 시간(tf): 73.04초
+직선+원호(Arc) 궤적 총 길이: 213.39m
+비행 속력: 2.92m/s, 필요 비행 시간(tf): 73.04초
+Episode: 362/3000 | Episode reward:  3166.98 | Episode steps:  731 | Average reward:  2929.26 | Step Count: 255980 | Episode Q0:   325.68
+직선+원호(Arc) 궤적 총 길이: 202.97m
+비행 속력: 2.95m/s, 필요 비행 시간(tf): 68.76초
+직선+원호(Arc) 궤적 총 길이: 202.97m
+비행 속력: 2.95m/s, 필요 비행 시간(tf): 68.76초
+Episode: 363/3000 | Episode reward:  2780.72 | Episode steps:  688 | Average reward:  2939.30 | Step Count: 256668 | Episode Q0:   337.26
+직선+원호(Arc) 궤적 총 길이: 196.21m
+비행 속력: 2.57m/s, 필요 비행 시간(tf): 76.45초
+직선+원호(Arc) 궤적 총 길이: 196.21m
+비행 속력: 2.57m/s, 필요 비행 시간(tf): 76.45초
+Episode: 364/3000 | Episode reward:  4031.12 | Episode steps:  765 | Average reward:  2969.37 | Step Count: 257433 | Episode Q0:   343.34
+직선+원호(Arc) 궤적 총 길이: 147.21m
+비행 속력: 3.51m/s, 필요 비행 시간(tf): 41.92초
+직선+원호(Arc) 궤적 총 길이: 147.21m
+비행 속력: 3.51m/s, 필요 비행 시간(tf): 41.92초
+Episode: 365/3000 | Episode reward:  2135.84 | Episode steps:  420 | Average reward:  2940.34 | Step Count: 257853 | Episode Q0:   405.73
+직선+원호(Arc) 궤적 총 길이: 189.89m
+비행 속력: 3.38m/s, 필요 비행 시간(tf): 56.23초
+직선+원호(Arc) 궤적 총 길이: 189.89m
+비행 속력: 3.38m/s, 필요 비행 시간(tf): 56.23초
+Episode: 366/3000 | Episode reward:  1800.01 | Episode steps:  563 | Average reward:  2849.93 | Step Count: 258416 | Episode Q0:   369.79
+직선+원호(Arc) 궤적 총 길이: 204.36m
+비행 속력: 3.28m/s, 필요 비행 시간(tf): 62.24초
+직선+원호(Arc) 궤적 총 길이: 204.36m
+비행 속력: 3.28m/s, 필요 비행 시간(tf): 62.24초
+Episode: 367/3000 | Episode reward:  2268.36 | Episode steps:  623 | Average reward:  2848.35 | Step Count: 259039 | Episode Q0:   378.63
+직선+원호(Arc) 궤적 총 길이: 188.70m
+비행 속력: 2.70m/s, 필요 비행 시간(tf): 69.90초
+직선+원호(Arc) 궤적 총 길이: 188.70m
+비행 속력: 2.70m/s, 필요 비행 시간(tf): 69.90초
+Episode: 368/3000 | Episode reward:  3729.14 | Episode steps:  700 | Average reward:  2862.52 | Step Count: 259739 | Episode Q0:   358.51
+직선+원호(Arc) 궤적 총 길이: 193.92m
+비행 속력: 2.68m/s, 필요 비행 시간(tf): 72.25초
+직선+원호(Arc) 궤적 총 길이: 193.92m
+비행 속력: 2.68m/s, 필요 비행 시간(tf): 72.25초
+Episode: 369/3000 | Episode reward:  3446.71 | Episode steps:  723 | Average reward:  2890.24 | Step Count: 260462 | Episode Q0:   359.47
+직선+원호(Arc) 궤적 총 길이: 127.60m
+비행 속력: 3.45m/s, 필요 비행 시간(tf): 36.94초
+직선+원호(Arc) 궤적 총 길이: 127.60m
+비행 속력: 3.45m/s, 필요 비행 시간(tf): 36.94초
+Episode: 370/3000 | Episode reward:  1227.33 | Episode steps:  370 | Average reward:  2793.80 | Step Count: 260832 | Episode Q0:   377.58
+직선+원호(Arc) 궤적 총 길이: 253.93m
+비행 속력: 3.24m/s, 필요 비행 시간(tf): 78.36초
+직선+원호(Arc) 궤적 총 길이: 253.93m
+비행 속력: 3.24m/s, 필요 비행 시간(tf): 78.36초
+Episode: 371/3000 | Episode reward:  2938.07 | Episode steps:  784 | Average reward:  2770.94 | Step Count: 261616 | Episode Q0:   371.10
+직선+원호(Arc) 궤적 총 길이: 295.35m
+비행 속력: 3.06m/s, 필요 비행 시간(tf): 96.63초
+직선+원호(Arc) 궤적 총 길이: 295.35m
+비행 속력: 3.06m/s, 필요 비행 시간(tf): 96.63초
+Episode: 372/3000 | Episode reward:  3921.85 | Episode steps:  967 | Average reward:  2761.95 | Step Count: 262583 | Episode Q0:   353.56
+직선+원호(Arc) 궤적 총 길이: 349.94m
+비행 속력: 2.70m/s, 필요 비행 시간(tf): 129.84초
+직선+원호(Arc) 궤적 총 길이: 349.94m
+비행 속력: 2.70m/s, 필요 비행 시간(tf): 129.84초
+Episode: 373/3000 | Episode reward:  6514.40 | Episode steps: 1299 | Average reward:  2839.55 | Step Count: 263882 | Episode Q0:   349.33
+직선+원호(Arc) 궤적 총 길이: 210.25m
+비행 속력: 3.08m/s, 필요 비행 시간(tf): 68.17초
+직선+원호(Arc) 궤적 총 길이: 210.25m
+비행 속력: 3.08m/s, 필요 비행 시간(tf): 68.17초
+Episode: 374/3000 | Episode reward:  2966.64 | Episode steps:  682 | Average reward:  2846.48 | Step Count: 264564 | Episode Q0:   369.65
+직선+원호(Arc) 궤적 총 길이: 150.92m
+비행 속력: 3.18m/s, 필요 비행 시간(tf): 47.44초
+직선+원호(Arc) 궤적 총 길이: 150.92m
+비행 속력: 3.18m/s, 필요 비행 시간(tf): 47.44초
+Episode: 375/3000 | Episode reward:  2469.42 | Episode steps:  475 | Average reward:  2845.87 | Step Count: 265039 | Episode Q0:   363.23
+직선+원호(Arc) 궤적 총 길이: 141.50m
+비행 속력: 3.19m/s, 필요 비행 시간(tf): 44.31초
+직선+원호(Arc) 궤적 총 길이: 141.50m
+비행 속력: 3.19m/s, 필요 비행 시간(tf): 44.31초
+Episode: 376/3000 | Episode reward:  1837.49 | Episode steps:  444 | Average reward:  2812.06 | Step Count: 265483 | Episode Q0:   369.99
+직선+원호(Arc) 궤적 총 길이: 199.56m
+비행 속력: 2.53m/s, 필요 비행 시간(tf): 78.95초
+직선+원호(Arc) 궤적 총 길이: 199.56m
+비행 속력: 2.53m/s, 필요 비행 시간(tf): 78.95초
+Episode: 377/3000 | Episode reward:  3365.94 | Episode steps:  790 | Average reward:  2835.02 | Step Count: 266273 | Episode Q0:   350.32
+직선+원호(Arc) 궤적 총 길이: 148.85m
+비행 속력: 2.87m/s, 필요 비행 시간(tf): 51.83초
+직선+원호(Arc) 궤적 총 길이: 148.85m
+비행 속력: 2.87m/s, 필요 비행 시간(tf): 51.83초
+Episode: 378/3000 | Episode reward:  2629.99 | Episode steps:  519 | Average reward:  2853.89 | Step Count: 266792 | Episode Q0:   360.33
+직선+원호(Arc) 궤적 총 길이: 236.30m
+비행 속력: 3.36m/s, 필요 비행 시간(tf): 70.34초
+직선+원호(Arc) 궤적 총 길이: 236.30m
+비행 속력: 3.36m/s, 필요 비행 시간(tf): 70.34초
+Episode: 379/3000 | Episode reward:  2650.29 | Episode steps:  704 | Average reward:  2868.19 | Step Count: 267496 | Episode Q0:   355.94
+직선+원호(Arc) 궤적 총 길이: 207.80m
+비행 속력: 2.79m/s, 필요 비행 시간(tf): 74.56초
+직선+원호(Arc) 궤적 총 길이: 207.80m
+비행 속력: 2.79m/s, 필요 비행 시간(tf): 74.56초
+Episode: 380/3000 | Episode reward:  2827.70 | Episode steps:  746 | Average reward:  2888.76 | Step Count: 268242 | Episode Q0:   350.32
+직선+원호(Arc) 궤적 총 길이: 99.97m
+비행 속력: 2.91m/s, 필요 비행 시간(tf): 34.39초
+직선+원호(Arc) 궤적 총 길이: 99.97m
+비행 속력: 2.91m/s, 필요 비행 시간(tf): 34.39초
+Episode: 381/3000 | Episode reward:  1529.74 | Episode steps:  344 | Average reward:  2855.60 | Step Count: 268586 | Episode Q0:   370.58
+직선+원호(Arc) 궤적 총 길이: 184.44m
+비행 속력: 3.38m/s, 필요 비행 시간(tf): 54.49초
+직선+원호(Arc) 궤적 총 길이: 184.44m
+비행 속력: 3.38m/s, 필요 비행 시간(tf): 54.49초
+Episode: 382/3000 | Episode reward:  2198.10 | Episode steps:  545 | Average reward:  2825.40 | Step Count: 269131 | Episode Q0:   385.29
+직선+원호(Arc) 궤적 총 길이: 195.98m
+비행 속력: 2.51m/s, 필요 비행 시간(tf): 77.99초
+직선+원호(Arc) 궤적 총 길이: 195.98m
+비행 속력: 2.51m/s, 필요 비행 시간(tf): 77.99초
+Episode: 383/3000 | Episode reward:  3657.16 | Episode steps:  780 | Average reward:  2846.10 | Step Count: 269911 | Episode Q0:   311.35
+직선+원호(Arc) 궤적 총 길이: 191.70m
+비행 속력: 3.18m/s, 필요 비행 시간(tf): 60.34초
+직선+원호(Arc) 궤적 총 길이: 191.70m
+비행 속력: 3.18m/s, 필요 비행 시간(tf): 60.34초
+Episode: 384/3000 | Episode reward:  1909.71 | Episode steps:  604 | Average reward:  2828.47 | Step Count: 270515 | Episode Q0:   347.60
+직선+원호(Arc) 궤적 총 길이: 197.71m
+비행 속력: 3.58m/s, 필요 비행 시간(tf): 55.29초
+직선+원호(Arc) 궤적 총 길이: 197.71m
+비행 속력: 3.58m/s, 필요 비행 시간(tf): 55.29초
+Episode: 385/3000 | Episode reward:  1605.63 | Episode steps:  553 | Average reward:  2828.95 | Step Count: 271068 | Episode Q0:   367.87
+직선+원호(Arc) 궤적 총 길이: 160.46m
+비행 속력: 3.74m/s, 필요 비행 시간(tf): 42.88초
+직선+원호(Arc) 궤적 총 길이: 160.46m
+비행 속력: 3.74m/s, 필요 비행 시간(tf): 42.88초
+Episode: 386/3000 | Episode reward:  2191.31 | Episode steps:  429 | Average reward:  2807.07 | Step Count: 271497 | Episode Q0:   352.26
+직선+원호(Arc) 궤적 총 길이: 245.55m
+비행 속력: 3.28m/s, 필요 비행 시간(tf): 74.79초
+직선+원호(Arc) 궤적 총 길이: 245.55m
+비행 속력: 3.28m/s, 필요 비행 시간(tf): 74.79초
+Episode: 387/3000 | Episode reward:  2727.05 | Episode steps:  748 | Average reward:  2785.13 | Step Count: 272245 | Episode Q0:   329.62
+직선+원호(Arc) 궤적 총 길이: 282.45m
+비행 속력: 3.12m/s, 필요 비행 시간(tf): 90.66초
+직선+원호(Arc) 궤적 총 길이: 282.45m
+비행 속력: 3.12m/s, 필요 비행 시간(tf): 90.66초
+Episode: 388/3000 | Episode reward:  3582.00 | Episode steps:  907 | Average reward:  2776.31 | Step Count: 273152 | Episode Q0:   324.70
+직선+원호(Arc) 궤적 총 길이: 270.10m
+비행 속력: 2.96m/s, 필요 비행 시간(tf): 91.27초
+직선+원호(Arc) 궤적 총 길이: 270.10m
+비행 속력: 2.96m/s, 필요 비행 시간(tf): 91.27초
+Episode: 389/3000 | Episode reward:  4394.88 | Episode steps:  913 | Average reward:  2808.05 | Step Count: 274065 | Episode Q0:   333.59
+직선+원호(Arc) 궤적 총 길이: 274.28m
+비행 속력: 3.63m/s, 필요 비행 시간(tf): 75.46초
+직선+원호(Arc) 궤적 총 길이: 274.28m
+비행 속력: 3.63m/s, 필요 비행 시간(tf): 75.46초
+Episode: 390/3000 | Episode reward:  1771.52 | Episode steps:  755 | Average reward:  2742.55 | Step Count: 274820 | Episode Q0:   360.82
+직선+원호(Arc) 궤적 총 길이: 133.34m
+비행 속력: 3.27m/s, 필요 비행 시간(tf): 40.76초
+직선+원호(Arc) 궤적 총 길이: 133.34m
+비행 속력: 3.27m/s, 필요 비행 시간(tf): 40.76초
+Episode: 391/3000 | Episode reward:  1636.02 | Episode steps:  408 | Average reward:  2736.41 | Step Count: 275228 | Episode Q0:   318.11
+직선+원호(Arc) 궤적 총 길이: 146.47m
+비행 속력: 3.15m/s, 필요 비행 시간(tf): 46.48초
+직선+원호(Arc) 궤적 총 길이: 146.47m
+비행 속력: 3.15m/s, 필요 비행 시간(tf): 46.48초
+Episode: 392/3000 | Episode reward:  2118.00 | Episode steps:  465 | Average reward:  2742.64 | Step Count: 275693 | Episode Q0:   321.61
+직선+원호(Arc) 궤적 총 길이: 184.70m
+비행 속력: 3.08m/s, 필요 비행 시간(tf): 60.02초
+직선+원호(Arc) 궤적 총 길이: 184.70m
+비행 속력: 3.08m/s, 필요 비행 시간(tf): 60.02초
+Episode: 393/3000 | Episode reward:  1956.20 | Episode steps:  601 | Average reward:  2765.01 | Step Count: 276294 | Episode Q0:   328.12
+직선+원호(Arc) 궤적 총 길이: 303.15m
+비행 속력: 3.40m/s, 필요 비행 시간(tf): 89.04초
+직선+원호(Arc) 궤적 총 길이: 303.15m
+비행 속력: 3.40m/s, 필요 비행 시간(tf): 89.04초
+Episode: 394/3000 | Episode reward:  2627.11 | Episode steps:  891 | Average reward:  2780.66 | Step Count: 277185 | Episode Q0:   338.43
+직선+원호(Arc) 궤적 총 길이: 117.12m
+비행 속력: 3.35m/s, 필요 비행 시간(tf): 34.93초
+직선+원호(Arc) 궤적 총 길이: 117.12m
+비행 속력: 3.35m/s, 필요 비행 시간(tf): 34.93초
+Episode: 395/3000 | Episode reward:  1141.36 | Episode steps:  350 | Average reward:  2711.05 | Step Count: 277535 | Episode Q0:   331.14
+직선+원호(Arc) 궤적 총 길이: 127.32m
+비행 속력: 3.33m/s, 필요 비행 시간(tf): 38.22초
+직선+원호(Arc) 궤적 총 길이: 127.32m
+비행 속력: 3.33m/s, 필요 비행 시간(tf): 38.22초
+Episode: 396/3000 | Episode reward:  1999.80 | Episode steps:  383 | Average reward:  2723.81 | Step Count: 277918 | Episode Q0:   315.05
+직선+원호(Arc) 궤적 총 길이: 224.83m
+비행 속력: 3.21m/s, 필요 비행 시간(tf): 70.04초
+직선+원호(Arc) 궤적 총 길이: 224.83m
+비행 속력: 3.21m/s, 필요 비행 시간(tf): 70.04초
+Episode: 397/3000 | Episode reward:  3081.67 | Episode steps:  701 | Average reward:  2730.91 | Step Count: 278619 | Episode Q0:   286.30
+직선+원호(Arc) 궤적 총 길이: 206.07m
+비행 속력: 3.18m/s, 필요 비행 시간(tf): 64.78초
+직선+원호(Arc) 궤적 총 길이: 206.07m
+비행 속력: 3.18m/s, 필요 비행 시간(tf): 64.78초
+Episode: 398/3000 | Episode reward:  1890.02 | Episode steps:  648 | Average reward:  2713.90 | Step Count: 279267 | Episode Q0:   320.77
+직선+원호(Arc) 궤적 총 길이: 192.66m
+비행 속력: 3.41m/s, 필요 비행 시간(tf): 56.44초
+직선+원호(Arc) 궤적 총 길이: 192.66m
+비행 속력: 3.41m/s, 필요 비행 시간(tf): 56.44초
+Episode: 399/3000 | Episode reward:  1887.64 | Episode steps:  565 | Average reward:  2679.74 | Step Count: 279832 | Episode Q0:   315.70
+직선+원호(Arc) 궤적 총 길이: 278.15m
+비행 속력: 3.70m/s, 필요 비행 시간(tf): 75.25초
+직선+원호(Arc) 궤적 총 길이: 278.15m
+비행 속력: 3.70m/s, 필요 비행 시간(tf): 75.25초
+Episode: 400/3000 | Episode reward:  2265.02 | Episode steps:  753 | Average reward:  2694.96 | Step Count: 280585 | Episode Q0:   328.96
+직선+원호(Arc) 궤적 총 길이: 188.15m
+비행 속력: 3.58m/s, 필요 비행 시간(tf): 52.60초
+직선+원호(Arc) 궤적 총 길이: 188.15m
+비행 속력: 3.58m/s, 필요 비행 시간(tf): 52.60초
+Episode: 401/3000 | Episode reward:  1260.10 | Episode steps:  526 | Average reward:  2662.28 | Step Count: 281111 | Episode Q0:   312.09
+직선+원호(Arc) 궤적 총 길이: 293.28m
+비행 속력: 3.77m/s, 필요 비행 시간(tf): 77.82초
+직선+원호(Arc) 궤적 총 길이: 293.28m
+비행 속력: 3.77m/s, 필요 비행 시간(tf): 77.82초
+Episode: 402/3000 | Episode reward:  2570.71 | Episode steps:  779 | Average reward:  2624.55 | Step Count: 281890 | Episode Q0:   316.81
+직선+원호(Arc) 궤적 총 길이: 152.08m
+비행 속력: 3.73m/s, 필요 비행 시간(tf): 40.82초
+직선+원호(Arc) 궤적 총 길이: 152.08m
+비행 속력: 3.73m/s, 필요 비행 시간(tf): 40.82초
+Episode: 403/3000 | Episode reward:   822.79 | Episode steps:  409 | Average reward:  2587.72 | Step Count: 282299 | Episode Q0:   307.63
+직선+원호(Arc) 궤적 총 길이: 201.30m
+비행 속력: 3.05m/s, 필요 비행 시간(tf): 66.08초
+직선+원호(Arc) 궤적 총 길이: 201.30m
+비행 속력: 3.05m/s, 필요 비행 시간(tf): 66.08초
+Episode: 404/3000 | Episode reward:  2568.18 | Episode steps:  661 | Average reward:  2627.15 | Step Count: 282960 | Episode Q0:   290.80
+직선+원호(Arc) 궤적 총 길이: 275.44m
+비행 속력: 3.07m/s, 필요 비행 시간(tf): 89.73초
+직선+원호(Arc) 궤적 총 길이: 275.44m
+비행 속력: 3.07m/s, 필요 비행 시간(tf): 89.73초
+Episode: 405/3000 | Episode reward:  3761.81 | Episode steps:  898 | Average reward:  2629.05 | Step Count: 283858 | Episode Q0:   293.06
+직선+원호(Arc) 궤적 총 길이: 268.31m
+비행 속력: 3.39m/s, 필요 비행 시간(tf): 79.10초
+직선+원호(Arc) 궤적 총 길이: 268.31m
+비행 속력: 3.39m/s, 필요 비행 시간(tf): 79.10초
+Episode: 406/3000 | Episode reward:  3065.51 | Episode steps:  792 | Average reward:  2642.53 | Step Count: 284650 | Episode Q0:   303.71
+직선+원호(Arc) 궤적 총 길이: 110.29m
+비행 속력: 2.93m/s, 필요 비행 시간(tf): 37.63초
+직선+원호(Arc) 궤적 총 길이: 110.29m
+비행 속력: 2.93m/s, 필요 비행 시간(tf): 37.63초
+Episode: 407/3000 | Episode reward:  1991.09 | Episode steps:  377 | Average reward:  2617.15 | Step Count: 285027 | Episode Q0:   298.02
+직선+원호(Arc) 궤적 총 길이: 285.62m
+비행 속력: 3.00m/s, 필요 비행 시간(tf): 95.22초
+직선+원호(Arc) 궤적 총 길이: 285.62m
+비행 속력: 3.00m/s, 필요 비행 시간(tf): 95.22초
+Episode: 408/3000 | Episode reward:  4113.92 | Episode steps:  953 | Average reward:  2631.81 | Step Count: 285980 | Episode Q0:   299.70
+직선+원호(Arc) 궤적 총 길이: 197.25m
+비행 속력: 3.27m/s, 필요 비행 시간(tf): 60.28초
+직선+원호(Arc) 궤적 총 길이: 197.25m
+비행 속력: 3.27m/s, 필요 비행 시간(tf): 60.28초
+Episode: 409/3000 | Episode reward:  2144.77 | Episode steps:  603 | Average reward:  2575.77 | Step Count: 286583 | Episode Q0:   304.08
+직선+원호(Arc) 궤적 총 길이: 309.64m
+비행 속력: 3.46m/s, 필요 비행 시간(tf): 89.43초
+직선+원호(Arc) 궤적 총 길이: 309.64m
+비행 속력: 3.46m/s, 필요 비행 시간(tf): 89.43초
+Episode: 410/3000 | Episode reward:  3550.74 | Episode steps:  895 | Average reward:  2610.51 | Step Count: 287478 | Episode Q0:   318.49
+직선+원호(Arc) 궤적 총 길이: 305.86m
+비행 속력: 2.60m/s, 필요 비행 시간(tf): 117.42초
+직선+원호(Arc) 궤적 총 길이: 305.86m
+비행 속력: 2.60m/s, 필요 비행 시간(tf): 117.42초
+Episode: 411/3000 | Episode reward:  5763.40 | Episode steps: 1175 | Average reward:  2689.82 | Step Count: 288653 | Episode Q0:   285.07
+직선+원호(Arc) 궤적 총 길이: 278.78m
+비행 속력: 3.33m/s, 필요 비행 시간(tf): 83.73초
+직선+원호(Arc) 궤적 총 길이: 278.78m
+비행 속력: 3.33m/s, 필요 비행 시간(tf): 83.73초
+Episode: 412/3000 | Episode reward:  3251.95 | Episode steps:  838 | Average reward:  2691.52 | Step Count: 289491 | Episode Q0:   334.89
+직선+원호(Arc) 궤적 총 길이: 276.47m
+비행 속력: 3.64m/s, 필요 비행 시간(tf): 76.00초
+직선+원호(Arc) 궤적 총 길이: 276.47m
+비행 속력: 3.64m/s, 필요 비행 시간(tf): 76.00초
+Episode: 413/3000 | Episode reward:  2631.59 | Episode steps:  760 | Average reward:  2688.54 | Step Count: 290251 | Episode Q0:   332.11
+직선+원호(Arc) 궤적 총 길이: 256.15m
+비행 속력: 3.35m/s, 필요 비행 시간(tf): 76.57초
+직선+원호(Arc) 궤적 총 길이: 256.15m
+비행 속력: 3.35m/s, 필요 비행 시간(tf): 76.57초
+Episode: 414/3000 | Episode reward:  2516.83 | Episode steps:  766 | Average reward:  2658.25 | Step Count: 291017 | Episode Q0:   326.24
+직선+원호(Arc) 궤적 총 길이: 231.28m
+비행 속력: 3.37m/s, 필요 비행 시간(tf): 68.70초
+직선+원호(Arc) 궤적 총 길이: 231.28m
+비행 속력: 3.37m/s, 필요 비행 시간(tf): 68.70초
+Episode: 415/3000 | Episode reward:  2180.44 | Episode steps:  688 | Average reward:  2659.14 | Step Count: 291705 | Episode Q0:   321.01
+직선+원호(Arc) 궤적 총 길이: 111.57m
+비행 속력: 3.08m/s, 필요 비행 시간(tf): 36.22초
+직선+원호(Arc) 궤적 총 길이: 111.57m
+비행 속력: 3.08m/s, 필요 비행 시간(tf): 36.22초
+Episode: 416/3000 | Episode reward:  1218.81 | Episode steps:  363 | Average reward:  2647.52 | Step Count: 292068 | Episode Q0:   292.66
+직선+원호(Arc) 궤적 총 길이: 230.88m
+비행 속력: 3.45m/s, 필요 비행 시간(tf): 66.95초
+직선+원호(Arc) 궤적 총 길이: 230.88m
+비행 속력: 3.45m/s, 필요 비행 시간(tf): 66.95초
+Episode: 417/3000 | Episode reward:  1616.39 | Episode steps:  670 | Average reward:  2634.48 | Step Count: 292738 | Episode Q0:   302.41
+직선+원호(Arc) 궤적 총 길이: 264.62m
+비행 속력: 3.39m/s, 필요 비행 시간(tf): 78.07초
+직선+원호(Arc) 궤적 총 길이: 264.62m
+비행 속력: 3.39m/s, 필요 비행 시간(tf): 78.07초
+Episode: 418/3000 | Episode reward:  2258.61 | Episode steps:  781 | Average reward:  2605.07 | Step Count: 293519 | Episode Q0:   295.86
+직선+원호(Arc) 궤적 총 길이: 160.56m
+비행 속력: 2.92m/s, 필요 비행 시간(tf): 54.92초
+직선+원호(Arc) 궤적 총 길이: 160.56m
+비행 속력: 2.92m/s, 필요 비행 시간(tf): 54.92초
+Episode: 419/3000 | Episode reward:  2391.76 | Episode steps:  550 | Average reward:  2583.97 | Step Count: 294069 | Episode Q0:   278.79
+직선+원호(Arc) 궤적 총 길이: 318.74m
+비행 속력: 3.74m/s, 필요 비행 시간(tf): 85.22초
+직선+원호(Arc) 궤적 총 길이: 318.74m
+비행 속력: 3.74m/s, 필요 비행 시간(tf): 85.22초
+Episode: 420/3000 | Episode reward:  2391.89 | Episode steps:  853 | Average reward:  2607.26 | Step Count: 294922 | Episode Q0:   298.10
+직선+원호(Arc) 궤적 총 길이: 253.07m
+비행 속력: 3.02m/s, 필요 비행 시간(tf): 83.93초
+직선+원호(Arc) 궤적 총 길이: 253.07m
+비행 속력: 3.02m/s, 필요 비행 시간(tf): 83.93초
+Episode: 421/3000 | Episode reward:  1988.75 | Episode steps:  840 | Average reward:  2588.27 | Step Count: 295762 | Episode Q0:   284.57
+직선+원호(Arc) 궤적 총 길이: 235.96m
+비행 속력: 2.62m/s, 필요 비행 시간(tf): 90.16초
+직선+원호(Arc) 궤적 총 길이: 235.96m
+비행 속력: 2.62m/s, 필요 비행 시간(tf): 90.16초
+Episode: 422/3000 | Episode reward:  4310.05 | Episode steps:  902 | Average reward:  2596.04 | Step Count: 296664 | Episode Q0:   258.37
+직선+원호(Arc) 궤적 총 길이: 279.54m
+비행 속력: 3.38m/s, 필요 비행 시간(tf): 82.66초
+직선+원호(Arc) 궤적 총 길이: 279.54m
+비행 속력: 3.38m/s, 필요 비행 시간(tf): 82.66초
+Episode: 423/3000 | Episode reward:  2142.71 | Episode steps:  827 | Average reward:  2508.60 | Step Count: 297491 | Episode Q0:   307.39
+직선+원호(Arc) 궤적 총 길이: 279.52m
+비행 속력: 2.57m/s, 필요 비행 시간(tf): 108.67초
+직선+원호(Arc) 궤적 총 길이: 279.52m
+비행 속력: 2.57m/s, 필요 비행 시간(tf): 108.67초
+Episode: 424/3000 | Episode reward:  5688.73 | Episode steps: 1087 | Average reward:  2563.05 | Step Count: 298578 | Episode Q0:   275.43
+직선+원호(Arc) 궤적 총 길이: 102.95m
+비행 속력: 3.09m/s, 필요 비행 시간(tf): 33.35초
+직선+원호(Arc) 궤적 총 길이: 102.95m
+비행 속력: 3.09m/s, 필요 비행 시간(tf): 33.35초
+Episode: 425/3000 | Episode reward:  1199.93 | Episode steps:  334 | Average reward:  2537.66 | Step Count: 298912 | Episode Q0:   319.27
+직선+원호(Arc) 궤적 총 길이: 119.28m
+비행 속력: 2.51m/s, 필요 비행 시간(tf): 47.54초
+직선+원호(Arc) 궤적 총 길이: 119.28m
+비행 속력: 2.51m/s, 필요 비행 시간(tf): 47.54초
+Episode: 426/3000 | Episode reward:  2235.42 | Episode steps:  476 | Average reward:  2545.61 | Step Count: 299388 | Episode Q0:   292.75
+직선+원호(Arc) 궤적 총 길이: 113.21m
+비행 속력: 3.34m/s, 필요 비행 시간(tf): 33.85초
+직선+원호(Arc) 궤적 총 길이: 113.21m
+비행 속력: 3.34m/s, 필요 비행 시간(tf): 33.85초
+Episode: 427/3000 | Episode reward:  1552.54 | Episode steps:  339 | Average reward:  2509.35 | Step Count: 299727 | Episode Q0:   315.02
+직선+원호(Arc) 궤적 총 길이: 118.47m
+비행 속력: 3.71m/s, 필요 비행 시간(tf): 31.89초
+직선+원호(Arc) 궤적 총 길이: 118.47m
+비행 속력: 3.71m/s, 필요 비행 시간(tf): 31.89초
+Episode: 428/3000 | Episode reward:   916.68 | Episode steps:  319 | Average reward:  2475.08 | Step Count: 300046 | Episode Q0:   344.61
+직선+원호(Arc) 궤적 총 길이: 210.33m
+비행 속력: 2.52m/s, 필요 비행 시간(tf): 83.35초
+직선+원호(Arc) 궤적 총 길이: 210.33m
+비행 속력: 2.52m/s, 필요 비행 시간(tf): 83.35초
+Episode: 429/3000 | Episode reward:  3524.15 | Episode steps:  834 | Average reward:  2492.56 | Step Count: 300880 | Episode Q0:   310.65
+직선+원호(Arc) 궤적 총 길이: 199.45m
+비행 속력: 3.28m/s, 필요 비행 시간(tf): 60.72초
+직선+원호(Arc) 궤적 총 길이: 199.45m
+비행 속력: 3.28m/s, 필요 비행 시간(tf): 60.72초
+Episode: 430/3000 | Episode reward:  1889.58 | Episode steps:  608 | Average reward:  2473.80 | Step Count: 301488 | Episode Q0:   333.06
+직선+원호(Arc) 궤적 총 길이: 293.76m
+비행 속력: 2.82m/s, 필요 비행 시간(tf): 104.23초
+직선+원호(Arc) 궤적 총 길이: 293.76m
+비행 속력: 2.82m/s, 필요 비행 시간(tf): 104.23초
+Episode: 431/3000 | Episode reward:  4299.69 | Episode steps: 1043 | Average reward:  2529.19 | Step Count: 302531 | Episode Q0:   315.29
+직선+원호(Arc) 궤적 총 길이: 198.12m
+비행 속력: 2.52m/s, 필요 비행 시간(tf): 78.56초
+직선+원호(Arc) 궤적 총 길이: 198.12m
+비행 속력: 2.52m/s, 필요 비행 시간(tf): 78.56초
+Episode: 432/3000 | Episode reward:  3542.71 | Episode steps:  786 | Average reward:  2556.09 | Step Count: 303317 | Episode Q0:   316.58
+직선+원호(Arc) 궤적 총 길이: 111.21m
+비행 속력: 2.71m/s, 필요 비행 시간(tf): 41.10초
+직선+원호(Arc) 궤적 총 길이: 111.21m
+비행 속력: 2.71m/s, 필요 비행 시간(tf): 41.10초
+Episode: 433/3000 | Episode reward:  1767.85 | Episode steps:  412 | Average reward:  2518.30 | Step Count: 303729 | Episode Q0:   330.76
+직선+원호(Arc) 궤적 총 길이: 137.63m
+비행 속력: 3.00m/s, 필요 비행 시간(tf): 45.91초
+직선+원호(Arc) 궤적 총 길이: 137.63m
+비행 속력: 3.00m/s, 필요 비행 시간(tf): 45.91초
+Episode: 434/3000 | Episode reward:  1965.12 | Episode steps:  460 | Average reward:  2519.41 | Step Count: 304189 | Episode Q0:   338.57
+직선+원호(Arc) 궤적 총 길이: 176.67m
+비행 속력: 2.70m/s, 필요 비행 시간(tf): 65.49초
+직선+원호(Arc) 궤적 총 길이: 176.67m
+비행 속력: 2.70m/s, 필요 비행 시간(tf): 65.49초
+Episode: 435/3000 | Episode reward:  3502.94 | Episode steps:  655 | Average reward:  2557.35 | Step Count: 304844 | Episode Q0:   307.29
+직선+원호(Arc) 궤적 총 길이: 265.93m
+비행 속력: 3.15m/s, 필요 비행 시간(tf): 84.47초
+직선+원호(Arc) 궤적 총 길이: 265.93m
+비행 속력: 3.15m/s, 필요 비행 시간(tf): 84.47초
+Episode: 436/3000 | Episode reward:  3984.08 | Episode steps:  845 | Average reward:  2593.21 | Step Count: 305689 | Episode Q0:   325.99
+직선+원호(Arc) 궤적 총 길이: 320.24m
+비행 속력: 3.20m/s, 필요 비행 시간(tf): 100.16초
+직선+원호(Arc) 궤적 총 길이: 320.24m
+비행 속력: 3.20m/s, 필요 비행 시간(tf): 100.16초
+Episode: 437/3000 | Episode reward:  3951.93 | Episode steps: 1002 | Average reward:  2617.71 | Step Count: 306691 | Episode Q0:   364.92
+직선+원호(Arc) 궤적 총 길이: 146.31m
+비행 속력: 2.96m/s, 필요 비행 시간(tf): 49.37초
+직선+원호(Arc) 궤적 총 길이: 146.31m
+비행 속력: 2.96m/s, 필요 비행 시간(tf): 49.37초
+Episode: 438/3000 | Episode reward:  2148.10 | Episode steps:  494 | Average reward:  2589.03 | Step Count: 307185 | Episode Q0:   352.11
+직선+원호(Arc) 궤적 총 길이: 340.02m
+비행 속력: 3.25m/s, 필요 비행 시간(tf): 104.78초
+직선+원호(Arc) 궤적 총 길이: 340.02m
+비행 속력: 3.25m/s, 필요 비행 시간(tf): 104.78초
+Episode: 439/3000 | Episode reward:  3884.98 | Episode steps: 1048 | Average reward:  2578.83 | Step Count: 308233 | Episode Q0:   359.68
+직선+원호(Arc) 궤적 총 길이: 233.14m
+비행 속력: 3.25m/s, 필요 비행 시간(tf): 71.73초
+직선+원호(Arc) 궤적 총 길이: 233.14m
+비행 속력: 3.25m/s, 필요 비행 시간(tf): 71.73초
+Episode: 440/3000 | Episode reward:  2860.20 | Episode steps:  718 | Average reward:  2600.61 | Step Count: 308951 | Episode Q0:   361.67
+직선+원호(Arc) 궤적 총 길이: 115.80m
+비행 속력: 3.67m/s, 필요 비행 시간(tf): 31.52초
+직선+원호(Arc) 궤적 총 길이: 115.80m
+비행 속력: 3.67m/s, 필요 비행 시간(tf): 31.52초
+Episode: 441/3000 | Episode reward:   939.81 | Episode steps:  316 | Average reward:  2586.68 | Step Count: 309267 | Episode Q0:   330.04
+직선+원호(Arc) 궤적 총 길이: 103.99m
+비행 속력: 2.52m/s, 필요 비행 시간(tf): 41.27초
+직선+원호(Arc) 궤적 총 길이: 103.99m
+비행 속력: 2.52m/s, 필요 비행 시간(tf): 41.27초
+Episode: 442/3000 | Episode reward:  1952.91 | Episode steps:  413 | Average reward:  2583.38 | Step Count: 309680 | Episode Q0:   328.93
+직선+원호(Arc) 궤적 총 길이: 300.52m
+비행 속력: 3.77m/s, 필요 비행 시간(tf): 79.69초
+직선+원호(Arc) 궤적 총 길이: 300.52m
+비행 속력: 3.77m/s, 필요 비행 시간(tf): 79.69초
+Episode: 443/3000 | Episode reward:  2608.03 | Episode steps:  797 | Average reward:  2596.42 | Step Count: 310477 | Episode Q0:   351.58
+직선+원호(Arc) 궤적 총 길이: 131.64m
+비행 속력: 3.52m/s, 필요 비행 시간(tf): 37.38초
+직선+원호(Arc) 궤적 총 길이: 131.64m
+비행 속력: 3.52m/s, 필요 비행 시간(tf): 37.38초
+Episode: 444/3000 | Episode reward:  1027.34 | Episode steps:  374 | Average reward:  2564.42 | Step Count: 310851 | Episode Q0:   328.42
+직선+원호(Arc) 궤적 총 길이: 125.47m
+비행 속력: 3.19m/s, 필요 비행 시간(tf): 39.32초
+직선+원호(Arc) 궤적 총 길이: 125.47m
+비행 속력: 3.19m/s, 필요 비행 시간(tf): 39.32초
+Episode: 445/3000 | Episode reward:  2070.72 | Episode steps:  394 | Average reward:  2583.01 | Step Count: 311245 | Episode Q0:   300.34
+직선+원호(Arc) 궤적 총 길이: 218.29m
+비행 속력: 2.84m/s, 필요 비행 시간(tf): 76.94초
+직선+원호(Arc) 궤적 총 길이: 218.29m
+비행 속력: 2.84m/s, 필요 비행 시간(tf): 76.94초
+Episode: 446/3000 | Episode reward:  2932.91 | Episode steps:  770 | Average reward:  2601.67 | Step Count: 312015 | Episode Q0:   319.84
+직선+원호(Arc) 궤적 총 길이: 139.57m
+비행 속력: 2.94m/s, 필요 비행 시간(tf): 47.52초
+직선+원호(Arc) 궤적 총 길이: 139.57m
+비행 속력: 2.94m/s, 필요 비행 시간(tf): 47.52초
+Episode: 447/3000 | Episode reward:  2021.55 | Episode steps:  476 | Average reward:  2580.47 | Step Count: 312491 | Episode Q0:   322.80
+직선+원호(Arc) 궤적 총 길이: 175.23m
+비행 속력: 3.68m/s, 필요 비행 시간(tf): 47.64초
+직선+원호(Arc) 궤적 총 길이: 175.23m
+비행 속력: 3.68m/s, 필요 비행 시간(tf): 47.64초
+Episode: 448/3000 | Episode reward:  1395.00 | Episode steps:  477 | Average reward:  2570.57 | Step Count: 312968 | Episode Q0:   324.37
+직선+원호(Arc) 궤적 총 길이: 322.14m
+비행 속력: 2.71m/s, 필요 비행 시간(tf): 119.07초
+직선+원호(Arc) 궤적 총 길이: 322.14m
+비행 속력: 2.71m/s, 필요 비행 시간(tf): 119.07초
+Episode: 449/3000 | Episode reward:  5472.23 | Episode steps: 1191 | Average reward:  2642.26 | Step Count: 314159 | Episode Q0:   306.67
+직선+원호(Arc) 궤적 총 길이: 293.79m
+비행 속력: 3.20m/s, 필요 비행 시간(tf): 91.82초
+직선+원호(Arc) 궤적 총 길이: 293.79m
+비행 속력: 3.20m/s, 필요 비행 시간(tf): 91.82초
+Episode: 450/3000 | Episode reward:  2615.26 | Episode steps:  919 | Average reward:  2649.26 | Step Count: 315078 | Episode Q0:   330.15
+직선+원호(Arc) 궤적 총 길이: 300.10m
+비행 속력: 2.53m/s, 필요 비행 시간(tf): 118.64초
+직선+원호(Arc) 궤적 총 길이: 300.10m
+비행 속력: 2.53m/s, 필요 비행 시간(tf): 118.64초
+Episode: 451/3000 | Episode reward:  6442.61 | Episode steps: 1187 | Average reward:  2752.91 | Step Count: 316265 | Episode Q0:   319.07
+직선+원호(Arc) 궤적 총 길이: 286.86m
+비행 속력: 3.80m/s, 필요 비행 시간(tf): 75.53초
+직선+원호(Arc) 궤적 총 길이: 286.86m
+비행 속력: 3.80m/s, 필요 비행 시간(tf): 75.53초
+Episode: 452/3000 | Episode reward:  2340.92 | Episode steps:  756 | Average reward:  2748.32 | Step Count: 317021 | Episode Q0:   359.82
+직선+원호(Arc) 궤적 총 길이: 297.67m
+비행 속력: 2.98m/s, 필요 비행 시간(tf): 99.92초
+직선+원호(Arc) 궤적 총 길이: 297.67m
+비행 속력: 2.98m/s, 필요 비행 시간(tf): 99.92초
+Episode: 453/3000 | Episode reward:  4003.85 | Episode steps: 1000 | Average reward:  2811.94 | Step Count: 318021 | Episode Q0:   318.36
+직선+원호(Arc) 궤적 총 길이: 279.18m
+비행 속력: 3.05m/s, 필요 비행 시간(tf): 91.58초
+직선+원호(Arc) 궤적 총 길이: 279.18m
+비행 속력: 3.05m/s, 필요 비행 시간(tf): 91.58초
+Episode: 454/3000 | Episode reward:  3550.37 | Episode steps:  916 | Average reward:  2831.58 | Step Count: 318937 | Episode Q0:   320.59
+직선+원호(Arc) 궤적 총 길이: 253.49m
+비행 속력: 3.00m/s, 필요 비행 시간(tf): 84.59초
+직선+원호(Arc) 궤적 총 길이: 253.49m
+비행 속력: 3.00m/s, 필요 비행 시간(tf): 84.59초
+Episode: 455/3000 | Episode reward:  4220.95 | Episode steps:  846 | Average reward:  2840.77 | Step Count: 319783 | Episode Q0:   317.16
+직선+원호(Arc) 궤적 총 길이: 308.70m
+비행 속력: 3.61m/s, 필요 비행 시간(tf): 85.42초
+직선+원호(Arc) 궤적 총 길이: 308.70m
+비행 속력: 3.61m/s, 필요 비행 시간(tf): 85.42초
+Episode: 456/3000 | Episode reward:  3083.20 | Episode steps:  855 | Average reward:  2841.12 | Step Count: 320638 | Episode Q0:   329.86
+직선+원호(Arc) 궤적 총 길이: 217.49m
+비행 속력: 2.73m/s, 필요 비행 시간(tf): 79.74초
+직선+원호(Arc) 궤적 총 길이: 217.49m
+비행 속력: 2.73m/s, 필요 비행 시간(tf): 79.74초
+Episode: 457/3000 | Episode reward:  3723.12 | Episode steps:  798 | Average reward:  2875.76 | Step Count: 321436 | Episode Q0:   336.15
+직선+원호(Arc) 궤적 총 길이: 326.31m
+비행 속력: 3.37m/s, 필요 비행 시간(tf): 96.76초
+직선+원호(Arc) 궤적 총 길이: 326.31m
+비행 속력: 3.37m/s, 필요 비행 시간(tf): 96.76초
+Episode: 458/3000 | Episode reward:  3741.64 | Episode steps:  968 | Average reward:  2868.31 | Step Count: 322404 | Episode Q0:   331.37
+직선+원호(Arc) 궤적 총 길이: 278.11m
+비행 속력: 2.99m/s, 필요 비행 시간(tf): 93.05초
+직선+원호(Arc) 궤적 총 길이: 278.11m
+비행 속력: 2.99m/s, 필요 비행 시간(tf): 93.05초
+Episode: 459/3000 | Episode reward:  3671.41 | Episode steps:  931 | Average reward:  2898.85 | Step Count: 323335 | Episode Q0:   363.81
+직선+원호(Arc) 궤적 총 길이: 337.34m
+비행 속력: 3.08m/s, 필요 비행 시간(tf): 109.67초
+직선+원호(Arc) 궤적 총 길이: 337.34m
+비행 속력: 3.08m/s, 필요 비행 시간(tf): 109.67초
+Episode: 460/3000 | Episode reward:  4356.89 | Episode steps: 1097 | Average reward:  2914.97 | Step Count: 324432 | Episode Q0:   323.32
+직선+원호(Arc) 궤적 총 길이: 103.00m
+비행 속력: 3.66m/s, 필요 비행 시간(tf): 28.18초
+직선+원호(Arc) 궤적 총 길이: 103.00m
+비행 속력: 3.66m/s, 필요 비행 시간(tf): 28.18초
+Episode: 461/3000 | Episode reward:   135.29 | Episode steps:  282 | Average reward:  2802.41 | Step Count: 324714 | Episode Q0:   331.28
+직선+원호(Arc) 궤적 총 길이: 138.00m
+비행 속력: 2.86m/s, 필요 비행 시간(tf): 48.33초
+직선+원호(Arc) 궤적 총 길이: 138.00m
+비행 속력: 2.86m/s, 필요 비행 시간(tf): 48.33초
+Episode: 462/3000 | Episode reward:  2080.20 | Episode steps:  484 | Average reward:  2778.97 | Step Count: 325198 | Episode Q0:   321.66
+직선+원호(Arc) 궤적 총 길이: 262.26m
+비행 속력: 3.28m/s, 필요 비행 시간(tf): 79.94초
+직선+원호(Arc) 궤적 총 길이: 262.26m
+비행 속력: 3.28m/s, 필요 비행 시간(tf): 79.94초
+Episode: 463/3000 | Episode reward:  3160.84 | Episode steps:  800 | Average reward:  2789.56 | Step Count: 325998 | Episode Q0:   301.54
+직선+원호(Arc) 궤적 총 길이: 310.69m
+비행 속력: 2.85m/s, 필요 비행 시간(tf): 108.85초
+직선+원호(Arc) 궤적 총 길이: 310.69m
+비행 속력: 2.85m/s, 필요 비행 시간(tf): 108.85초
+Episode: 464/3000 | Episode reward:  4976.07 | Episode steps: 1089 | Average reward:  2838.74 | Step Count: 327087 | Episode Q0:   310.72
+직선+원호(Arc) 궤적 총 길이: 139.51m
+비행 속력: 3.80m/s, 필요 비행 시간(tf): 36.72초
+직선+원호(Arc) 궤적 총 길이: 139.51m
+비행 속력: 3.80m/s, 필요 비행 시간(tf): 36.72초
+Episode: 465/3000 | Episode reward:  1204.76 | Episode steps:  368 | Average reward:  2819.23 | Step Count: 327455 | Episode Q0:   351.40
+직선+원호(Arc) 궤적 총 길이: 260.18m
+비행 속력: 3.09m/s, 필요 비행 시간(tf): 84.21초
+직선+원호(Arc) 궤적 총 길이: 260.18m
+비행 속력: 3.09m/s, 필요 비행 시간(tf): 84.21초
+Episode: 466/3000 | Episode reward:  3023.67 | Episode steps:  843 | Average reward:  2855.33 | Step Count: 328298 | Episode Q0:   338.76
+직선+원호(Arc) 궤적 총 길이: 284.37m
+비행 속력: 2.99m/s, 필요 비행 시간(tf): 95.12초
+직선+원호(Arc) 궤적 총 길이: 284.37m
+비행 속력: 2.99m/s, 필요 비행 시간(tf): 95.12초
+Episode: 467/3000 | Episode reward:  3574.15 | Episode steps:  952 | Average reward:  2894.48 | Step Count: 329250 | Episode Q0:   329.51
+직선+원호(Arc) 궤적 총 길이: 276.86m
+비행 속력: 3.60m/s, 필요 비행 시간(tf): 76.96초
+직선+원호(Arc) 궤적 총 길이: 276.86m
+비행 속력: 3.60m/s, 필요 비행 시간(tf): 76.96초
+Episode: 468/3000 | Episode reward:  2100.85 | Episode steps:  770 | Average reward:  2891.33 | Step Count: 330020 | Episode Q0:   340.55
+직선+원호(Arc) 궤적 총 길이: 204.60m
+비행 속력: 3.01m/s, 필요 비행 시간(tf): 67.88초
+직선+원호(Arc) 궤적 총 길이: 204.60m
+비행 속력: 3.01m/s, 필요 비행 시간(tf): 67.88초
+Episode: 469/3000 | Episode reward:  1783.39 | Episode steps:  679 | Average reward:  2879.16 | Step Count: 330699 | Episode Q0:   285.17
+직선+원호(Arc) 궤적 총 길이: 275.83m
+비행 속력: 3.68m/s, 필요 비행 시간(tf): 75.05초
+직선+원호(Arc) 궤적 총 길이: 275.83m
+비행 속력: 3.68m/s, 필요 비행 시간(tf): 75.05초
+Episode: 470/3000 | Episode reward:  2596.56 | Episode steps:  751 | Average reward:  2883.25 | Step Count: 331450 | Episode Q0:   313.51
+직선+원호(Arc) 궤적 총 길이: 273.96m
+비행 속력: 2.94m/s, 필요 비행 시간(tf): 93.12초
+직선+원호(Arc) 궤적 총 길이: 273.96m
+비행 속력: 2.94m/s, 필요 비행 시간(tf): 93.12초
+Episode: 471/3000 | Episode reward:  4227.80 | Episode steps:  932 | Average reward:  2928.03 | Step Count: 332382 | Episode Q0:   292.73
+직선+원호(Arc) 궤적 총 길이: 283.38m
+비행 속력: 2.92m/s, 필요 비행 시간(tf): 97.01초
+직선+원호(Arc) 궤적 총 길이: 283.38m
+비행 속력: 2.92m/s, 필요 비행 시간(tf): 97.01초
+Episode: 472/3000 | Episode reward:  3984.18 | Episode steps:  971 | Average reward:  2921.52 | Step Count: 333353 | Episode Q0:   301.08
+직선+원호(Arc) 궤적 총 길이: 152.30m
+비행 속력: 2.94m/s, 필요 비행 시간(tf): 51.89초
+직선+원호(Arc) 궤적 총 길이: 152.30m
+비행 속력: 2.94m/s, 필요 비행 시간(tf): 51.89초
+Episode: 473/3000 | Episode reward:  2269.64 | Episode steps:  519 | Average reward:  2924.06 | Step Count: 333872 | Episode Q0:   285.55
+직선+원호(Arc) 궤적 총 길이: 170.85m
+비행 속력: 3.37m/s, 필요 비행 시간(tf): 50.67초
+직선+원호(Arc) 궤적 총 길이: 170.85m
+비행 속력: 3.37m/s, 필요 비행 시간(tf): 50.67초
+Episode: 474/3000 | Episode reward:  2191.98 | Episode steps:  507 | Average reward:  2854.12 | Step Count: 334379 | Episode Q0:   296.97
+직선+원호(Arc) 궤적 총 길이: 173.04m
+비행 속력: 2.93m/s, 필요 비행 시간(tf): 59.01초
+직선+원호(Arc) 궤적 총 길이: 173.04m
+비행 속력: 2.93m/s, 필요 비행 시간(tf): 59.01초
+Episode: 475/3000 | Episode reward:  1985.28 | Episode steps:  591 | Average reward:  2869.83 | Step Count: 334970 | Episode Q0:   307.36
+직선+원호(Arc) 궤적 총 길이: 140.36m
+비행 속력: 2.51m/s, 필요 비행 시간(tf): 55.88초
+직선+원호(Arc) 궤적 총 길이: 140.36m
+비행 속력: 2.51m/s, 필요 비행 시간(tf): 55.88초
+Episode: 476/3000 | Episode reward:  2601.21 | Episode steps:  559 | Average reward:  2877.14 | Step Count: 335529 | Episode Q0:   299.58
+직선+원호(Arc) 궤적 총 길이: 250.98m
+비행 속력: 3.78m/s, 필요 비행 시간(tf): 66.44초
+직선+원호(Arc) 궤적 총 길이: 250.98m
+비행 속력: 3.78m/s, 필요 비행 시간(tf): 66.44초
+Episode: 477/3000 | Episode reward:  1846.94 | Episode steps:  665 | Average reward:  2883.03 | Step Count: 336194 | Episode Q0:   325.14
+직선+원호(Arc) 궤적 총 길이: 282.68m
+비행 속력: 3.43m/s, 필요 비행 시간(tf): 82.47초
+직선+원호(Arc) 궤적 총 길이: 282.68m
+비행 속력: 3.43m/s, 필요 비행 시간(tf): 82.47초
+Episode: 478/3000 | Episode reward:  2170.15 | Episode steps:  825 | Average reward:  2908.10 | Step Count: 337019 | Episode Q0:   297.26
+직선+원호(Arc) 궤적 총 길이: 149.94m
+비행 속력: 3.19m/s, 필요 비행 시간(tf): 47.00초
+직선+원호(Arc) 궤적 총 길이: 149.94m
+비행 속력: 3.19m/s, 필요 비행 시간(tf): 47.00초
+Episode: 479/3000 | Episode reward:  2378.20 | Episode steps:  470 | Average reward:  2885.18 | Step Count: 337489 | Episode Q0:   286.93
+직선+원호(Arc) 궤적 총 길이: 121.73m
+비행 속력: 2.72m/s, 필요 비행 시간(tf): 44.77초
+직선+원호(Arc) 궤적 총 길이: 121.73m
+비행 속력: 2.72m/s, 필요 비행 시간(tf): 44.77초
+Episode: 480/3000 | Episode reward:  1884.03 | Episode steps:  448 | Average reward:  2885.07 | Step Count: 337937 | Episode Q0:   269.55
+직선+원호(Arc) 궤적 총 길이: 320.89m
+비행 속력: 3.16m/s, 필요 비행 시간(tf): 101.51초
+직선+원호(Arc) 궤적 총 길이: 320.89m
+비행 속력: 3.16m/s, 필요 비행 시간(tf): 101.51초
+Episode: 481/3000 | Episode reward:  3871.19 | Episode steps: 1016 | Average reward:  2876.50 | Step Count: 338953 | Episode Q0:   302.92
+직선+원호(Arc) 궤적 총 길이: 196.85m
+비행 속력: 3.02m/s, 필요 비행 시간(tf): 65.11초
+직선+원호(Arc) 궤적 총 길이: 196.85m
+비행 속력: 3.02m/s, 필요 비행 시간(tf): 65.11초
+Episode: 482/3000 | Episode reward:  3109.13 | Episode steps:  652 | Average reward:  2867.83 | Step Count: 339605 | Episode Q0:   292.80
+직선+원호(Arc) 궤적 총 길이: 171.29m
+비행 속력: 3.39m/s, 필요 비행 시간(tf): 50.45초
+직선+원호(Arc) 궤적 총 길이: 171.29m
+비행 속력: 3.39m/s, 필요 비행 시간(tf): 50.45초
+Episode: 483/3000 | Episode reward:  2001.92 | Episode steps:  505 | Average reward:  2872.51 | Step Count: 340110 | Episode Q0:   310.48
+직선+원호(Arc) 궤적 총 길이: 225.30m
+비행 속력: 3.27m/s, 필요 비행 시간(tf): 68.81초
+직선+원호(Arc) 궤적 총 길이: 225.30m
+비행 속력: 3.27m/s, 필요 비행 시간(tf): 68.81초
+Episode: 484/3000 | Episode reward:  2196.78 | Episode steps:  689 | Average reward:  2877.14 | Step Count: 340799 | Episode Q0:   322.18
+직선+원호(Arc) 궤적 총 길이: 215.58m
+비행 속력: 3.24m/s, 필요 비행 시간(tf): 66.56초
+직선+원호(Arc) 궤적 총 길이: 215.58m
+비행 속력: 3.24m/s, 필요 비행 시간(tf): 66.56초
+Episode: 485/3000 | Episode reward:  2109.76 | Episode steps:  666 | Average reward:  2849.28 | Step Count: 341465 | Episode Q0:   315.49
+직선+원호(Arc) 궤적 총 길이: 181.51m
+비행 속력: 3.60m/s, 필요 비행 시간(tf): 50.45초
+직선+원호(Arc) 궤적 총 길이: 181.51m
+비행 속력: 3.60m/s, 필요 비행 시간(tf): 50.45초
+Episode: 486/3000 | Episode reward:  1942.39 | Episode steps:  505 | Average reward:  2808.45 | Step Count: 341970 | Episode Q0:   290.59
+직선+원호(Arc) 궤적 총 길이: 260.46m
+비행 속력: 3.75m/s, 필요 비행 시간(tf): 69.44초
+직선+원호(Arc) 궤적 총 길이: 260.46m
+비행 속력: 3.75m/s, 필요 비행 시간(tf): 69.44초
+Episode: 487/3000 | Episode reward:  1895.23 | Episode steps:  695 | Average reward:  2767.31 | Step Count: 342665 | Episode Q0:   292.34
+직선+원호(Arc) 궤적 총 길이: 274.21m
+비행 속력: 2.91m/s, 필요 비행 시간(tf): 94.29초
+직선+원호(Arc) 궤적 총 길이: 274.21m
+비행 속력: 2.91m/s, 필요 비행 시간(tf): 94.29초
+Episode: 488/3000 | Episode reward:  3601.25 | Episode steps:  943 | Average reward:  2796.38 | Step Count: 343608 | Episode Q0:   290.64
+직선+원호(Arc) 궤적 총 길이: 134.52m
+비행 속력: 3.70m/s, 필요 비행 시간(tf): 36.33초
+직선+원호(Arc) 궤적 총 길이: 134.52m
+비행 속력: 3.70m/s, 필요 비행 시간(tf): 36.33초
+Episode: 489/3000 | Episode reward:  1561.05 | Episode steps:  364 | Average reward:  2749.90 | Step Count: 343972 | Episode Q0:   304.42
+직선+원호(Arc) 궤적 총 길이: 257.71m
+비행 속력: 2.58m/s, 필요 비행 시간(tf): 100.00초
+직선+원호(Arc) 궤적 총 길이: 257.71m
+비행 속력: 2.58m/s, 필요 비행 시간(tf): 100.00초
+Episode: 490/3000 | Episode reward:  4806.72 | Episode steps: 1000 | Average reward:  2788.83 | Step Count: 344972 | Episode Q0:   299.07
+직선+원호(Arc) 궤적 총 길이: 334.28m
+비행 속력: 3.36m/s, 필요 비행 시간(tf): 99.51초
+직선+원호(Arc) 궤적 총 길이: 334.28m
+비행 속력: 3.36m/s, 필요 비행 시간(tf): 99.51초
+Episode: 491/3000 | Episode reward:  3628.15 | Episode steps:  996 | Average reward:  2842.59 | Step Count: 345968 | Episode Q0:   312.15
+직선+원호(Arc) 궤적 총 길이: 229.73m
+비행 속력: 3.21m/s, 필요 비행 시간(tf): 71.57초
+직선+원호(Arc) 궤적 총 길이: 229.73m
+비행 속력: 3.21m/s, 필요 비행 시간(tf): 71.57초
+Episode: 492/3000 | Episode reward:  3410.38 | Episode steps:  716 | Average reward:  2871.74 | Step Count: 346684 | Episode Q0:   309.57
+직선+원호(Arc) 궤적 총 길이: 273.53m
+비행 속력: 2.65m/s, 필요 비행 시간(tf): 103.30초
+직선+원호(Arc) 궤적 총 길이: 273.53m
+비행 속력: 2.65m/s, 필요 비행 시간(tf): 103.30초
+Episode: 493/3000 | Episode reward:  4654.47 | Episode steps: 1034 | Average reward:  2912.67 | Step Count: 347718 | Episode Q0:   307.32
+직선+원호(Arc) 궤적 총 길이: 269.30m
+비행 속력: 3.70m/s, 필요 비행 시간(tf): 72.86초
+직선+원호(Arc) 궤적 총 길이: 269.30m
+비행 속력: 3.70m/s, 필요 비행 시간(tf): 72.86초
+Episode: 494/3000 | Episode reward:  2227.20 | Episode steps:  729 | Average reward:  2936.67 | Step Count: 348447 | Episode Q0:   342.99
+직선+원호(Arc) 궤적 총 길이: 119.81m
+비행 속력: 3.50m/s, 필요 비행 시간(tf): 34.26초
+직선+원호(Arc) 궤적 총 길이: 119.81m
+비행 속력: 3.50m/s, 필요 비행 시간(tf): 34.26초
+Episode: 495/3000 | Episode reward:  1505.99 | Episode steps:  343 | Average reward:  2925.37 | Step Count: 348790 | Episode Q0:   322.61
+직선+원호(Arc) 궤적 총 길이: 185.54m
+비행 속력: 2.55m/s, 필요 비행 시간(tf): 72.89초
+직선+원호(Arc) 궤적 총 길이: 185.54m
+비행 속력: 2.55m/s, 필요 비행 시간(tf): 72.89초
+Episode: 496/3000 | Episode reward:  2945.19 | Episode steps:  729 | Average reward:  2925.62 | Step Count: 349519 | Episode Q0:   304.81
+직선+원호(Arc) 궤적 총 길이: 186.46m
+비행 속력: 3.29m/s, 필요 비행 시간(tf): 56.72초
+직선+원호(Arc) 궤적 총 길이: 186.46m
+비행 속력: 3.29m/s, 필요 비행 시간(tf): 56.72초
+Episode: 497/3000 | Episode reward:  1378.76 | Episode steps:  568 | Average reward:  2912.76 | Step Count: 350087 | Episode Q0:   317.07
+직선+원호(Arc) 궤적 총 길이: 152.86m
+비행 속력: 2.75m/s, 필요 비행 시간(tf): 55.55초
+직선+원호(Arc) 궤적 총 길이: 152.86m
+비행 속력: 2.75m/s, 필요 비행 시간(tf): 55.55초
+Episode: 498/3000 | Episode reward:  2745.98 | Episode steps:  556 | Average reward:  2939.78 | Step Count: 350643 | Episode Q0:   315.20
+직선+원호(Arc) 궤적 총 길이: 169.09m
+비행 속력: 2.54m/s, 필요 비행 시간(tf): 66.51초
+직선+원호(Arc) 궤적 총 길이: 169.09m
+비행 속력: 2.54m/s, 필요 비행 시간(tf): 66.51초
+Episode: 499/3000 | Episode reward:  2876.66 | Episode steps:  666 | Average reward:  2887.87 | Step Count: 351309 | Episode Q0:   310.46
+직선+원호(Arc) 궤적 총 길이: 107.01m
+비행 속력: 3.65m/s, 필요 비행 시간(tf): 29.33초
+직선+원호(Arc) 궤적 총 길이: 107.01m
+비행 속력: 3.65m/s, 필요 비행 시간(tf): 29.33초
+Episode: 500/3000 | Episode reward:  1062.05 | Episode steps:  294 | Average reward:  2856.81 | Step Count: 351603 | Episode Q0:   337.56
+직선+원호(Arc) 궤적 총 길이: 221.37m
+비행 속력: 3.50m/s, 필요 비행 시간(tf): 63.21초
+직선+원호(Arc) 궤적 총 길이: 221.37m
+비행 속력: 3.50m/s, 필요 비행 시간(tf): 63.21초
+Episode: 501/3000 | Episode reward:  1893.39 | Episode steps:  633 | Average reward:  2765.82 | Step Count: 352236 | Episode Q0:   329.29
+직선+원호(Arc) 궤적 총 길이: 308.77m
+비행 속력: 3.16m/s, 필요 비행 시간(tf): 97.68초
+직선+원호(Arc) 궤적 총 길이: 308.77m
+비행 속력: 3.16m/s, 필요 비행 시간(tf): 97.68초
+Episode: 502/3000 | Episode reward:  3316.46 | Episode steps:  977 | Average reward:  2785.33 | Step Count: 353213 | Episode Q0:   312.52
+직선+원호(Arc) 궤적 총 길이: 317.31m
+비행 속력: 2.72m/s, 필요 비행 시간(tf): 116.75초
+직선+원호(Arc) 궤적 총 길이: 317.31m
+비행 속력: 2.72m/s, 필요 비행 시간(tf): 116.75초
+Episode: 503/3000 | Episode reward:  5459.68 | Episode steps: 1168 | Average reward:  2814.45 | Step Count: 354381 | Episode Q0:   315.58
+직선+원호(Arc) 궤적 총 길이: 216.87m
+비행 속력: 2.70m/s, 필요 비행 시간(tf): 80.43초
+직선+원호(Arc) 궤적 총 길이: 216.87m
+비행 속력: 2.70m/s, 필요 비행 시간(tf): 80.43초
+Episode: 504/3000 | Episode reward:  3535.97 | Episode steps:  805 | Average reward:  2814.16 | Step Count: 355186 | Episode Q0:   322.54
+직선+원호(Arc) 궤적 총 길이: 176.05m
+비행 속력: 3.25m/s, 필요 비행 시간(tf): 54.15초
+직선+원호(Arc) 궤적 총 길이: 176.05m
+비행 속력: 3.25m/s, 필요 비행 시간(tf): 54.15초
+Episode: 505/3000 | Episode reward:  1934.07 | Episode steps:  542 | Average reward:  2768.43 | Step Count: 355728 | Episode Q0:   358.73
+직선+원호(Arc) 궤적 총 길이: 218.98m
+비행 속력: 3.19m/s, 필요 비행 시간(tf): 68.55초
+직선+원호(Arc) 궤적 총 길이: 218.98m
+비행 속력: 3.19m/s, 필요 비행 시간(tf): 68.55초
+Episode: 506/3000 | Episode reward:  1996.64 | Episode steps:  686 | Average reward:  2746.69 | Step Count: 356414 | Episode Q0:   337.94
+직선+원호(Arc) 궤적 총 길이: 284.46m
+비행 속력: 3.23m/s, 필요 비행 시간(tf): 88.15초
+직선+원호(Arc) 궤적 총 길이: 284.46m
+비행 속력: 3.23m/s, 필요 비행 시간(tf): 88.15초
+Episode: 507/3000 | Episode reward:  2485.27 | Episode steps:  882 | Average reward:  2721.94 | Step Count: 357296 | Episode Q0:   324.44
+직선+원호(Arc) 궤적 총 길이: 256.25m
+비행 속력: 2.86m/s, 필요 비행 시간(tf): 89.56초
+직선+원호(Arc) 궤적 총 길이: 256.25m
+비행 속력: 2.86m/s, 필요 비행 시간(tf): 89.56초
+Episode: 508/3000 | Episode reward:  4499.75 | Episode steps:  896 | Average reward:  2737.10 | Step Count: 358192 | Episode Q0:   345.81
+직선+원호(Arc) 궤적 총 길이: 157.49m
+비행 속력: 3.01m/s, 필요 비행 시간(tf): 52.34초
+직선+원호(Arc) 궤적 총 길이: 157.49m
+비행 속력: 3.01m/s, 필요 비행 시간(tf): 52.34초
+Episode: 509/3000 | Episode reward:  2769.87 | Episode steps:  524 | Average reward:  2719.07 | Step Count: 358716 | Episode Q0:   380.44
+직선+원호(Arc) 궤적 총 길이: 336.92m
+비행 속력: 2.98m/s, 필요 비행 시간(tf): 113.24초
+직선+원호(Arc) 궤적 총 길이: 336.92m
+비행 속력: 2.98m/s, 필요 비행 시간(tf): 113.24초
+Episode: 510/3000 | Episode reward:  4939.06 | Episode steps: 1133 | Average reward:  2730.71 | Step Count: 359849 | Episode Q0:   318.24
+직선+원호(Arc) 궤적 총 길이: 303.03m
+비행 속력: 3.50m/s, 필요 비행 시간(tf): 86.52초
+직선+원호(Arc) 궤적 총 길이: 303.03m
+비행 속력: 3.50m/s, 필요 비행 시간(tf): 86.52초
+Episode: 511/3000 | Episode reward:  2604.85 | Episode steps:  866 | Average reward:  2780.10 | Step Count: 360715 | Episode Q0:   353.06
+직선+원호(Arc) 궤적 총 길이: 188.29m
+비행 속력: 3.55m/s, 필요 비행 시간(tf): 53.09초
+직선+원호(Arc) 궤적 총 길이: 188.29m
+비행 속력: 3.55m/s, 필요 비행 시간(tf): 53.09초
+Episode: 512/3000 | Episode reward:  1406.71 | Episode steps:  531 | Average reward:  2766.63 | Step Count: 361246 | Episode Q0:   320.51
+직선+원호(Arc) 궤적 총 길이: 307.84m
+비행 속력: 3.74m/s, 필요 비행 시간(tf): 82.27초
+직선+원호(Arc) 궤적 총 길이: 307.84m
+비행 속력: 3.74m/s, 필요 비행 시간(tf): 82.27초
+Episode: 513/3000 | Episode reward:  3237.11 | Episode steps:  823 | Average reward:  2768.16 | Step Count: 362069 | Episode Q0:   367.34
+직선+원호(Arc) 궤적 총 길이: 297.17m
+비행 속력: 2.66m/s, 필요 비행 시간(tf): 111.86초
+직선+원호(Arc) 궤적 총 길이: 297.17m
+비행 속력: 2.66m/s, 필요 비행 시간(tf): 111.86초
+Episode: 514/3000 | Episode reward:  5421.47 | Episode steps: 1119 | Average reward:  2777.07 | Step Count: 363188 | Episode Q0:   305.55
+직선+원호(Arc) 궤적 총 길이: 167.17m
+비행 속력: 3.31m/s, 필요 비행 시간(tf): 50.49초
+직선+원호(Arc) 궤적 총 길이: 167.17m
+비행 속력: 3.31m/s, 필요 비행 시간(tf): 50.49초
+Episode: 515/3000 | Episode reward:  1307.30 | Episode steps:  505 | Average reward:  2779.12 | Step Count: 363693 | Episode Q0:   331.26
+직선+원호(Arc) 궤적 총 길이: 184.22m
+비행 속력: 3.38m/s, 필요 비행 시간(tf): 54.49초
+직선+원호(Arc) 궤적 총 길이: 184.22m
+비행 속력: 3.38m/s, 필요 비행 시간(tf): 54.49초
+Episode: 516/3000 | Episode reward:  1537.90 | Episode steps:  545 | Average reward:  2749.40 | Step Count: 364238 | Episode Q0:   331.76
+직선+원호(Arc) 궤적 총 길이: 242.93m
+비행 속력: 2.62m/s, 필요 비행 시간(tf): 92.58초
+직선+원호(Arc) 궤적 총 길이: 242.93m
+비행 속력: 2.62m/s, 필요 비행 시간(tf): 92.58초
+Episode: 517/3000 | Episode reward:  4118.30 | Episode steps:  926 | Average reward:  2760.29 | Step Count: 365164 | Episode Q0:   302.68
+직선+원호(Arc) 궤적 총 길이: 103.09m
+비행 속력: 2.60m/s, 필요 비행 시간(tf): 39.60초
+직선+원호(Arc) 궤적 총 길이: 103.09m
+비행 속력: 2.60m/s, 필요 비행 시간(tf): 39.60초
+Episode: 518/3000 | Episode reward:  1472.49 | Episode steps:  396 | Average reward:  2747.72 | Step Count: 365560 | Episode Q0:   313.96
+직선+원호(Arc) 궤적 총 길이: 137.09m
+비행 속력: 3.58m/s, 필요 비행 시간(tf): 38.24초
+직선+원호(Arc) 궤적 총 길이: 137.09m
+비행 속력: 3.58m/s, 필요 비행 시간(tf): 38.24초
+Episode: 519/3000 | Episode reward:  1313.36 | Episode steps:  383 | Average reward:  2738.32 | Step Count: 365943 | Episode Q0:   321.90
+직선+원호(Arc) 궤적 총 길이: 308.19m
+비행 속력: 2.65m/s, 필요 비행 시간(tf): 116.19초
+직선+원호(Arc) 궤적 총 길이: 308.19m
+비행 속력: 2.65m/s, 필요 비행 시간(tf): 116.19초
+Episode: 520/3000 | Episode reward:  5898.52 | Episode steps: 1162 | Average reward:  2804.36 | Step Count: 367105 | Episode Q0:   310.85
+직선+원호(Arc) 궤적 총 길이: 250.28m
+비행 속력: 2.71m/s, 필요 비행 시간(tf): 92.32초
+직선+원호(Arc) 궤적 총 길이: 250.28m
+비행 속력: 2.71m/s, 필요 비행 시간(tf): 92.32초
+Episode: 521/3000 | Episode reward:  3980.85 | Episode steps:  924 | Average reward:  2799.42 | Step Count: 368029 | Episode Q0:   342.63
+직선+원호(Arc) 궤적 총 길이: 131.14m
+비행 속력: 3.51m/s, 필요 비행 시간(tf): 37.39초
+직선+원호(Arc) 궤적 총 길이: 131.14m
+비행 속력: 3.51m/s, 필요 비행 시간(tf): 37.39초
+Episode: 522/3000 | Episode reward:  1380.77 | Episode steps:  374 | Average reward:  2747.35 | Step Count: 368403 | Episode Q0:   357.30
+직선+원호(Arc) 궤적 총 길이: 198.98m
+비행 속력: 2.57m/s, 필요 비행 시간(tf): 77.40초
+직선+원호(Arc) 궤적 총 길이: 198.98m
+비행 속력: 2.57m/s, 필요 비행 시간(tf): 77.40초
+Episode: 523/3000 | Episode reward:  3579.33 | Episode steps:  774 | Average reward:  2773.54 | Step Count: 369177 | Episode Q0:   347.95
+직선+원호(Arc) 궤적 총 길이: 208.40m
+비행 속력: 2.75m/s, 필요 비행 시간(tf): 75.76초
+직선+원호(Arc) 궤적 총 길이: 208.40m
+비행 속력: 2.75m/s, 필요 비행 시간(tf): 75.76초
+Episode: 524/3000 | Episode reward:  3261.73 | Episode steps:  758 | Average reward:  2794.94 | Step Count: 369935 | Episode Q0:   356.46
+직선+원호(Arc) 궤적 총 길이: 119.27m
+비행 속력: 3.58m/s, 필요 비행 시간(tf): 33.29초
+직선+원호(Arc) 궤적 총 길이: 119.27m
+비행 속력: 3.58m/s, 필요 비행 시간(tf): 33.29초
+Episode: 525/3000 | Episode reward:  1308.91 | Episode steps:  333 | Average reward:  2781.41 | Step Count: 370268 | Episode Q0:   369.81
+직선+원호(Arc) 궤적 총 길이: 159.55m
+비행 속력: 3.33m/s, 필요 비행 시간(tf): 47.85초
+직선+원호(Arc) 궤적 총 길이: 159.55m
+비행 속력: 3.33m/s, 필요 비행 시간(tf): 47.85초
+Episode: 526/3000 | Episode reward:  1102.07 | Episode steps:  479 | Average reward:  2751.43 | Step Count: 370747 | Episode Q0:   359.48
+직선+원호(Arc) 궤적 총 길이: 267.74m
+비행 속력: 2.64m/s, 필요 비행 시간(tf): 101.35초
+직선+원호(Arc) 궤적 총 길이: 267.74m
+비행 속력: 2.64m/s, 필요 비행 시간(tf): 101.35초
+Episode: 527/3000 | Episode reward:  4219.45 | Episode steps: 1014 | Average reward:  2798.88 | Step Count: 371761 | Episode Q0:   322.67
+직선+원호(Arc) 궤적 총 길이: 244.34m
+비행 속력: 3.00m/s, 필요 비행 시간(tf): 81.43초
+직선+원호(Arc) 궤적 총 길이: 244.34m
+비행 속력: 3.00m/s, 필요 비행 시간(tf): 81.43초
+Episode: 528/3000 | Episode reward:  3262.43 | Episode steps:  815 | Average reward:  2820.72 | Step Count: 372576 | Episode Q0:   336.98
+직선+원호(Arc) 궤적 총 길이: 193.13m
+비행 속력: 2.86m/s, 필요 비행 시간(tf): 67.59초
+직선+원호(Arc) 궤적 총 길이: 193.13m
+비행 속력: 2.86m/s, 필요 비행 시간(tf): 67.59초
+Episode: 529/3000 | Episode reward:  2911.97 | Episode steps:  676 | Average reward:  2831.40 | Step Count: 373252 | Episode Q0:   363.89
+직선+원호(Arc) 궤적 총 길이: 128.01m
+비행 속력: 2.86m/s, 필요 비행 시간(tf): 44.81초
+직선+원호(Arc) 궤적 총 길이: 128.01m
+비행 속력: 2.86m/s, 필요 비행 시간(tf): 44.81초
+Episode: 530/3000 | Episode reward:  2056.69 | Episode steps:  449 | Average reward:  2834.85 | Step Count: 373701 | Episode Q0:   345.89
+직선+원호(Arc) 궤적 총 길이: 200.97m
+비행 속력: 3.19m/s, 필요 비행 시간(tf): 63.06초
+직선+원호(Arc) 궤적 총 길이: 200.97m
+비행 속력: 3.19m/s, 필요 비행 시간(tf): 63.06초
+Episode: 531/3000 | Episode reward:  1851.40 | Episode steps:  631 | Average reward:  2794.46 | Step Count: 374332 | Episode Q0:   378.77
+직선+원호(Arc) 궤적 총 길이: 298.98m
+비행 속력: 3.05m/s, 필요 비행 시간(tf): 97.97초
+직선+원호(Arc) 궤적 총 길이: 298.98m
+비행 속력: 3.05m/s, 필요 비행 시간(tf): 97.97초
+Episode: 532/3000 | Episode reward:  4521.55 | Episode steps:  980 | Average reward:  2822.70 | Step Count: 375312 | Episode Q0:   356.22
+직선+원호(Arc) 궤적 총 길이: 230.71m
+비행 속력: 3.22m/s, 필요 비행 시간(tf): 71.64초
+직선+원호(Arc) 궤적 총 길이: 230.71m
+비행 속력: 3.22m/s, 필요 비행 시간(tf): 71.64초
+Episode: 533/3000 | Episode reward:  2581.28 | Episode steps:  717 | Average reward:  2834.29 | Step Count: 376029 | Episode Q0:   328.15
+직선+원호(Arc) 궤적 총 길이: 270.23m
+비행 속력: 2.56m/s, 필요 비행 시간(tf): 105.49초
+직선+원호(Arc) 궤적 총 길이: 270.23m
+비행 속력: 2.56m/s, 필요 비행 시간(tf): 105.49초
+Episode: 534/3000 | Episode reward:  4866.74 | Episode steps: 1055 | Average reward:  2887.69 | Step Count: 377084 | Episode Q0:   312.17
+직선+원호(Arc) 궤적 총 길이: 102.07m
+비행 속력: 3.48m/s, 필요 비행 시간(tf): 29.32초
+직선+원호(Arc) 궤적 총 길이: 102.07m
+비행 속력: 3.48m/s, 필요 비행 시간(tf): 29.32초
+Episode: 535/3000 | Episode reward:   201.51 | Episode steps:  294 | Average reward:  2849.53 | Step Count: 377378 | Episode Q0:   339.80
+직선+원호(Arc) 궤적 총 길이: 192.39m
+비행 속력: 2.58m/s, 필요 비행 시간(tf): 74.58초
+직선+원호(Arc) 궤적 총 길이: 192.39m
+비행 속력: 2.58m/s, 필요 비행 시간(tf): 74.58초
+Episode: 536/3000 | Episode reward:  2787.28 | Episode steps:  746 | Average reward:  2866.42 | Step Count: 378124 | Episode Q0:   330.47
+직선+원호(Arc) 궤적 총 길이: 303.14m
+비행 속력: 2.86m/s, 필요 비행 시간(tf): 106.00초
+직선+원호(Arc) 궤적 총 길이: 303.14m
+비행 속력: 2.86m/s, 필요 비행 시간(tf): 106.00초
+Episode: 537/3000 | Episode reward:  4261.90 | Episode steps: 1061 | Average reward:  2913.76 | Step Count: 379185 | Episode Q0:   327.00
+직선+원호(Arc) 궤적 총 길이: 249.09m
+비행 속력: 3.68m/s, 필요 비행 시간(tf): 67.76초
+직선+원호(Arc) 궤적 총 길이: 249.09m
+비행 속력: 3.68m/s, 필요 비행 시간(tf): 67.76초
+Episode: 538/3000 | Episode reward:  1499.17 | Episode steps:  678 | Average reward:  2871.72 | Step Count: 379863 | Episode Q0:   331.12
+직선+원호(Arc) 궤적 총 길이: 157.88m
+비행 속력: 3.70m/s, 필요 비행 시간(tf): 42.62초
+직선+원호(Arc) 궤적 총 길이: 157.88m
+비행 속력: 3.70m/s, 필요 비행 시간(tf): 42.62초
+Episode: 539/3000 | Episode reward:  2176.48 | Episode steps:  427 | Average reward:  2884.02 | Step Count: 380290 | Episode Q0:   246.97
+직선+원호(Arc) 궤적 총 길이: 113.54m
+비행 속력: 2.56m/s, 필요 비행 시간(tf): 44.38초
+직선+원호(Arc) 궤적 총 길이: 113.54m
+비행 속력: 2.56m/s, 필요 비행 시간(tf): 44.38초
+Episode: 540/3000 | Episode reward:  1965.54 | Episode steps:  444 | Average reward:  2827.20 | Step Count: 380734 | Episode Q0:   301.90
+직선+원호(Arc) 궤적 총 길이: 154.13m
+비행 속력: 2.58m/s, 필요 비행 시간(tf): 59.72초
+직선+원호(Arc) 궤적 총 길이: 154.13m
+비행 속력: 2.58m/s, 필요 비행 시간(tf): 59.72초
+Episode: 541/3000 | Episode reward:  2792.99 | Episode steps:  598 | Average reward:  2810.50 | Step Count: 381332 | Episode Q0:   319.64
+직선+원호(Arc) 궤적 총 길이: 331.28m
+비행 속력: 3.61m/s, 필요 비행 시간(tf): 91.85초
+직선+원호(Arc) 궤적 총 길이: 331.28m
+비행 속력: 3.61m/s, 필요 비행 시간(tf): 91.85초
+Episode: 542/3000 | Episode reward:  2962.22 | Episode steps:  919 | Average reward:  2801.53 | Step Count: 382251 | Episode Q0:   267.88
+직선+원호(Arc) 궤적 총 길이: 305.08m
+비행 속력: 2.78m/s, 필요 비행 시간(tf): 109.89초
+직선+원호(Arc) 궤적 총 길이: 305.08m
+비행 속력: 2.78m/s, 필요 비행 시간(tf): 109.89초
+Episode: 543/3000 | Episode reward:  4324.51 | Episode steps: 1099 | Average reward:  2794.94 | Step Count: 383350 | Episode Q0:   315.10
+직선+원호(Arc) 궤적 총 길이: 300.90m
+비행 속력: 3.63m/s, 필요 비행 시간(tf): 82.88초
+직선+원호(Arc) 궤적 총 길이: 300.90m
+비행 속력: 3.63m/s, 필요 비행 시간(tf): 82.88초
+Episode: 544/3000 | Episode reward:  2277.16 | Episode steps:  829 | Average reward:  2795.93 | Step Count: 384179 | Episode Q0:   318.04
+직선+원호(Arc) 궤적 총 길이: 149.96m
+비행 속력: 3.27m/s, 필요 비행 시간(tf): 45.92초
+직선+원호(Arc) 궤적 총 길이: 149.96m
+비행 속력: 3.27m/s, 필요 비행 시간(tf): 45.92초
+Episode: 545/3000 | Episode reward:  1857.74 | Episode steps:  460 | Average reward:  2802.97 | Step Count: 384639 | Episode Q0:   298.38
+직선+원호(Arc) 궤적 총 길이: 218.75m
+비행 속력: 2.92m/s, 필요 비행 시간(tf): 74.86초
+직선+원호(Arc) 궤적 총 길이: 218.75m
+비행 속력: 2.92m/s, 필요 비행 시간(tf): 74.86초
+Episode: 546/3000 | Episode reward:  3312.62 | Episode steps:  749 | Average reward:  2810.32 | Step Count: 385388 | Episode Q0:   301.72
+직선+원호(Arc) 궤적 총 길이: 118.83m
+비행 속력: 3.27m/s, 필요 비행 시간(tf): 36.32초
+직선+원호(Arc) 궤적 총 길이: 118.83m
+비행 속력: 3.27m/s, 필요 비행 시간(tf): 36.32초
+Episode: 547/3000 | Episode reward:  1660.22 | Episode steps:  364 | Average reward:  2815.95 | Step Count: 385752 | Episode Q0:   305.10
+직선+원호(Arc) 궤적 총 길이: 248.42m
+비행 속력: 3.33m/s, 필요 비행 시간(tf): 74.52초
+직선+원호(Arc) 궤적 총 길이: 248.42m
+비행 속력: 3.33m/s, 필요 비행 시간(tf): 74.52초
+Episode: 548/3000 | Episode reward:  2307.01 | Episode steps:  746 | Average reward:  2807.17 | Step Count: 386498 | Episode Q0:   304.19
+직선+원호(Arc) 궤적 총 길이: 135.55m
+비행 속력: 3.61m/s, 필요 비행 시간(tf): 37.60초
+직선+원호(Arc) 궤적 총 길이: 135.55m
+비행 속력: 3.61m/s, 필요 비행 시간(tf): 37.60초
+Episode: 549/3000 | Episode reward:  1874.36 | Episode steps:  376 | Average reward:  2787.12 | Step Count: 386874 | Episode Q0:   301.79
+직선+원호(Arc) 궤적 총 길이: 239.04m
+비행 속력: 3.01m/s, 필요 비행 시간(tf): 79.31초
+직선+원호(Arc) 궤적 총 길이: 239.04m
+비행 속력: 3.01m/s, 필요 비행 시간(tf): 79.31초
+Episode: 550/3000 | Episode reward:  3938.69 | Episode steps:  794 | Average reward:  2844.66 | Step Count: 387668 | Episode Q0:   303.48
+직선+원호(Arc) 궤적 총 길이: 245.84m
+비행 속력: 3.13m/s, 필요 비행 시간(tf): 78.44초
+직선+원호(Arc) 궤적 총 길이: 245.84m
+비행 속력: 3.13m/s, 필요 비행 시간(tf): 78.44초
+Episode: 551/3000 | Episode reward:  3053.52 | Episode steps:  785 | Average reward:  2867.86 | Step Count: 388453 | Episode Q0:   311.38
+직선+원호(Arc) 궤적 총 길이: 118.86m
+비행 속력: 3.78m/s, 필요 비행 시간(tf): 31.44초
+직선+원호(Arc) 궤적 총 길이: 118.86m
+비행 속력: 3.78m/s, 필요 비행 시간(tf): 31.44초
+Episode: 552/3000 | Episode reward:  1219.53 | Episode steps:  315 | Average reward:  2825.92 | Step Count: 388768 | Episode Q0:   313.33
+직선+원호(Arc) 궤적 총 길이: 237.62m
+비행 속력: 2.85m/s, 필요 비행 시간(tf): 83.45초
+직선+원호(Arc) 궤적 총 길이: 237.62m
+비행 속력: 2.85m/s, 필요 비행 시간(tf): 83.45초
+Episode: 553/3000 | Episode reward:  4105.20 | Episode steps:  835 | Average reward:  2798.83 | Step Count: 389603 | Episode Q0:   329.92
+직선+원호(Arc) 궤적 총 길이: 197.80m
+비행 속력: 3.59m/s, 필요 비행 시간(tf): 55.07초
+직선+원호(Arc) 궤적 총 길이: 197.80m
+비행 속력: 3.59m/s, 필요 비행 시간(tf): 55.07초
+Episode: 554/3000 | Episode reward:  1273.06 | Episode steps:  551 | Average reward:  2753.57 | Step Count: 390154 | Episode Q0:   324.60
+직선+원호(Arc) 궤적 총 길이: 253.83m
+비행 속력: 3.28m/s, 필요 비행 시간(tf): 77.37초
+직선+원호(Arc) 궤적 총 길이: 253.83m
+비행 속력: 3.28m/s, 필요 비행 시간(tf): 77.37초
+Episode: 555/3000 | Episode reward:  3384.55 | Episode steps:  774 | Average reward:  2782.58 | Step Count: 390928 | Episode Q0:   345.01
+직선+원호(Arc) 궤적 총 길이: 122.20m
+비행 속력: 2.60m/s, 필요 비행 시간(tf): 47.02초
+직선+원호(Arc) 궤적 총 길이: 122.20m
+비행 속력: 2.60m/s, 필요 비행 시간(tf): 47.02초
+Episode: 556/3000 | Episode reward:  2168.16 | Episode steps:  471 | Average reward:  2786.01 | Step Count: 391399 | Episode Q0:   325.31
+직선+원호(Arc) 궤적 총 길이: 259.90m
+비행 속력: 2.89m/s, 필요 비행 시간(tf): 90.02초
+직선+원호(Arc) 궤적 총 길이: 259.90m
+비행 속력: 2.89m/s, 필요 비행 시간(tf): 90.02초
+Episode: 557/3000 | Episode reward:  3273.74 | Episode steps:  901 | Average reward:  2801.78 | Step Count: 392300 | Episode Q0:   323.79
+직선+원호(Arc) 궤적 총 길이: 327.60m
+비행 속력: 2.96m/s, 필요 비행 시간(tf): 110.72초
+직선+원호(Arc) 궤적 총 길이: 327.60m
+비행 속력: 2.96m/s, 필요 비행 시간(tf): 110.72초
+Episode: 558/3000 | Episode reward:  4843.29 | Episode steps: 1108 | Average reward:  2808.65 | Step Count: 393408 | Episode Q0:   339.38
+직선+원호(Arc) 궤적 총 길이: 267.20m
+비행 속력: 3.48m/s, 필요 비행 시간(tf): 76.74초
+직선+원호(Arc) 궤적 총 길이: 267.20m
+비행 속력: 3.48m/s, 필요 비행 시간(tf): 76.74초
+Episode: 559/3000 | Episode reward:  2012.90 | Episode steps:  768 | Average reward:  2793.51 | Step Count: 394176 | Episode Q0:   330.48
+직선+원호(Arc) 궤적 총 길이: 138.37m
+비행 속력: 3.53m/s, 필요 비행 시간(tf): 39.19초
+직선+원호(Arc) 궤적 총 길이: 138.37m
+비행 속력: 3.53m/s, 필요 비행 시간(tf): 39.19초
+Episode: 560/3000 | Episode reward:  1876.89 | Episode steps:  392 | Average reward:  2732.27 | Step Count: 394568 | Episode Q0:   339.09
+직선+원호(Arc) 궤적 총 길이: 328.73m
+비행 속력: 2.92m/s, 필요 비행 시간(tf): 112.57초
+직선+원호(Arc) 궤적 총 길이: 328.73m
+비행 속력: 2.92m/s, 필요 비행 시간(tf): 112.57초
+Episode: 561/3000 | Episode reward:  4701.71 | Episode steps: 1126 | Average reward:  2774.21 | Step Count: 395694 | Episode Q0:   315.85
+직선+원호(Arc) 궤적 총 길이: 221.53m
+비행 속력: 3.36m/s, 필요 비행 시간(tf): 65.99초
+직선+원호(Arc) 궤적 총 길이: 221.53m
+비행 속력: 3.36m/s, 필요 비행 시간(tf): 65.99초
+Episode: 562/3000 | Episode reward:  1762.04 | Episode steps:  660 | Average reward:  2781.31 | Step Count: 396354 | Episode Q0:   322.71
+직선+원호(Arc) 궤적 총 길이: 190.87m
+비행 속력: 2.82m/s, 필요 비행 시간(tf): 67.60초
+직선+원호(Arc) 궤적 총 길이: 190.87m
+비행 속력: 2.82m/s, 필요 비행 시간(tf): 67.60초
+Episode: 563/3000 | Episode reward:  2598.33 | Episode steps:  676 | Average reward:  2768.54 | Step Count: 397030 | Episode Q0:   299.00
+직선+원호(Arc) 궤적 총 길이: 294.62m
+비행 속력: 3.35m/s, 필요 비행 시간(tf): 88.05초
+직선+원호(Arc) 궤적 총 길이: 294.62m
+비행 속력: 3.35m/s, 필요 비행 시간(tf): 88.05초
+Episode: 564/3000 | Episode reward:  3398.16 | Episode steps:  881 | Average reward:  2728.07 | Step Count: 397911 | Episode Q0:   301.20
+직선+원호(Arc) 궤적 총 길이: 171.10m
+비행 속력: 3.74m/s, 필요 비행 시간(tf): 45.79초
+직선+원호(Arc) 궤적 총 길이: 171.10m
+비행 속력: 3.74m/s, 필요 비행 시간(tf): 45.79초
+Episode: 565/3000 | Episode reward:   931.37 | Episode steps:  458 | Average reward:  2720.55 | Step Count: 398369 | Episode Q0:   309.58
+직선+원호(Arc) 궤적 총 길이: 242.59m
+비행 속력: 2.69m/s, 필요 비행 시간(tf): 90.09초
+직선+원호(Arc) 궤적 총 길이: 242.59m
+비행 속력: 2.69m/s, 필요 비행 시간(tf): 90.09초
+Episode: 566/3000 | Episode reward:  4180.26 | Episode steps:  901 | Average reward:  2773.40 | Step Count: 399270 | Episode Q0:   310.76
+직선+원호(Arc) 궤적 총 길이: 134.47m
+비행 속력: 3.14m/s, 필요 비행 시간(tf): 42.86초
+직선+원호(Arc) 궤적 총 길이: 134.47m
+비행 속력: 3.14m/s, 필요 비행 시간(tf): 42.86초
+Episode: 567/3000 | Episode reward:  1769.19 | Episode steps:  429 | Average reward:  2726.42 | Step Count: 399699 | Episode Q0:   307.82
+직선+원호(Arc) 궤적 총 길이: 280.24m
+비행 속력: 2.54m/s, 필요 비행 시간(tf): 110.12초
+직선+원호(Arc) 궤적 총 길이: 280.24m
+비행 속력: 2.54m/s, 필요 비행 시간(tf): 110.12초
+Episode: 568/3000 | Episode reward:  5286.66 | Episode steps: 1102 | Average reward:  2802.70 | Step Count: 400801 | Episode Q0:   311.99
+직선+원호(Arc) 궤적 총 길이: 283.50m
+비행 속력: 2.93m/s, 필요 비행 시간(tf): 96.87초
+직선+원호(Arc) 궤적 총 길이: 283.50m
+비행 속력: 2.93m/s, 필요 비행 시간(tf): 96.87초
+Episode: 569/3000 | Episode reward:  4036.79 | Episode steps:  969 | Average reward:  2857.17 | Step Count: 401770 | Episode Q0:   327.72
+직선+원호(Arc) 궤적 총 길이: 103.88m
+비행 속력: 2.73m/s, 필요 비행 시간(tf): 37.99초
+직선+원호(Arc) 궤적 총 길이: 103.88m
+비행 속력: 2.73m/s, 필요 비행 시간(tf): 37.99초
+Episode: 570/3000 | Episode reward:  2043.59 | Episode steps:  380 | Average reward:  2780.07 | Step Count: 402150 | Episode Q0:   330.21
+직선+원호(Arc) 궤적 총 길이: 182.70m
+비행 속력: 2.56m/s, 필요 비행 시간(tf): 71.45초
+직선+원호(Arc) 궤적 총 길이: 182.70m
+비행 속력: 2.56m/s, 필요 비행 시간(tf): 71.45초
+Episode: 571/3000 | Episode reward:  3236.76 | Episode steps:  715 | Average reward:  2765.19 | Step Count: 402865 | Episode Q0:   332.85
+직선+원호(Arc) 궤적 총 길이: 168.75m
+비행 속력: 2.59m/s, 필요 비행 시간(tf): 65.24초
+직선+원호(Arc) 궤적 총 길이: 168.75m
+비행 속력: 2.59m/s, 필요 비행 시간(tf): 65.24초
+Episode: 572/3000 | Episode reward:  3119.88 | Episode steps:  653 | Average reward:  2799.97 | Step Count: 403518 | Episode Q0:   339.99
+직선+원호(Arc) 궤적 총 길이: 327.64m
+비행 속력: 3.44m/s, 필요 비행 시간(tf): 95.35초
+직선+원호(Arc) 궤적 총 길이: 327.64m
+비행 속력: 3.44m/s, 필요 비행 시간(tf): 95.35초
+Episode: 573/3000 | Episode reward:  3430.22 | Episode steps:  954 | Average reward:  2796.99 | Step Count: 404472 | Episode Q0:   321.99
+직선+원호(Arc) 궤적 총 길이: 221.58m
+비행 속력: 2.53m/s, 필요 비행 시간(tf): 87.65초
+직선+원호(Arc) 궤적 총 길이: 221.58m
+비행 속력: 2.53m/s, 필요 비행 시간(tf): 87.65초
+Episode: 574/3000 | Episode reward:  4617.81 | Episode steps:  877 | Average reward:  2824.11 | Step Count: 405349 | Episode Q0:   355.03
+직선+원호(Arc) 궤적 총 길이: 119.90m
+비행 속력: 2.68m/s, 필요 비행 시간(tf): 44.75초
+직선+원호(Arc) 궤적 총 길이: 119.90m
+비행 속력: 2.68m/s, 필요 비행 시간(tf): 44.75초
+Episode: 575/3000 | Episode reward:  2472.69 | Episode steps:  448 | Average reward:  2847.39 | Step Count: 405797 | Episode Q0:   394.34
+직선+원호(Arc) 궤적 총 길이: 283.10m
+비행 속력: 2.93m/s, 필요 비행 시간(tf): 96.48초
+직선+원호(Arc) 궤적 총 길이: 283.10m
+비행 속력: 2.93m/s, 필요 비행 시간(tf): 96.48초
+Episode: 576/3000 | Episode reward:  4074.29 | Episode steps:  965 | Average reward:  2906.83 | Step Count: 406762 | Episode Q0:   356.29
+직선+원호(Arc) 궤적 총 길이: 244.39m
+비행 속력: 2.78m/s, 필요 비행 시간(tf): 87.84초
+직선+원호(Arc) 궤적 총 길이: 244.39m
+비행 속력: 2.78m/s, 필요 비행 시간(tf): 87.84초
+Episode: 577/3000 | Episode reward:  3552.15 | Episode steps:  879 | Average reward:  2893.48 | Step Count: 407641 | Episode Q0:   359.63
+직선+원호(Arc) 궤적 총 길이: 220.35m
+비행 속력: 3.68m/s, 필요 비행 시간(tf): 59.86초
+직선+원호(Arc) 궤적 총 길이: 220.35m
+비행 속력: 3.68m/s, 필요 비행 시간(tf): 59.86초
+Episode: 578/3000 | Episode reward:  1824.44 | Episode steps:  599 | Average reward:  2864.72 | Step Count: 408240 | Episode Q0:   353.93
+직선+원호(Arc) 궤적 총 길이: 115.58m
+비행 속력: 3.28m/s, 필요 비행 시간(tf): 35.24초
+직선+원호(Arc) 궤적 총 길이: 115.58m
+비행 속력: 3.28m/s, 필요 비행 시간(tf): 35.24초
+Episode: 579/3000 | Episode reward:  1321.96 | Episode steps:  353 | Average reward:  2832.92 | Step Count: 408593 | Episode Q0:   366.97
+직선+원호(Arc) 궤적 총 길이: 179.71m
+비행 속력: 3.49m/s, 필요 비행 시간(tf): 51.47초
+직선+원호(Arc) 궤적 총 길이: 179.71m
+비행 속력: 3.49m/s, 필요 비행 시간(tf): 51.47초
+Episode: 580/3000 | Episode reward:  2587.15 | Episode steps:  515 | Average reward:  2843.53 | Step Count: 409108 | Episode Q0:   346.74
+직선+원호(Arc) 궤적 총 길이: 254.00m
+비행 속력: 2.76m/s, 필요 비행 시간(tf): 92.01초
+직선+원호(Arc) 궤적 총 길이: 254.00m
+비행 속력: 2.76m/s, 필요 비행 시간(tf): 92.01초
+Episode: 581/3000 | Episode reward:  4206.43 | Episode steps:  921 | Average reward:  2890.63 | Step Count: 410029 | Episode Q0:   337.85
+직선+원호(Arc) 궤적 총 길이: 257.06m
+비행 속력: 3.63m/s, 필요 비행 시간(tf): 70.89초
+직선+원호(Arc) 궤적 총 길이: 257.06m
+비행 속력: 3.63m/s, 필요 비행 시간(tf): 70.89초
+Episode: 582/3000 | Episode reward:  1555.72 | Episode steps:  709 | Average reward:  2831.32 | Step Count: 410738 | Episode Q0:   352.13
+직선+원호(Arc) 궤적 총 길이: 199.03m
+비행 속력: 2.88m/s, 필요 비행 시간(tf): 69.02초
+직선+원호(Arc) 궤적 총 길이: 199.03m
+비행 속력: 2.88m/s, 필요 비행 시간(tf): 69.02초
+Episode: 583/3000 | Episode reward:  3039.96 | Episode steps:  691 | Average reward:  2840.49 | Step Count: 411429 | Episode Q0:   333.70
+직선+원호(Arc) 궤적 총 길이: 311.50m
+비행 속력: 3.32m/s, 필요 비행 시간(tf): 93.74초
+직선+원호(Arc) 궤적 총 길이: 311.50m
+비행 속력: 3.32m/s, 필요 비행 시간(tf): 93.74초
+Episode: 584/3000 | Episode reward:  3534.35 | Episode steps:  938 | Average reward:  2813.84 | Step Count: 412367 | Episode Q0:   315.48
+직선+원호(Arc) 궤적 총 길이: 191.13m
+비행 속력: 3.10m/s, 필요 비행 시간(tf): 61.75초
+직선+원호(Arc) 궤적 총 길이: 191.13m
+비행 속력: 3.10m/s, 필요 비행 시간(tf): 61.75초
+Episode: 585/3000 | Episode reward:  2722.93 | Episode steps:  618 | Average reward:  2864.27 | Step Count: 412985 | Episode Q0:   330.33
+직선+원호(Arc) 궤적 총 길이: 257.17m
+비행 속력: 2.97m/s, 필요 비행 시간(tf): 86.60초
+직선+원호(Arc) 궤적 총 길이: 257.17m
+비행 속력: 2.97m/s, 필요 비행 시간(tf): 86.60초
+Episode: 586/3000 | Episode reward:  2978.51 | Episode steps:  866 | Average reward:  2868.10 | Step Count: 413851 | Episode Q0:   320.89
+직선+원호(Arc) 궤적 총 길이: 294.19m
+비행 속력: 3.71m/s, 필요 비행 시간(tf): 79.33초
+직선+원호(Arc) 궤적 총 길이: 294.19m
+비행 속력: 3.71m/s, 필요 비행 시간(tf): 79.33초
+Episode: 587/3000 | Episode reward:  2569.54 | Episode steps:  794 | Average reward:  2834.25 | Step Count: 414645 | Episode Q0:   328.01
+직선+원호(Arc) 궤적 총 길이: 263.51m
+비행 속력: 3.36m/s, 필요 비행 시간(tf): 78.52초
+직선+원호(Arc) 궤적 총 길이: 263.51m
+비행 속력: 3.36m/s, 필요 비행 시간(tf): 78.52초
+Episode: 588/3000 | Episode reward:  2182.66 | Episode steps:  786 | Average reward:  2847.92 | Step Count: 415431 | Episode Q0:   327.10
+직선+원호(Arc) 궤적 총 길이: 273.56m
+비행 속력: 3.58m/s, 필요 비행 시간(tf): 76.45초
+직선+원호(Arc) 궤적 총 길이: 273.56m
+비행 속력: 3.58m/s, 필요 비행 시간(tf): 76.45초
+Episode: 589/3000 | Episode reward:  2375.57 | Episode steps:  765 | Average reward:  2851.90 | Step Count: 416196 | Episode Q0:   297.12
+직선+원호(Arc) 궤적 총 길이: 225.05m
+비행 속력: 2.95m/s, 필요 비행 시간(tf): 76.34초
+직선+원호(Arc) 궤적 총 길이: 225.05m
+비행 속력: 2.95m/s, 필요 비행 시간(tf): 76.34초
+Episode: 590/3000 | Episode reward:  3293.85 | Episode steps:  764 | Average reward:  2878.47 | Step Count: 416960 | Episode Q0:   323.41
+직선+원호(Arc) 궤적 총 길이: 270.06m
+비행 속력: 3.65m/s, 필요 비행 시간(tf): 74.00초
+직선+원호(Arc) 궤적 총 길이: 270.06m
+비행 속력: 3.65m/s, 필요 비행 시간(tf): 74.00초
+Episode: 591/3000 | Episode reward:  2040.78 | Episode steps:  741 | Average reward:  2863.42 | Step Count: 417701 | Episode Q0:   352.35
+직선+원호(Arc) 궤적 총 길이: 119.65m
+비행 속력: 2.86m/s, 필요 비행 시간(tf): 41.81초
+직선+원호(Arc) 궤적 총 길이: 119.65m
+비행 속력: 2.86m/s, 필요 비행 시간(tf): 41.81초
+Episode: 592/3000 | Episode reward:  1737.48 | Episode steps:  419 | Average reward:  2838.93 | Step Count: 418120 | Episode Q0:   271.49
+직선+원호(Arc) 궤적 총 길이: 258.83m
+비행 속력: 3.18m/s, 필요 비행 시간(tf): 81.31초
+직선+원호(Arc) 궤적 총 길이: 258.83m
+비행 속력: 3.18m/s, 필요 비행 시간(tf): 81.31초
+Episode: 593/3000 | Episode reward:  3105.05 | Episode steps:  814 | Average reward:  2814.54 | Step Count: 418934 | Episode Q0:   284.56
+직선+원호(Arc) 궤적 총 길이: 127.41m
+비행 속력: 3.54m/s, 필요 비행 시간(tf): 35.98초
+직선+원호(Arc) 궤적 총 길이: 127.41m
+비행 속력: 3.54m/s, 필요 비행 시간(tf): 35.98초
+Episode: 594/3000 | Episode reward:  1638.44 | Episode steps:  360 | Average reward:  2801.76 | Step Count: 419294 | Episode Q0:   330.51
+직선+원호(Arc) 궤적 총 길이: 141.00m
+비행 속력: 2.94m/s, 필요 비행 시간(tf): 47.91초
+직선+원호(Arc) 궤적 총 길이: 141.00m
+비행 속력: 2.94m/s, 필요 비행 시간(tf): 47.91초
+Episode: 595/3000 | Episode reward:  2573.87 | Episode steps:  480 | Average reward:  2816.09 | Step Count: 419774 | Episode Q0:   316.92
+직선+원호(Arc) 궤적 총 길이: 267.70m
+비행 속력: 2.78m/s, 필요 비행 시간(tf): 96.19초
+직선+원호(Arc) 궤적 총 길이: 267.70m
+비행 속력: 2.78m/s, 필요 비행 시간(tf): 96.19초
+Episode: 596/3000 | Episode reward:  4246.89 | Episode steps:  962 | Average reward:  2834.77 | Step Count: 420736 | Episode Q0:   295.15
+직선+원호(Arc) 궤적 총 길이: 264.02m
+비행 속력: 2.66m/s, 필요 비행 시간(tf): 99.32초
+직선+원호(Arc) 궤적 총 길이: 264.02m
+비행 속력: 2.66m/s, 필요 비행 시간(tf): 99.32초
+Episode: 597/3000 | Episode reward:  4903.25 | Episode steps:  994 | Average reward:  2899.63 | Step Count: 421730 | Episode Q0:   320.79
+직선+원호(Arc) 궤적 총 길이: 285.13m
+비행 속력: 2.93m/s, 필요 비행 시간(tf): 97.46초
+직선+원호(Arc) 궤적 총 길이: 285.13m
+비행 속력: 2.93m/s, 필요 비행 시간(tf): 97.46초
+Episode: 598/3000 | Episode reward:  4356.33 | Episode steps:  975 | Average reward:  2940.62 | Step Count: 422705 | Episode Q0:   342.21
+직선+원호(Arc) 궤적 총 길이: 144.40m
+비행 속력: 3.17m/s, 필요 비행 시간(tf): 45.61초
+직선+원호(Arc) 궤적 총 길이: 144.40m
+비행 속력: 3.17m/s, 필요 비행 시간(tf): 45.61초
+Episode: 599/3000 | Episode reward:  1889.94 | Episode steps:  457 | Average reward:  2940.93 | Step Count: 423162 | Episode Q0:   332.25
+직선+원호(Arc) 궤적 총 길이: 265.56m
+비행 속력: 3.54m/s, 필요 비행 시간(tf): 74.98초
+직선+원호(Arc) 궤적 총 길이: 265.56m
+비행 속력: 3.54m/s, 필요 비행 시간(tf): 74.98초
+Episode: 600/3000 | Episode reward:  2578.88 | Episode steps:  750 | Average reward:  2913.73 | Step Count: 423912 | Episode Q0:   333.53
+직선+원호(Arc) 궤적 총 길이: 178.19m
+비행 속력: 4.02m/s, 필요 비행 시간(tf): 44.35초
+직선+원호(Arc) 궤적 총 길이: 178.19m
+비행 속력: 4.02m/s, 필요 비행 시간(tf): 44.35초
+Episode: 601/3000 | Episode reward:   304.15 | Episode steps:  444 | Average reward:  2858.75 | Step Count: 424356 | Episode Q0:   329.03
+직선+원호(Arc) 궤적 총 길이: 125.90m
+비행 속력: 3.17m/s, 필요 비행 시간(tf): 39.74초
+직선+원호(Arc) 궤적 총 길이: 125.90m
+비행 속력: 3.17m/s, 필요 비행 시간(tf): 39.74초
+Episode: 602/3000 | Episode reward:   561.25 | Episode steps:  398 | Average reward:  2845.58 | Step Count: 424754 | Episode Q0:   325.83
+직선+원호(Arc) 궤적 총 길이: 166.72m
+비행 속력: 3.22m/s, 필요 비행 시간(tf): 51.85초
+직선+원호(Arc) 궤적 총 길이: 166.72m
+비행 속력: 3.22m/s, 필요 비행 시간(tf): 51.85초
+Episode: 603/3000 | Episode reward:  1639.14 | Episode steps:  519 | Average reward:  2796.26 | Step Count: 425273 | Episode Q0:   279.57
+직선+원호(Arc) 궤적 총 길이: 87.08m
+비행 속력: 3.94m/s, 필요 비행 시간(tf): 22.12초
+직선+원호(Arc) 궤적 총 길이: 87.08m
+비행 속력: 3.94m/s, 필요 비행 시간(tf): 22.12초
+Episode: 604/3000 | Episode reward:   273.68 | Episode steps:  222 | Average reward:  2776.27 | Step Count: 425495 | Episode Q0:   280.47
+직선+원호(Arc) 궤적 총 길이: 211.19m
+비행 속력: 3.27m/s, 필요 비행 시간(tf): 64.55초
+직선+원호(Arc) 궤적 총 길이: 211.19m
+비행 속력: 3.27m/s, 필요 비행 시간(tf): 64.55초
+Episode: 605/3000 | Episode reward:  1765.26 | Episode steps:  646 | Average reward:  2743.89 | Step Count: 426141 | Episode Q0:   267.21
+직선+원호(Arc) 궤적 총 길이: 202.69m
+비행 속력: 3.78m/s, 필요 비행 시간(tf): 53.64초
+직선+원호(Arc) 궤적 총 길이: 202.69m
+비행 속력: 3.78m/s, 필요 비행 시간(tf): 53.64초
+Episode: 606/3000 | Episode reward:  1181.07 | Episode steps:  537 | Average reward:  2724.14 | Step Count: 426678 | Episode Q0:   280.65
+직선+원호(Arc) 궤적 총 길이: 254.27m
+비행 속력: 3.63m/s, 필요 비행 시간(tf): 70.09초
+직선+원호(Arc) 궤적 총 길이: 254.27m
+비행 속력: 3.63m/s, 필요 비행 시간(tf): 70.09초
+Episode: 607/3000 | Episode reward:  1957.94 | Episode steps:  701 | Average reward:  2697.83 | Step Count: 427379 | Episode Q0:   280.18
+직선+원호(Arc) 궤적 총 길이: 257.56m
+비행 속력: 3.19m/s, 필요 비행 시간(tf): 80.84초
+직선+원호(Arc) 궤적 총 길이: 257.56m
+비행 속력: 3.19m/s, 필요 비행 시간(tf): 80.84초
+Episode: 608/3000 | Episode reward:  2875.18 | Episode steps:  809 | Average reward:  2658.47 | Step Count: 428188 | Episode Q0:   273.65
+직선+원호(Arc) 궤적 총 길이: 81.23m
+비행 속력: 3.03m/s, 필요 비행 시간(tf): 26.77초
+직선+원호(Arc) 궤적 총 길이: 81.23m
+비행 속력: 3.03m/s, 필요 비행 시간(tf): 26.77초
+Episode: 609/3000 | Episode reward:    65.09 | Episode steps:  268 | Average reward:  2619.51 | Step Count: 428456 | Episode Q0:   246.95
+직선+원호(Arc) 궤적 총 길이: 220.07m
+비행 속력: 3.44m/s, 필요 비행 시간(tf): 64.05초
+직선+원호(Arc) 궤적 총 길이: 220.07m
+비행 속력: 3.44m/s, 필요 비행 시간(tf): 64.05초
+Episode: 610/3000 | Episode reward:  1597.05 | Episode steps:  641 | Average reward:  2613.91 | Step Count: 429097 | Episode Q0:   285.73
+직선+원호(Arc) 궤적 총 길이: 226.26m
+비행 속력: 3.31m/s, 필요 비행 시간(tf): 68.38초
+직선+원호(Arc) 궤적 총 길이: 226.26m
+비행 속력: 3.31m/s, 필요 비행 시간(tf): 68.38초
+Episode: 611/3000 | Episode reward:  1676.02 | Episode steps:  684 | Average reward:  2553.40 | Step Count: 429781 | Episode Q0:   226.80
+직선+원호(Arc) 궤적 총 길이: 86.92m
+비행 속력: 3.47m/s, 필요 비행 시간(tf): 25.01초
+직선+원호(Arc) 궤적 총 길이: 86.92m
+비행 속력: 3.47m/s, 필요 비행 시간(tf): 25.01초
+Episode: 612/3000 | Episode reward:   -68.64 | Episode steps:  251 | Average reward:  2516.79 | Step Count: 430032 | Episode Q0:   221.49
+직선+원호(Arc) 궤적 총 길이: 175.11m
+비행 속력: 3.95m/s, 필요 비행 시간(tf): 44.32초
+직선+원호(Arc) 궤적 총 길이: 175.11m
+비행 속력: 3.95m/s, 필요 비행 시간(tf): 44.32초
+Episode: 613/3000 | Episode reward:   211.75 | Episode steps:  444 | Average reward:  2469.05 | Step Count: 430476 | Episode Q0:   257.74
+직선+원호(Arc) 궤적 총 길이: 183.95m
+비행 속력: 3.15m/s, 필요 비행 시간(tf): 58.34초
+직선+원호(Arc) 궤적 총 길이: 183.95m
+비행 속력: 3.15m/s, 필요 비행 시간(tf): 58.34초
+Episode: 614/3000 | Episode reward:  1582.46 | Episode steps:  584 | Average reward:  2432.74 | Step Count: 431060 | Episode Q0:   208.61
+직선+원호(Arc) 궤적 총 길이: 141.27m
+비행 속력: 4.15m/s, 필요 비행 시간(tf): 34.08초
+직선+원호(Arc) 궤적 총 길이: 141.27m
+비행 속력: 4.15m/s, 필요 비행 시간(tf): 34.08초
+Episode: 615/3000 | Episode reward:   282.35 | Episode steps:  341 | Average reward:  2419.76 | Step Count: 431401 | Episode Q0:   186.96
+직선+원호(Arc) 궤적 총 길이: 179.24m
+비행 속력: 3.76m/s, 필요 비행 시간(tf): 47.71초
+직선+원호(Arc) 궤적 총 길이: 179.24m
+비행 속력: 3.76m/s, 필요 비행 시간(tf): 47.71초
+Episode: 616/3000 | Episode reward:   964.54 | Episode steps:  478 | Average reward:  2355.45 | Step Count: 431879 | Episode Q0:   168.58
+직선+원호(Arc) 궤적 총 길이: 152.63m
+비행 속력: 3.92m/s, 필요 비행 시간(tf): 38.94초
+직선+원호(Arc) 궤적 총 길이: 152.63m
+비행 속력: 3.92m/s, 필요 비행 시간(tf): 38.94초
+Episode: 617/3000 | Episode reward:  1305.61 | Episode steps:  390 | Average reward:  2346.17 | Step Count: 432269 | Episode Q0:   165.16
+직선+원호(Arc) 궤적 총 길이: 206.72m
+비행 속력: 3.82m/s, 필요 비행 시간(tf): 54.15초
+직선+원호(Arc) 궤적 총 길이: 206.72m
+비행 속력: 3.82m/s, 필요 비행 시간(tf): 54.15초
+Episode: 618/3000 | Episode reward:   887.58 | Episode steps:  542 | Average reward:  2258.19 | Step Count: 432811 | Episode Q0:   186.89
+직선+원호(Arc) 궤적 총 길이: 154.69m
+비행 속력: 3.73m/s, 필요 비행 시간(tf): 41.47초
+직선+원호(Arc) 궤적 총 길이: 154.69m
+비행 속력: 3.73m/s, 필요 비행 시간(tf): 41.47초
+Episode: 619/3000 | Episode reward:   551.27 | Episode steps:  415 | Average reward:  2188.48 | Step Count: 433226 | Episode Q0:   188.12
+직선+원호(Arc) 궤적 총 길이: 277.29m
+비행 속력: 3.77m/s, 필요 비행 시간(tf): 73.49초
+직선+원호(Arc) 궤적 총 길이: 277.29m
+비행 속력: 3.77m/s, 필요 비행 시간(tf): 73.49초
+Episode: 620/3000 | Episode reward:  1801.51 | Episode steps:  735 | Average reward:  2183.64 | Step Count: 433961 | Episode Q0:   174.60
+직선+원호(Arc) 궤적 총 길이: 230.17m
+비행 속력: 3.61m/s, 필요 비행 시간(tf): 63.76초
+직선+원호(Arc) 궤적 총 길이: 230.17m
+비행 속력: 3.61m/s, 필요 비행 시간(tf): 63.76초
+Episode: 621/3000 | Episode reward:   517.84 | Episode steps:  638 | Average reward:  2129.26 | Step Count: 434599 | Episode Q0:   178.87
+직선+원호(Arc) 궤적 총 길이: 77.17m
+비행 속력: 3.90m/s, 필요 비행 시간(tf): 19.79초
+직선+원호(Arc) 궤적 총 길이: 77.17m
+비행 속력: 3.90m/s, 필요 비행 시간(tf): 19.79초
+Episode: 622/3000 | Episode reward: -1093.58 | Episode steps:  198 | Average reward:  2044.99 | Step Count: 434797 | Episode Q0:   165.78
+직선+원호(Arc) 궤적 총 길이: 99.97m
+비행 속력: 3.26m/s, 필요 비행 시간(tf): 30.65초
+직선+원호(Arc) 궤적 총 길이: 99.97m
+비행 속력: 3.26m/s, 필요 비행 시간(tf): 30.65초
+Episode: 623/3000 | Episode reward:   245.60 | Episode steps:  307 | Average reward:  1981.30 | Step Count: 435104 | Episode Q0:   159.36
+직선+원호(Arc) 궤적 총 길이: 235.65m
+비행 속력: 3.14m/s, 필요 비행 시간(tf): 75.14초
+직선+원호(Arc) 궤적 총 길이: 235.65m
+비행 속력: 3.14m/s, 필요 비행 시간(tf): 75.14초
+Episode: 624/3000 | Episode reward:  1637.46 | Episode steps:  752 | Average reward:  1921.69 | Step Count: 435856 | Episode Q0:   161.99
+직선+원호(Arc) 궤적 총 길이: 193.61m
+비행 속력: 4.44m/s, 필요 비행 시간(tf): 43.63초
+직선+원호(Arc) 궤적 총 길이: 193.61m
+비행 속력: 4.44m/s, 필요 비행 시간(tf): 43.63초
+Episode: 625/3000 | Episode reward:  1877.55 | Episode steps:  437 | Average reward:  1909.79 | Step Count: 436293 | Episode Q0:   118.03
+직선+원호(Arc) 궤적 총 길이: 169.82m
+비행 속력: 3.09m/s, 필요 비행 시간(tf): 54.89초
+직선+원호(Arc) 궤적 총 길이: 169.82m
+비행 속력: 3.09m/s, 필요 비행 시간(tf): 54.89초
+Episode: 626/3000 | Episode reward:  1524.82 | Episode steps:  549 | Average reward:  1858.80 | Step Count: 436842 | Episode Q0:   164.78
+직선+원호(Arc) 궤적 총 길이: 99.84m
+비행 속력: 3.42m/s, 필요 비행 시간(tf): 29.20초
+직선+원호(Arc) 궤적 총 길이: 99.84m
+비행 속력: 3.42m/s, 필요 비행 시간(tf): 29.20초
+Episode: 627/3000 | Episode reward:   407.08 | Episode steps:  292 | Average reward:  1795.90 | Step Count: 437134 | Episode Q0:   173.47
+직선+원호(Arc) 궤적 총 길이: 267.35m
+비행 속력: 3.98m/s, 필요 비행 시간(tf): 67.15초
+직선+원호(Arc) 궤적 총 길이: 267.35m
+비행 속력: 3.98m/s, 필요 비행 시간(tf): 67.15초
+Episode: 628/3000 | Episode reward:   945.41 | Episode steps:  672 | Average reward:  1778.32 | Step Count: 437806 | Episode Q0:   169.07
+직선+원호(Arc) 궤적 총 길이: 211.48m
+비행 속력: 3.28m/s, 필요 비행 시간(tf): 64.46초
+직선+원호(Arc) 궤적 총 길이: 211.48m
+비행 속력: 3.28m/s, 필요 비행 시간(tf): 64.46초
+Episode: 629/3000 | Episode reward:  2340.07 | Episode steps:  645 | Average reward:  1798.68 | Step Count: 438451 | Episode Q0:   167.72
+직선+원호(Arc) 궤적 총 길이: 250.76m
+비행 속력: 3.27m/s, 필요 비행 시간(tf): 76.59초
+직선+원호(Arc) 궤적 총 길이: 250.76m
+비행 속력: 3.27m/s, 필요 비행 시간(tf): 76.59초
+Episode: 630/3000 | Episode reward:  2072.30 | Episode steps:  766 | Average reward:  1788.39 | Step Count: 439217 | Episode Q0:   204.26
+직선+원호(Arc) 궤적 총 길이: 147.83m
+비행 속력: 3.68m/s, 필요 비행 시간(tf): 40.18초
+직선+원호(Arc) 궤적 총 길이: 147.83m
+비행 속력: 3.68m/s, 필요 비행 시간(tf): 40.18초
+Episode: 631/3000 | Episode reward:  1874.33 | Episode steps:  402 | Average reward:  1741.74 | Step Count: 439619 | Episode Q0:   200.50
+직선+원호(Arc) 궤적 총 길이: 227.14m
+비행 속력: 4.43m/s, 필요 비행 시간(tf): 51.26초
+직선+원호(Arc) 궤적 총 길이: 227.14m
+비행 속력: 4.43m/s, 필요 비행 시간(tf): 51.26초
+Episode: 632/3000 | Episode reward:  -155.29 | Episode steps:  513 | Average reward:  1707.52 | Step Count: 440132 | Episode Q0:   181.92
+직선+원호(Arc) 궤적 총 길이: 180.04m
+비행 속력: 4.09m/s, 필요 비행 시간(tf): 43.98초
+직선+원호(Arc) 궤적 총 길이: 180.04m
+비행 속력: 4.09m/s, 필요 비행 시간(tf): 43.98초
+Episode: 633/3000 | Episode reward:   819.50 | Episode steps:  440 | Average reward:  1663.11 | Step Count: 440572 | Episode Q0:   180.42
+직선+원호(Arc) 궤적 총 길이: 233.58m
+비행 속력: 3.57m/s, 필요 비행 시간(tf): 65.52초
+직선+원호(Arc) 궤적 총 길이: 233.58m
+비행 속력: 3.57m/s, 필요 비행 시간(tf): 65.52초
+Episode: 634/3000 | Episode reward:  1193.77 | Episode steps:  656 | Average reward:  1616.30 | Step Count: 441228 | Episode Q0:   192.97
+직선+원호(Arc) 궤적 총 길이: 200.84m
+비행 속력: 3.92m/s, 필요 비행 시간(tf): 51.25초
+직선+원호(Arc) 궤적 총 길이: 200.84m
+비행 속력: 3.92m/s, 필요 비행 시간(tf): 51.25초
+Episode: 635/3000 | Episode reward:  1345.20 | Episode steps:  513 | Average reward:  1588.75 | Step Count: 441741 | Episode Q0:   196.45
+직선+원호(Arc) 궤적 총 길이: 110.53m
+비행 속력: 3.06m/s, 필요 비행 시간(tf): 36.11초
+직선+원호(Arc) 궤적 총 길이: 110.53m
+비행 속력: 3.06m/s, 필요 비행 시간(tf): 36.11초
+Episode: 636/3000 | Episode reward:  1141.74 | Episode steps:  362 | Average reward:  1552.01 | Step Count: 442103 | Episode Q0:   198.10
+직선+원호(Arc) 궤적 총 길이: 224.45m
+비행 속력: 4.12m/s, 필요 비행 시간(tf): 54.47초
+직선+원호(Arc) 궤적 총 길이: 224.45m
+비행 속력: 4.12m/s, 필요 비행 시간(tf): 54.47초
+Episode: 637/3000 | Episode reward:   913.55 | Episode steps:  545 | Average reward:  1518.89 | Step Count: 442648 | Episode Q0:   185.19
+직선+원호(Arc) 궤적 총 길이: 82.64m
+비행 속력: 3.69m/s, 필요 비행 시간(tf): 22.40초
+직선+원호(Arc) 궤적 총 길이: 82.64m
+비행 속력: 3.69m/s, 필요 비행 시간(tf): 22.40초
+Episode: 638/3000 | Episode reward:   -57.00 | Episode steps:  224 | Average reward:  1474.10 | Step Count: 442872 | Episode Q0:   192.76
+직선+원호(Arc) 궤적 총 길이: 138.17m
+비행 속력: 3.09m/s, 필요 비행 시간(tf): 44.79초
+직선+원호(Arc) 궤적 총 길이: 138.17m
+비행 속력: 3.09m/s, 필요 비행 시간(tf): 44.79초
+Episode: 639/3000 | Episode reward:  1865.66 | Episode steps:  448 | Average reward:  1463.90 | Step Count: 443320 | Episode Q0:   190.87
+직선+원호(Arc) 궤적 총 길이: 196.01m
+비행 속력: 3.84m/s, 필요 비행 시간(tf): 51.06초
+직선+원호(Arc) 궤적 총 길이: 196.01m
+비행 속력: 3.84m/s, 필요 비행 시간(tf): 51.06초
+Episode: 640/3000 | Episode reward:  1124.89 | Episode steps:  511 | Average reward:  1420.52 | Step Count: 443831 | Episode Q0:   174.81
+직선+원호(Arc) 궤적 총 길이: 197.82m
+비행 속력: 3.13m/s, 필요 비행 시간(tf): 63.11초
+직선+원호(Arc) 궤적 총 길이: 197.82m
+비행 속력: 3.13m/s, 필요 비행 시간(tf): 63.11초
+Episode: 641/3000 | Episode reward:  2287.03 | Episode steps:  632 | Average reward:  1425.45 | Step Count: 444463 | Episode Q0:   212.18
+직선+원호(Arc) 궤적 총 길이: 199.03m
+비행 속력: 3.41m/s, 필요 비행 시간(tf): 58.36초
+직선+원호(Arc) 궤적 총 길이: 199.03m
+비행 속력: 3.41m/s, 필요 비행 시간(tf): 58.36초
+Episode: 642/3000 | Episode reward:   824.83 | Episode steps:  584 | Average reward:  1407.19 | Step Count: 445047 | Episode Q0:   206.94
+직선+원호(Arc) 궤적 총 길이: 76.98m
+비행 속력: 4.12m/s, 필요 비행 시간(tf): 18.68초
+직선+원호(Arc) 궤적 총 길이: 76.98m
+비행 속력: 4.12m/s, 필요 비행 시간(tf): 18.68초
+Episode: 643/3000 | Episode reward:  -297.37 | Episode steps:  187 | Average reward:  1339.15 | Step Count: 445234 | Episode Q0:   178.46
+직선+원호(Arc) 궤적 총 길이: 187.43m
+비행 속력: 3.56m/s, 필요 비행 시간(tf): 52.59초
+직선+원호(Arc) 궤적 총 길이: 187.43m
+비행 속력: 3.56m/s, 필요 비행 시간(tf): 52.59초
+Episode: 644/3000 | Episode reward:  1976.48 | Episode steps:  526 | Average reward:  1345.91 | Step Count: 445760 | Episode Q0:   188.79
+직선+원호(Arc) 궤적 총 길이: 211.70m
+비행 속력: 3.51m/s, 필요 비행 시간(tf): 60.30초
+직선+원호(Arc) 궤적 총 길이: 211.70m
+비행 속력: 3.51m/s, 필요 비행 시간(tf): 60.30초
+Episode: 645/3000 | Episode reward:  2087.15 | Episode steps:  604 | Average reward:  1336.17 | Step Count: 446364 | Episode Q0:   192.00
+직선+원호(Arc) 궤적 총 길이: 170.35m
+비행 속력: 3.12m/s, 필요 비행 시간(tf): 54.65초
+직선+원호(Arc) 궤적 총 길이: 170.35m
+비행 속력: 3.12m/s, 필요 비행 시간(tf): 54.65초
+Episode: 646/3000 | Episode reward:  1739.48 | Episode steps:  547 | Average reward:  1286.02 | Step Count: 446911 | Episode Q0:   217.51
+직선+원호(Arc) 궤적 총 길이: 80.60m
+비행 속력: 3.67m/s, 필요 비행 시간(tf): 21.95초
+직선+원호(Arc) 궤적 총 길이: 80.60m
+비행 속력: 3.67m/s, 필요 비행 시간(tf): 21.95초
+Episode: 647/3000 | Episode reward:   -76.24 | Episode steps:  220 | Average reward:  1186.43 | Step Count: 447131 | Episode Q0:   216.32
+직선+원호(Arc) 궤적 총 길이: 104.62m
+비행 속력: 3.76m/s, 필요 비행 시간(tf): 27.80초
+직선+원호(Arc) 궤적 총 길이: 104.62m
+비행 속력: 3.76m/s, 필요 비행 시간(tf): 27.80초
+Episode: 648/3000 | Episode reward:   -72.60 | Episode steps:  278 | Average reward:  1097.86 | Step Count: 447409 | Episode Q0:   214.13
+직선+원호(Arc) 궤적 총 길이: 142.93m
+비행 속력: 3.11m/s, 필요 비행 시간(tf): 45.96초
+직선+원호(Arc) 궤적 총 길이: 142.93m
+비행 속력: 3.11m/s, 필요 비행 시간(tf): 45.96초
+Episode: 649/3000 | Episode reward:  1241.15 | Episode steps:  460 | Average reward:  1084.88 | Step Count: 447869 | Episode Q0:   226.53
+직선+원호(Arc) 궤적 총 길이: 239.87m
+비행 속력: 4.02m/s, 필요 비행 시간(tf): 59.60초
+직선+원호(Arc) 궤적 총 길이: 239.87m
+비행 속력: 4.02m/s, 필요 비행 시간(tf): 59.60초
+Episode: 650/3000 | Episode reward:   662.59 | Episode steps:  597 | Average reward:  1046.55 | Step Count: 448466 | Episode Q0:   186.86
+직선+원호(Arc) 궤적 총 길이: 173.92m
+비행 속력: 3.15m/s, 필요 비행 시간(tf): 55.22초
+직선+원호(Arc) 궤적 총 길이: 173.92m
+비행 속력: 3.15m/s, 필요 비행 시간(tf): 55.22초
+Episode: 651/3000 | Episode reward:  1395.78 | Episode steps:  553 | Average reward:  1068.39 | Step Count: 449019 | Episode Q0:   208.93
+직선+원호(Arc) 궤적 총 길이: 252.42m
+비행 속력: 3.73m/s, 필요 비행 시간(tf): 67.66초
+직선+원호(Arc) 궤적 총 길이: 252.42m
+비행 속력: 3.73m/s, 필요 비행 시간(tf): 67.66초
+Episode: 652/3000 | Episode reward:   980.74 | Episode steps:  677 | Average reward:  1076.78 | Step Count: 449696 | Episode Q0:   180.46
+직선+원호(Arc) 궤적 총 길이: 225.98m
+비행 속력: 3.92m/s, 필요 비행 시간(tf): 57.65초
+직선+원호(Arc) 궤적 총 길이: 225.98m
+비행 속력: 3.92m/s, 필요 비행 시간(tf): 57.65초
+Episode: 653/3000 | Episode reward:  1305.06 | Episode steps:  577 | Average reward:  1070.09 | Step Count: 450273 | Episode Q0:   170.61
+직선+원호(Arc) 궤적 총 길이: 265.11m
+비행 속력: 3.86m/s, 필요 비행 시간(tf): 68.70초
+직선+원호(Arc) 궤적 총 길이: 265.11m
+비행 속력: 3.86m/s, 필요 비행 시간(tf): 68.70초
+Episode: 654/3000 | Episode reward:  1378.45 | Episode steps:  687 | Average reward:  1092.19 | Step Count: 450960 | Episode Q0:   172.33
+직선+원호(Arc) 궤적 총 길이: 78.42m
+비행 속력: 3.48m/s, 필요 비행 시간(tf): 22.53초
+직선+원호(Arc) 궤적 총 길이: 78.42m
+비행 속력: 3.48m/s, 필요 비행 시간(tf): 22.53초
+Episode: 655/3000 | Episode reward:   387.70 | Episode steps:  226 | Average reward:  1064.64 | Step Count: 451186 | Episode Q0:   199.08
+직선+원호(Arc) 궤적 총 길이: 141.14m
+비행 속력: 3.62m/s, 필요 비행 시간(tf): 39.00초
+직선+원호(Arc) 궤적 총 길이: 141.14m
+비행 속력: 3.62m/s, 필요 비행 시간(tf): 39.00초
+Episode: 656/3000 | Episode reward:  1119.60 | Episode steps:  391 | Average reward:  1063.41 | Step Count: 451577 | Episode Q0:   192.63
+직선+원호(Arc) 궤적 총 길이: 228.17m
+비행 속력: 3.64m/s, 필요 비행 시간(tf): 62.63초
+직선+원호(Arc) 궤적 총 길이: 228.17m
+비행 속력: 3.64m/s, 필요 비행 시간(tf): 62.63초
+Episode: 657/3000 | Episode reward:   939.47 | Episode steps:  627 | Average reward:  1043.04 | Step Count: 452204 | Episode Q0:   194.32
+직선+원호(Arc) 궤적 총 길이: 235.98m
+비행 속력: 4.28m/s, 필요 비행 시간(tf): 55.08초
+직선+원호(Arc) 궤적 총 길이: 235.98m
+비행 속력: 4.28m/s, 필요 비행 시간(tf): 55.08초
+Episode: 658/3000 | Episode reward:  1493.02 | Episode steps:  551 | Average reward:  1015.40 | Step Count: 452755 | Episode Q0:   185.25
+직선+원호(Arc) 궤적 총 길이: 198.96m
+비행 속력: 3.29m/s, 필요 비행 시간(tf): 60.50초
+직선+원호(Arc) 궤적 총 길이: 198.96m
+비행 속력: 3.29m/s, 필요 비행 시간(tf): 60.50초
+Episode: 659/3000 | Episode reward:  1631.81 | Episode steps:  605 | Average reward:  1046.73 | Step Count: 453360 | Episode Q0:   205.41
+직선+원호(Arc) 궤적 총 길이: 240.43m
+비행 속력: 4.04m/s, 필요 비행 시간(tf): 59.46초
+직선+원호(Arc) 궤적 총 길이: 240.43m
+비행 속력: 4.04m/s, 필요 비행 시간(tf): 59.46초
+Episode: 660/3000 | Episode reward:   419.52 | Episode steps:  595 | Average reward:  1023.18 | Step Count: 453955 | Episode Q0:   159.52
+직선+원호(Arc) 궤적 총 길이: 215.40m
+비행 속력: 3.06m/s, 필요 비행 시간(tf): 70.30초
+직선+원호(Arc) 궤적 총 길이: 215.40m
+비행 속력: 3.06m/s, 필요 비행 시간(tf): 70.30초
+Episode: 661/3000 | Episode reward:  1818.44 | Episode steps:  704 | Average reward:  1026.03 | Step Count: 454659 | Episode Q0:   188.89
+직선+원호(Arc) 궤적 총 길이: 267.86m
+비행 속력: 3.37m/s, 필요 비행 시간(tf): 79.51초
+직선+원호(Arc) 궤적 총 길이: 267.86m
+비행 속력: 3.37m/s, 필요 비행 시간(tf): 79.51초
+Episode: 662/3000 | Episode reward:  1820.03 | Episode steps:  796 | Average reward:  1063.80 | Step Count: 455455 | Episode Q0:   190.03
+직선+원호(Arc) 궤적 총 길이: 216.90m
+비행 속력: 4.39m/s, 필요 비행 시간(tf): 49.40초
+직선+원호(Arc) 궤적 총 길이: 216.90m
+비행 속력: 4.39m/s, 필요 비행 시간(tf): 49.40초
+Episode: 663/3000 | Episode reward:   647.09 | Episode steps:  495 | Average reward:  1072.51 | Step Count: 455950 | Episode Q0:   188.28
+직선+원호(Arc) 궤적 총 길이: 226.55m
+비행 속력: 4.37m/s, 필요 비행 시간(tf): 51.83초
+직선+원호(Arc) 궤적 총 길이: 226.55m
+비행 속력: 4.37m/s, 필요 비행 시간(tf): 51.83초
+Episode: 664/3000 | Episode reward:   249.22 | Episode steps:  519 | Average reward:  1045.84 | Step Count: 456469 | Episode Q0:   188.67
+직선+원호(Arc) 궤적 총 길이: 216.41m
+비행 속력: 3.41m/s, 필요 비행 시간(tf): 63.44초
+직선+원호(Arc) 궤적 총 길이: 216.41m
+비행 속력: 3.41m/s, 필요 비행 시간(tf): 63.44초
+Episode: 665/3000 | Episode reward:  1307.34 | Episode steps:  635 | Average reward:  1066.34 | Step Count: 457104 | Episode Q0:   150.15
+직선+원호(Arc) 궤적 총 길이: 180.19m
+비행 속력: 4.03m/s, 필요 비행 시간(tf): 44.72초
+직선+원호(Arc) 궤적 총 길이: 180.19m
+비행 속력: 4.03m/s, 필요 비행 시간(tf): 44.72초
+Episode: 666/3000 | Episode reward:  1281.95 | Episode steps:  448 | Average reward:  1072.69 | Step Count: 457552 | Episode Q0:   170.78
+직선+원호(Arc) 궤적 총 길이: 199.41m
+비행 속력: 3.54m/s, 필요 비행 시간(tf): 56.36초
+직선+원호(Arc) 궤적 총 길이: 199.41m
+비행 속력: 3.54m/s, 필요 비행 시간(tf): 56.36초
+Episode: 667/3000 | Episode reward:   612.04 | Episode steps:  564 | Average reward:  1058.82 | Step Count: 458116 | Episode Q0:   153.26
+직선+원호(Arc) 궤적 총 길이: 94.87m
+비행 속력: 3.28m/s, 필요 비행 시간(tf): 28.91초
+직선+원호(Arc) 궤적 총 길이: 94.87m
+비행 속력: 3.28m/s, 필요 비행 시간(tf): 28.91초
+Episode: 668/3000 | Episode reward:   670.35 | Episode steps:  290 | Average reward:  1054.48 | Step Count: 458406 | Episode Q0:   198.56
+직선+원호(Arc) 궤적 총 길이: 181.65m
+비행 속력: 3.59m/s, 필요 비행 시간(tf): 50.58초
+직선+원호(Arc) 궤적 총 길이: 181.65m
+비행 속력: 3.59m/s, 필요 비행 시간(tf): 50.58초
+Episode: 669/3000 | Episode reward:   814.04 | Episode steps:  506 | Average reward:  1059.73 | Step Count: 458912 | Episode Q0:   140.15
+직선+원호(Arc) 궤적 총 길이: 261.43m
+비행 속력: 3.28m/s, 필요 비행 시간(tf): 79.61초
+직선+원호(Arc) 궤적 총 길이: 261.43m
+비행 속력: 3.28m/s, 필요 비행 시간(tf): 79.61초
+Episode: 670/3000 | Episode reward:  2469.99 | Episode steps:  797 | Average reward:  1073.10 | Step Count: 459709 | Episode Q0:   168.49
+직선+원호(Arc) 궤적 총 길이: 182.11m
+비행 속력: 3.26m/s, 필요 비행 시간(tf): 55.88초
+직선+원호(Arc) 궤적 총 길이: 182.11m
+비행 속력: 3.26m/s, 필요 비행 시간(tf): 55.88초
+Episode: 671/3000 | Episode reward:  1495.46 | Episode steps:  559 | Average reward:  1092.65 | Step Count: 460268 | Episode Q0:   168.34
+직선+원호(Arc) 궤적 총 길이: 95.80m
+비행 속력: 4.09m/s, 필요 비행 시간(tf): 23.42초
+직선+원호(Arc) 궤적 총 길이: 95.80m
+비행 속력: 4.09m/s, 필요 비행 시간(tf): 23.42초
+Episode: 672/3000 | Episode reward:   -60.36 | Episode steps:  235 | Average reward:  1113.32 | Step Count: 460503 | Episode Q0:   144.38
+직선+원호(Arc) 궤적 총 길이: 87.54m
+비행 속력: 3.30m/s, 필요 비행 시간(tf): 26.51초
+직선+원호(Arc) 궤적 총 길이: 87.54m
+비행 속력: 3.30m/s, 필요 비행 시간(tf): 26.51초
+Episode: 673/3000 | Episode reward:   448.70 | Episode steps:  266 | Average reward:  1117.38 | Step Count: 460769 | Episode Q0:   180.53
+직선+원호(Arc) 궤적 총 길이: 191.51m
+비행 속력: 3.13m/s, 필요 비행 시간(tf): 61.09초
+직선+원호(Arc) 궤적 총 길이: 191.51m
+비행 속력: 3.13m/s, 필요 비행 시간(tf): 61.09초
+Episode: 674/3000 | Episode reward:  3117.75 | Episode steps:  611 | Average reward:  1146.99 | Step Count: 461380 | Episode Q0:   192.30
+직선+원호(Arc) 궤적 총 길이: 145.08m
+비행 속력: 3.25m/s, 필요 비행 시간(tf): 44.61초
+직선+원호(Arc) 궤적 총 길이: 145.08m
+비행 속력: 3.25m/s, 필요 비행 시간(tf): 44.61초
+Episode: 675/3000 | Episode reward:   855.87 | Episode steps:  447 | Average reward:  1126.55 | Step Count: 461827 | Episode Q0:   218.16
+직선+원호(Arc) 궤적 총 길이: 192.05m
+비행 속력: 4.21m/s, 필요 비행 시간(tf): 45.67초
+직선+원호(Arc) 궤적 총 길이: 192.05m
+비행 속력: 4.21m/s, 필요 비행 시간(tf): 45.67초
+Episode: 676/3000 | Episode reward:  1024.05 | Episode steps:  457 | Average reward:  1116.54 | Step Count: 462284 | Episode Q0:   198.67
+직선+원호(Arc) 궤적 총 길이: 162.95m
+비행 속력: 3.47m/s, 필요 비행 시간(tf): 46.97초
+직선+원호(Arc) 궤적 총 길이: 162.95m
+비행 속력: 3.47m/s, 필요 비행 시간(tf): 46.97초
+Episode: 677/3000 | Episode reward:  2285.46 | Episode steps:  470 | Average reward:  1154.10 | Step Count: 462754 | Episode Q0:   205.71
+직선+원호(Arc) 궤적 총 길이: 167.99m
+비행 속력: 3.25m/s, 필요 비행 시간(tf): 51.68초
+직선+원호(Arc) 궤적 총 길이: 167.99m
+비행 속력: 3.25m/s, 필요 비행 시간(tf): 51.68초
+Episode: 678/3000 | Episode reward:   952.92 | Episode steps:  517 | Average reward:  1154.25 | Step Count: 463271 | Episode Q0:   185.93
+직선+원호(Arc) 궤적 총 길이: 175.19m
+비행 속력: 3.20m/s, 필요 비행 시간(tf): 54.69초
+직선+원호(Arc) 궤적 총 길이: 175.19m
+비행 속력: 3.20m/s, 필요 비행 시간(tf): 54.69초
+Episode: 679/3000 | Episode reward:   926.69 | Episode steps:  547 | Average reward:  1125.99 | Step Count: 463818 | Episode Q0:   206.68
+직선+원호(Arc) 궤적 총 길이: 98.78m
+비행 속력: 4.06m/s, 필요 비행 시간(tf): 24.35초
+직선+원호(Arc) 궤적 총 길이: 98.78m
+비행 속력: 4.06m/s, 필요 비행 시간(tf): 24.35초
+Episode: 680/3000 | Episode reward:    39.70 | Episode steps:  244 | Average reward:  1085.33 | Step Count: 464062 | Episode Q0:   181.79
+직선+원호(Arc) 궤적 총 길이: 268.78m
+비행 속력: 4.15m/s, 필요 비행 시간(tf): 64.80초
+직선+원호(Arc) 궤적 총 길이: 268.78m
+비행 속력: 4.15m/s, 필요 비행 시간(tf): 64.80초
+Episode: 681/3000 | Episode reward:  1099.86 | Episode steps:  649 | Average reward:  1069.85 | Step Count: 464711 | Episode Q0:   169.96
+직선+원호(Arc) 궤적 총 길이: 145.18m
+비행 속력: 3.94m/s, 필요 비행 시간(tf): 36.86초
+직선+원호(Arc) 궤적 총 길이: 145.18m
+비행 속력: 3.94m/s, 필요 비행 시간(tf): 36.86초
+Episode: 682/3000 | Episode reward:   516.60 | Episode steps:  369 | Average reward:  1083.28 | Step Count: 465080 | Episode Q0:   173.62
+직선+원호(Arc) 궤적 총 길이: 241.03m
+비행 속력: 3.63m/s, 필요 비행 시간(tf): 66.44초
+직선+원호(Arc) 궤적 총 길이: 241.03m
+비행 속력: 3.63m/s, 필요 비행 시간(tf): 66.44초
+Episode: 683/3000 | Episode reward:   961.37 | Episode steps:  665 | Average reward:  1086.12 | Step Count: 465745 | Episode Q0:   153.91
+직선+원호(Arc) 궤적 총 길이: 279.30m
+비행 속력: 3.73m/s, 필요 비행 시간(tf): 74.89초
+직선+원호(Arc) 궤적 총 길이: 279.30m
+비행 속력: 3.73m/s, 필요 비행 시간(tf): 74.89초
+Episode: 684/3000 | Episode reward:  1396.74 | Episode steps:  749 | Average reward:  1090.18 | Step Count: 466494 | Episode Q0:   136.09
+직선+원호(Arc) 궤적 총 길이: 72.69m
+비행 속력: 3.72m/s, 필요 비행 시간(tf): 19.53초
+직선+원호(Arc) 궤적 총 길이: 72.69m
+비행 속력: 3.72m/s, 필요 비행 시간(tf): 19.53초
+Episode: 685/3000 | Episode reward:  -216.70 | Episode steps:  196 | Average reward:  1058.94 | Step Count: 466690 | Episode Q0:   135.58
+직선+원호(Arc) 궤적 총 길이: 66.43m
+비행 속력: 3.03m/s, 필요 비행 시간(tf): 21.90초
+직선+원호(Arc) 궤적 총 길이: 66.43m
+비행 속력: 3.03m/s, 필요 비행 시간(tf): 21.90초
+Episode: 686/3000 | Episode reward:    23.79 | Episode steps:  220 | Average reward:  1036.58 | Step Count: 466910 | Episode Q0:   159.53
+직선+원호(Arc) 궤적 총 길이: 82.78m
+비행 속력: 4.27m/s, 필요 비행 시간(tf): 19.41초
+직선+원호(Arc) 궤적 총 길이: 82.78m
+비행 속력: 4.27m/s, 필요 비행 시간(tf): 19.41초
+Episode: 687/3000 | Episode reward:   -11.14 | Episode steps:  195 | Average reward:  1018.09 | Step Count: 467105 | Episode Q0:   134.09
+직선+원호(Arc) 궤적 총 길이: 74.48m
+비행 속력: 3.54m/s, 필요 비행 시간(tf): 21.02초
+직선+원호(Arc) 궤적 총 길이: 74.48m
+비행 속력: 3.54m/s, 필요 비행 시간(tf): 21.02초
+Episode: 688/3000 | Episode reward:  -133.46 | Episode steps:  211 | Average reward:  1016.56 | Step Count: 467316 | Episode Q0:   141.50
+직선+원호(Arc) 궤적 총 길이: 222.00m
+비행 속력: 3.22m/s, 필요 비행 시간(tf): 68.84초
+직선+원호(Arc) 궤적 총 길이: 222.00m
+비행 속력: 3.22m/s, 필요 비행 시간(tf): 68.84초
+Episode: 689/3000 | Episode reward:  1927.72 | Episode steps:  689 | Average reward:  1017.80 | Step Count: 468005 | Episode Q0:   121.07
+직선+원호(Arc) 궤적 총 길이: 218.63m
+비행 속력: 3.61m/s, 필요 비행 시간(tf): 60.59초
+직선+원호(Arc) 궤적 총 길이: 218.63m
+비행 속력: 3.61m/s, 필요 비행 시간(tf): 60.59초
+Episode: 690/3000 | Episode reward:   409.15 | Episode steps:  606 | Average reward:  1003.49 | Step Count: 468611 | Episode Q0:   135.95
+직선+원호(Arc) 궤적 총 길이: 193.22m
+비행 속력: 3.64m/s, 필요 비행 시간(tf): 53.07초
+직선+원호(Arc) 궤적 총 길이: 193.22m
+비행 속력: 3.64m/s, 필요 비행 시간(tf): 53.07초
+Episode: 691/3000 | Episode reward:  1798.54 | Episode steps:  531 | Average reward:   993.72 | Step Count: 469142 | Episode Q0:   144.94
+직선+원호(Arc) 궤적 총 길이: 91.47m
+비행 속력: 3.57m/s, 필요 비행 시간(tf): 25.63초
+직선+원호(Arc) 궤적 총 길이: 91.47m
+비행 속력: 3.57m/s, 필요 비행 시간(tf): 25.63초
+Episode: 692/3000 | Episode reward:   433.36 | Episode steps:  257 | Average reward:   985.89 | Step Count: 469399 | Episode Q0:   166.47
+직선+원호(Arc) 궤적 총 길이: 210.49m
+비행 속력: 3.10m/s, 필요 비행 시간(tf): 67.86초
+직선+원호(Arc) 궤적 총 길이: 210.49m
+비행 속력: 3.10m/s, 필요 비행 시간(tf): 67.86초
+Episode: 693/3000 | Episode reward:  1346.56 | Episode steps:  679 | Average reward:  1018.77 | Step Count: 470078 | Episode Q0:   146.85
+직선+원호(Arc) 궤적 총 길이: 270.82m
+비행 속력: 3.47m/s, 필요 비행 시간(tf): 78.05초
+직선+원호(Arc) 궤적 총 길이: 270.82m
+비행 속력: 3.47m/s, 필요 비행 시간(tf): 78.05초
+Episode: 694/3000 | Episode reward:  1729.53 | Episode steps:  781 | Average reward:  1013.83 | Step Count: 470859 | Episode Q0:   148.70
+직선+원호(Arc) 궤적 총 길이: 275.23m
+비행 속력: 3.80m/s, 필요 비행 시간(tf): 72.51초
+직선+원호(Arc) 궤적 총 길이: 275.23m
+비행 속력: 3.80m/s, 필요 비행 시간(tf): 72.51초
+Episode: 695/3000 | Episode reward:  1050.62 | Episode steps:  726 | Average reward:   993.10 | Step Count: 471585 | Episode Q0:   129.21
+직선+원호(Arc) 궤적 총 길이: 238.05m
+비행 속력: 3.02m/s, 필요 비행 시간(tf): 78.79초
+직선+원호(Arc) 궤적 총 길이: 238.05m
+비행 속력: 3.02m/s, 필요 비행 시간(tf): 78.79초
+Episode: 696/3000 | Episode reward:  2806.80 | Episode steps:  788 | Average reward:  1014.44 | Step Count: 472373 | Episode Q0:   149.50
+직선+원호(Arc) 궤적 총 길이: 238.66m
+비행 속력: 4.44m/s, 필요 비행 시간(tf): 53.70초
+직선+원호(Arc) 궤적 총 길이: 238.66m
+비행 속력: 4.44m/s, 필요 비행 시간(tf): 53.70초
+Episode: 697/3000 | Episode reward:    93.62 | Episode steps:  538 | Average reward:  1017.84 | Step Count: 472911 | Episode Q0:   126.76
+직선+원호(Arc) 궤적 총 길이: 87.89m
+비행 속력: 4.30m/s, 필요 비행 시간(tf): 20.46초
+직선+원호(Arc) 궤적 총 길이: 87.89m
+비행 속력: 4.30m/s, 필요 비행 시간(tf): 20.46초
+Episode: 698/3000 | Episode reward:  -246.73 | Episode steps:  205 | Average reward:  1014.36 | Step Count: 473116 | Episode Q0:   130.80
+직선+원호(Arc) 궤적 총 길이: 61.52m
+비행 속력: 3.17m/s, 필요 비행 시간(tf): 19.40초
+직선+원호(Arc) 궤적 총 길이: 61.52m
+비행 속력: 3.17m/s, 필요 비행 시간(tf): 19.40초
+Episode: 699/3000 | Episode reward:   -42.70 | Episode steps:  195 | Average reward:   988.68 | Step Count: 473311 | Episode Q0:   135.92
+직선+원호(Arc) 궤적 총 길이: 155.32m
+비행 속력: 3.91m/s, 필요 비행 시간(tf): 39.70초
+직선+원호(Arc) 궤적 총 길이: 155.32m
+비행 속력: 3.91m/s, 필요 비행 시간(tf): 39.70초
+Episode: 700/3000 | Episode reward:   837.26 | Episode steps:  398 | Average reward:   992.17 | Step Count: 473709 | Episode Q0:   131.11
+직선+원호(Arc) 궤적 총 길이: 195.55m
+비행 속력: 4.20m/s, 필요 비행 시간(tf): 46.58초
+직선+원호(Arc) 궤적 총 길이: 195.55m
+비행 속력: 4.20m/s, 필요 비행 시간(tf): 46.58초
+Episode: 701/3000 | Episode reward:  -150.75 | Episode steps:  466 | Average reward:   961.24 | Step Count: 474175 | Episode Q0:   101.54
+직선+원호(Arc) 궤적 총 길이: 163.03m
+비행 속력: 3.96m/s, 필요 비행 시간(tf): 41.15초
+직선+원호(Arc) 궤적 총 길이: 163.03m
+비행 속력: 3.96m/s, 필요 비행 시간(tf): 41.15초
+Episode: 702/3000 | Episode reward:   245.38 | Episode steps:  412 | Average reward:   946.54 | Step Count: 474587 | Episode Q0:    93.36
+직선+원호(Arc) 궤적 총 길이: 190.75m
+비행 속력: 4.12m/s, 필요 비행 시간(tf): 46.26초
+직선+원호(Arc) 궤적 총 길이: 190.75m
+비행 속력: 4.12m/s, 필요 비행 시간(tf): 46.26초
+Episode: 703/3000 | Episode reward:   907.54 | Episode steps:  463 | Average reward:   938.59 | Step Count: 475050 | Episode Q0:   114.19
+직선+원호(Arc) 궤적 총 길이: 295.73m
+비행 속력: 4.39m/s, 필요 비행 시간(tf): 67.40초
+직선+원호(Arc) 궤적 총 길이: 295.73m
+비행 속력: 4.39m/s, 필요 비행 시간(tf): 67.40초
+Episode: 704/3000 | Episode reward:   772.08 | Episode steps:  675 | Average reward:   926.46 | Step Count: 475725 | Episode Q0:    81.61
+직선+원호(Arc) 궤적 총 길이: 74.50m
+비행 속력: 4.17m/s, 필요 비행 시간(tf): 17.87초
+직선+원호(Arc) 궤적 총 길이: 74.50m
+비행 속력: 4.17m/s, 필요 비행 시간(tf): 17.87초
+Episode: 705/3000 | Episode reward: -1843.78 | Episode steps:  179 | Average reward:   881.83 | Step Count: 475904 | Episode Q0:    86.56
+직선+원호(Arc) 궤적 총 길이: 174.03m
+비행 속력: 3.40m/s, 필요 비행 시간(tf): 51.14초
+직선+원호(Arc) 궤적 총 길이: 174.03m
+비행 속력: 3.40m/s, 필요 비행 시간(tf): 51.14초
+Episode: 706/3000 | Episode reward:   803.44 | Episode steps:  512 | Average reward:   875.51 | Step Count: 476416 | Episode Q0:   110.17
+직선+원호(Arc) 궤적 총 길이: 135.96m
+비행 속력: 4.24m/s, 필요 비행 시간(tf): 32.07초
+직선+원호(Arc) 궤적 총 길이: 135.96m
+비행 속력: 4.24m/s, 필요 비행 시간(tf): 32.07초
+Episode: 707/3000 | Episode reward:  1268.99 | Episode steps:  321 | Average reward:   882.10 | Step Count: 476737 | Episode Q0:    64.88
+직선+원호(Arc) 궤적 총 길이: 292.53m
+비행 속력: 4.09m/s, 필요 비행 시간(tf): 71.46초
+직선+원호(Arc) 궤적 총 길이: 292.53m
+비행 속력: 4.09m/s, 필요 비행 시간(tf): 71.46초
+Episode: 708/3000 | Episode reward:  1672.66 | Episode steps:  715 | Average reward:   885.69 | Step Count: 477452 | Episode Q0:    68.02
+직선+원호(Arc) 궤적 총 길이: 166.01m
+비행 속력: 4.44m/s, 필요 비행 시간(tf): 37.43초
+직선+원호(Arc) 궤적 총 길이: 166.01m
+비행 속력: 4.44m/s, 필요 비행 시간(tf): 37.43초
+Episode: 709/3000 | Episode reward:  -260.26 | Episode steps:  375 | Average reward:   847.85 | Step Count: 477827 | Episode Q0:   102.18
+직선+원호(Arc) 궤적 총 길이: 212.97m
+비행 속력: 3.27m/s, 필요 비행 시간(tf): 65.06초
+직선+원호(Arc) 궤적 총 길이: 212.97m
+비행 속력: 3.27m/s, 필요 비행 시간(tf): 65.06초
+Episode: 710/3000 | Episode reward:  1412.19 | Episode steps:  651 | Average reward:   867.70 | Step Count: 478478 | Episode Q0:   133.05
+직선+원호(Arc) 궤적 총 길이: 284.19m
+비행 속력: 4.11m/s, 필요 비행 시간(tf): 69.18초
+직선+원호(Arc) 궤적 총 길이: 284.19m
+비행 속력: 4.11m/s, 필요 비행 시간(tf): 69.18초
+Episode: 711/3000 | Episode reward:  1605.14 | Episode steps:  692 | Average reward:   863.43 | Step Count: 479170 | Episode Q0:    95.64
+직선+원호(Arc) 궤적 총 길이: 92.08m
+비행 속력: 3.09m/s, 필요 비행 시간(tf): 29.84초
+직선+원호(Arc) 궤적 총 길이: 92.08m
+비행 속력: 3.09m/s, 필요 비행 시간(tf): 29.84초
+Episode: 712/3000 | Episode reward:   643.57 | Episode steps:  299 | Average reward:   839.91 | Step Count: 479469 | Episode Q0:   140.76
+직선+원호(Arc) 궤적 총 길이: 77.67m
+비행 속력: 4.13m/s, 필요 비행 시간(tf): 18.82초
+직선+원호(Arc) 궤적 총 길이: 77.67m
+비행 속력: 4.13m/s, 필요 비행 시간(tf): 18.82초
+Episode: 713/3000 | Episode reward:    59.96 | Episode steps:  189 | Average reward:   828.16 | Step Count: 479658 | Episode Q0:   131.94
+직선+원호(Arc) 궤적 총 길이: 218.38m
+비행 속력: 3.95m/s, 필요 비행 시간(tf): 55.29초
+직선+원호(Arc) 궤적 총 길이: 218.38m
+비행 속력: 3.95m/s, 필요 비행 시간(tf): 55.29초
+Episode: 714/3000 | Episode reward:   967.38 | Episode steps:  553 | Average reward:   842.53 | Step Count: 480211 | Episode Q0:   120.63
+직선+원호(Arc) 궤적 총 길이: 259.81m
+비행 속력: 4.14m/s, 필요 비행 시간(tf): 62.70초
+직선+원호(Arc) 궤적 총 길이: 259.81m
+비행 속력: 4.14m/s, 필요 비행 시간(tf): 62.70초
+Episode: 715/3000 | Episode reward:   551.21 | Episode steps:  627 | Average reward:   827.40 | Step Count: 480838 | Episode Q0:   114.38
+직선+원호(Arc) 궤적 총 길이: 309.32m
+비행 속력: 4.02m/s, 필요 비행 시간(tf): 77.00초
+직선+원호(Arc) 궤적 총 길이: 309.32m
+비행 속력: 4.02m/s, 필요 비행 시간(tf): 77.00초
+Episode: 716/3000 | Episode reward:  1324.98 | Episode steps:  770 | Average reward:   828.26 | Step Count: 481608 | Episode Q0:   118.49
+직선+원호(Arc) 궤적 총 길이: 71.90m
+비행 속력: 3.47m/s, 필요 비행 시간(tf): 20.75초
+직선+원호(Arc) 궤적 총 길이: 71.90m
+비행 속력: 3.47m/s, 필요 비행 시간(tf): 20.75초
+Episode: 717/3000 | Episode reward:  -203.02 | Episode steps:  208 | Average reward:   811.96 | Step Count: 481816 | Episode Q0:   133.89
+직선+원호(Arc) 궤적 총 길이: 202.21m
+비행 속력: 3.82m/s, 필요 비행 시간(tf): 52.99초
+직선+원호(Arc) 궤적 총 길이: 202.21m
+비행 속력: 3.82m/s, 필요 비행 시간(tf): 52.99초
+Episode: 718/3000 | Episode reward:  1332.39 | Episode steps:  530 | Average reward:   825.20 | Step Count: 482346 | Episode Q0:   144.59
+직선+원호(Arc) 궤적 총 길이: 184.34m
+비행 속력: 3.21m/s, 필요 비행 시간(tf): 57.51초
+직선+원호(Arc) 궤적 총 길이: 184.34m
+비행 속력: 3.21m/s, 필요 비행 시간(tf): 57.51초
+Episode: 719/3000 | Episode reward:  1802.91 | Episode steps:  576 | Average reward:   844.98 | Step Count: 482922 | Episode Q0:   144.76
+직선+원호(Arc) 궤적 총 길이: 77.03m
+비행 속력: 3.27m/s, 필요 비행 시간(tf): 23.59초
+직선+원호(Arc) 궤적 총 길이: 77.03m
+비행 속력: 3.27m/s, 필요 비행 시간(tf): 23.59초
+Episode: 720/3000 | Episode reward:   -19.49 | Episode steps:  236 | Average reward:   795.19 | Step Count: 483158 | Episode Q0:   143.36
+직선+원호(Arc) 궤적 총 길이: 299.19m
+비행 속력: 4.21m/s, 필요 비행 시간(tf): 71.07초
+직선+원호(Arc) 궤적 총 길이: 299.19m
+비행 속력: 4.21m/s, 필요 비행 시간(tf): 71.07초
+Episode: 721/3000 | Episode reward:  2136.25 | Episode steps:  711 | Average reward:   808.01 | Step Count: 483869 | Episode Q0:   138.92
+직선+원호(Arc) 궤적 총 길이: 175.71m
+비행 속력: 4.33m/s, 필요 비행 시간(tf): 40.56초
+직선+원호(Arc) 궤적 총 길이: 175.71m
+비행 속력: 4.33m/s, 필요 비행 시간(tf): 40.56초
+Episode: 722/3000 | Episode reward:   432.31 | Episode steps:  406 | Average reward:   817.86 | Step Count: 484275 | Episode Q0:   132.84
+직선+원호(Arc) 궤적 총 길이: 192.95m
+비행 속력: 3.70m/s, 필요 비행 시간(tf): 52.09초
+직선+원호(Arc) 궤적 총 길이: 192.95m
+비행 속력: 3.70m/s, 필요 비행 시간(tf): 52.09초
+Episode: 723/3000 | Episode reward:   840.54 | Episode steps:  521 | Average reward:   825.70 | Step Count: 484796 | Episode Q0:   149.46
+직선+원호(Arc) 궤적 총 길이: 196.61m
+비행 속력: 3.33m/s, 필요 비행 시간(tf): 59.01초
+직선+원호(Arc) 궤적 총 길이: 196.61m
+비행 속력: 3.33m/s, 필요 비행 시간(tf): 59.01초
+Episode: 724/3000 | Episode reward:  1141.35 | Episode steps:  591 | Average reward:   786.17 | Step Count: 485387 | Episode Q0:   157.57
+직선+원호(Arc) 궤적 총 길이: 110.71m
+비행 속력: 3.19m/s, 필요 비행 시간(tf): 34.66초
+직선+원호(Arc) 궤적 총 길이: 110.71m
+비행 속력: 3.19m/s, 필요 비행 시간(tf): 34.66초
+Episode: 725/3000 | Episode reward:   972.63 | Episode steps:  347 | Average reward:   788.50 | Step Count: 485734 | Episode Q0:   160.62
+직선+원호(Arc) 궤적 총 길이: 247.50m
+비행 속력: 3.30m/s, 필요 비행 시간(tf): 75.10초
+직선+원호(Arc) 궤적 총 길이: 247.50m
+비행 속력: 3.30m/s, 필요 비행 시간(tf): 75.10초
+Episode: 726/3000 | Episode reward:  2161.58 | Episode steps:  751 | Average reward:   811.25 | Step Count: 486485 | Episode Q0:   168.02
+직선+원호(Arc) 궤적 총 길이: 198.76m
+비행 속력: 4.44m/s, 필요 비행 시간(tf): 44.82초
+직선+원호(Arc) 궤적 총 길이: 198.76m
+비행 속력: 4.44m/s, 필요 비행 시간(tf): 44.82초
+Episode: 727/3000 | Episode reward:  -154.17 | Episode steps:  449 | Average reward:   762.46 | Step Count: 486934 | Episode Q0:   148.37
+직선+원호(Arc) 궤적 총 길이: 303.46m
+비행 속력: 3.61m/s, 필요 비행 시간(tf): 84.02초
+직선+원호(Arc) 궤적 총 길이: 303.46m
+비행 속력: 3.61m/s, 필요 비행 시간(tf): 84.02초
+Episode: 728/3000 | Episode reward:  2079.97 | Episode steps:  841 | Average reward:   785.00 | Step Count: 487775 | Episode Q0:   166.36
+직선+원호(Arc) 궤적 총 길이: 206.71m
+비행 속력: 3.75m/s, 필요 비행 시간(tf): 55.06초
+직선+원호(Arc) 궤적 총 길이: 206.71m
+비행 속력: 3.75m/s, 필요 비행 시간(tf): 55.06초

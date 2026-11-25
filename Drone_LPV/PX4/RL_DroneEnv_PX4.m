@@ -44,6 +44,12 @@ classdef RL_DroneEnv_PX4 < rl.env.MATLABEnvironment
         randomize_init_speed = true; % true 시 50% 확률로 정지 출발(v0=0) 에피소드 포함
         randomize_delay      = true; % true 시 통신 지연을 0.032~0.080s (8~20 스텝 @250Hz) 무작위화
         delay_steps_range    = [8, 20];
+        randomize_thrust_exp = true; % true 시 Gazebo 추력 곡선 지수를 [1.75, 2.05] 범위에서 무작위화
+        thrust_exp_range     = [1.75, 2.05];
+        randomize_att_loop   = true; % true 시 자세 루프 P 게인([3.0, 5.0]) 및 tau_rate([0.03, 0.07]) 무작위화
+        mc_att_p_range       = [3.0, 5.0];
+        tau_rate_range       = [0.03, 0.07];
+        circle_ep_prob       = 0.30; % 30% 확률로 원 궤적(직선->원 2바퀴->직선) 에피소드 포함
         speed_range          = [2.5, 5.5];
         randomize_path       = true;
         max_kappa            = 0.25;
@@ -81,7 +87,8 @@ classdef RL_DroneEnv_PX4 < rl.env.MATLABEnvironment
             cfg.Ixx             = 0.021667;
             cfg.Iyy             = 0.021667;
             cfg.Izz             = 0.040000;
-            cfg.MPC_THR_HOVER   = 0.73; % 실측 호버 추력 0.73 (제어기 & 가상 기체 동시 반영)
+            cfg.MPC_THR_HOVER   = 0.73; % 실측 호버 추력 0.73 (제어기 sqrt 역보정 & Gazebo 제곱 추력 플랜트 정합)
+            cfg.thrust_exp      = 2.0;  % Gazebo THR_MDL_FAC=0 추력 지수 기본값 (학습 시 [1.75, 2.05] 무작위화)
             cfg.f_max_per_rotor = 8.60;
             cfg.km_yaw          = 0.05;
             cfg.tau_up          = 0.0125;
@@ -181,7 +188,8 @@ classdef RL_DroneEnv_PX4 < rl.env.MATLABEnvironment
 
             this.current_step = this.current_step + 1;
 
-            % 3. 새로운 관측치 수집: Actor는 실제 Gazebo와 동일하게 EKF2 추정치(p_est, v_est)만 관측
+            % 3. 새로운 관측치 수집: ChoeJae PX4/run_px4_mission.m (203행) 과 동일한 11차원 World(NED) 좌표계
+            %    [e_x; e_y; e_z; v_x; v_y; v_z; phi; theta; v_des; kappa_now; kappa_spatial]
             state      = this.drone_px4.GetState();
             v_des      = this.cfg.target_speed;
             dt_spatial = this.lookahead_L / max(v_des, 0.5);
@@ -285,12 +293,42 @@ classdef RL_DroneEnv_PX4 < rl.env.MATLABEnvironment
                 this.cfg.delay_steps = 10; % 기본 0.04s
             end
 
+            % Gazebo 추력 곡선 지수 및 자세 루프 도메인 무작위화
+            if this.randomize_thrust_exp
+                this.cfg.thrust_exp = this.thrust_exp_range(1) + ...
+                    (this.thrust_exp_range(2) - this.thrust_exp_range(1)) * rand();
+            else
+                this.cfg.thrust_exp = 2.0;
+            end
+            if this.randomize_att_loop
+                mc_p = this.mc_att_p_range(1) + (this.mc_att_p_range(2) - this.mc_att_p_range(1)) * rand();
+                this.cfg.MC_ROLL_P  = mc_p;
+                this.cfg.MC_PITCH_P = mc_p;
+                this.cfg.tau_rate   = this.tau_rate_range(1) + ...
+                    (this.tau_rate_range(2) - this.tau_rate_range(1)) * rand();
+            else
+                this.cfg.MC_ROLL_P  = 4.0;
+                this.cfg.MC_PITCH_P = 4.0;
+                this.cfg.tau_rate   = 0.04;
+            end
+
             v_now = this.cfg.target_speed;
             phys_kappa_limit = (9.81 * tand(this.cfg.max_angle_deg)) / max(v_now^2, 1.0);
             eff_max_kappa    = min(this.max_kappa, phys_kappa_limit);
 
             if this.randomize_path
-                [seg_r, seg_theta, seg_z] = pathGen(true, eff_max_kappa, true);
+                if rand() < this.circle_ep_prob
+                    k_min_c = min(0.08, 0.5 * eff_max_kappa);
+                    k_c     = k_min_c + (eff_max_kappa - k_min_c) * rand();
+                    R_c     = 1.0 / max(k_c, 0.04);
+                    dir_c   = 1; if rand() < 0.5, dir_c = -1; end
+                    L_in    = 15.0 + 15.0 * rand();
+                    seg_r     = [0,    dir_c * R_c,  0];
+                    seg_theta = [L_in, 4*pi,         15.0];
+                    seg_z     = [-6.0, -6.0,        -6.0];
+                else
+                    [seg_r, seg_theta, seg_z] = pathGen(true, eff_max_kappa, true);
+                end
             else
                 [seg_r, seg_theta, seg_z] = pathGen(false);
             end
@@ -324,7 +362,7 @@ classdef RL_DroneEnv_PX4 < rl.env.MATLABEnvironment
             this.last_p_est    = this.drone_px4.r;
             this.last_v_est    = this.drone_px4.dr;
 
-            % 초기 관측치 계산 (11x1)
+            % 초기 관측치 계산 (11x1, ChoeJae World NED 좌표계 일치)
             state      = this.drone_px4.GetState();
             v_des      = this.cfg.target_speed;
             dt_spatial = this.lookahead_L / max(v_des, 0.5);
