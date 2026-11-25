@@ -1,7 +1,13 @@
 function replot_px4_result(metaFiles, ulgFiles, varargin)
 %REPLOT_PX4_RESULT  저장된 비행 기록(px4_run_*.mat)과 ULog(.ulg)로 결과 그래프·Summary 를 다시 만든다.
 %
+%  입력 파일 두 종류
+%   1) 결과 파일 DroneSimResult_*.mat (log_data + cfg): ULog 없이 그대로 다시 그림
+%   2) 비행 기록 px4_run_*.mat (meta): ULog 를 찾아 log_data 를 새로 만든 뒤 그림
+%  파일 이름만 넣어도 됨 (예: 'DroneSimResult_20261125_155529.mat') -> PX4/results 아래 전체에서 찾음
+%
 %  사용법
+%   replot_px4_result('DroneSimResult_20261125_155529.mat')   % 결과 파일 이름만 복사·붙여넣기
 %   replot_px4_result                                  % 파일 선택 창 (여러 개 선택 가능)
 %   replot_px4_result('results/px4_run_20261125_123001_MATLAB.mat')
 %   replot_px4_result('results/px4_run_20261125_15*.mat')          % 와일드카드: 해당 파일 전부
@@ -26,12 +32,14 @@ p = inputParser;
 p.addParameter('ulogRoot', fullfile(getenv('HOME'), 'PX4-Autopilot', 'build', 'px4_sitl_default', 'rootfs', 'fs', 'log'));
 p.addParameter('saveRoot', fullfile(here, 'results', 'plots', 'replot'));
 p.addParameter('closeFigs', []);          % [] 이면 2개 이상일 때 그래프 저장 후 창 닫음
+p.addParameter('save', true);             % false: 그래프만 띄우고 저장하지 않음
 p.parse(varargin{:});
 opt = p.Results;
 
 %% 비행 기록 목록
 if nargin < 1 || isempty(metaFiles)
-    [f, d] = uigetfile(fullfile(here, 'results', 'px4_run_*.mat'), '비행 기록(px4_run_*.mat) 선택', 'MultiSelect', 'on');
+    [f, d] = uigetfile({'px4_run_*.mat;DroneSimResult_*.mat', '비행 기록 / 결과 파일'}, '파일 선택', ...
+        fullfile(here, 'results'), 'MultiSelect', 'on');
     if isequal(f, 0), disp('선택 취소'); return; end
     metaFiles = fullfile(d, cellstr(f));
 end
@@ -56,7 +64,23 @@ for i = 1:numel(metaFiles)
     [~, mname] = fileparts(mf);
     fprintf('\n===== [%d/%d] %s =====\n', i, numel(metaFiles), mname);
     try
-        S = load(mf); meta = S.meta;
+        S = load(mf);
+        if isfield(S, 'log_data') && isfield(S, 'cfg')
+            % 결과 파일(DroneSimResult_*.mat): 저장된 log_data 로 바로 다시 그림
+            cfg = S.cfg;
+            cfg.auto_save = opt.save;
+            cfg.save_dir  = fullfile(opt.saveRoot, mname);
+            cfg.result_name = [mname, '_replot'];
+            if opt.save && ~exist(cfg.save_dir, 'dir'), mkdir(cfg.save_dir); end
+            finalize_and_save_results(S.log_data, cfg);
+            if opt.save, fprintf('저장: %s\n', cfg.save_dir); end
+            nOk = nOk + 1;
+            if closeFigs, close all; end
+            continue;
+        elseif ~isfield(S, 'meta')
+            error('log_data/cfg(결과 파일)도 meta(비행 기록)도 없는 .mat 입니다.');
+        end
+        meta = S.meta;
         if meta.aborted
             warning('중단된 비행입니다: %s', meta.abort_reason);
         end
@@ -77,12 +101,12 @@ for i = 1:numel(metaFiles)
 
         cfg = meta.cfg;
         cfg.save_dir  = fullfile(opt.saveRoot, mname);
-        cfg.auto_save = true;
+        cfg.auto_save = opt.save;
         tok = regexp(mname, 'px4_run_(\d{8}_\d{6})', 'tokens', 'once');   % 원래 비행 시각으로 파일 이름
         if ~isempty(tok), cfg.result_name = sprintf('DroneSimResult_%s_replot', tok{1}); end
-        if ~exist(cfg.save_dir, 'dir'), mkdir(cfg.save_dir); end
+        if opt.save && ~exist(cfg.save_dir, 'dir'), mkdir(cfg.save_dir); end
         finalize_and_save_results(log_data, cfg);
-        fprintf('저장: %s\n', cfg.save_dir);
+        if opt.save, fprintf('저장: %s\n', cfg.save_dir); end
         nOk = nOk + 1;
         if closeFigs, close all; end
     catch err
@@ -111,7 +135,21 @@ for k = 1:numel(in)
     elseif isfile(s)
         files{end + 1} = s;                                     %#ok<AGROW>
     else
-        warning('파일이 없습니다: %s', s);
+        % 이름만 준 경우: PX4/results 아래 전체(하위 폴더 포함)에서 찾기
+        [~, nm, ext] = fileparts(s);
+        if isempty(ext), ext = '.mat'; end
+        d = dir(fullfile(here, 'results', '**', [nm, ext]));
+        d = d(~contains({d.folder}, fullfile('plots', 'replot')));   % 다시 그린 사본은 제외
+        if isempty(d)
+            warning('파일이 없습니다 (PX4/results 아래에서도 못 찾음): %s', s);
+        else
+            if numel(d) > 1
+                warning('%s 가 %d 개 있어 가장 최근 것을 씁니다.', [nm, ext], numel(d));
+                [~, j] = max([d.datenum]); d = d(j);
+            end
+            files{end + 1} = fullfile(d.folder, d.name);        %#ok<AGROW>
+            fprintf('찾음: %s\n', files{end});
+        end
     end
 end
 end
