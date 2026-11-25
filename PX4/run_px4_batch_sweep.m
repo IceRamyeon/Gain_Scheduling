@@ -93,7 +93,6 @@ for i = 1:nRun
     %  - 직진   : 착륙하지 않고 공중에서 원점 복귀 -> 착륙 -> 결과 저장 (return_land_plot)
     %             (~1.2 km 밖은 Gazebo 바닥이 없어 착륙하면 바닥을 뚫고 떨어짐)
     if ~isfield(ov, 'px4'), ov.px4 = struct(); end
-    ov.make_plots = false;             % 배치 중 그래프 창 없음 (결과 .mat + Summary 만, 그래프는 replot_px4_result 로)
     ov.px4.start_here = false;
     if abs(ov.curvature) < 1e-6
         ov.px4.end_mode = 'return_land_plot';
