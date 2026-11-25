@@ -275,6 +275,7 @@ function meta = run_px4_mission(link, cfg, ref, posCtrl, agent)
     %% ⑤ 종료 동작 (cfg.px4.end_mode)
     %  'land_plot_return' (기본) / 'land_plot' : 그 자리 3 s 호버 후 착륙 -> px4_main 이 disarm 대기 후 ULog 결과,
     %                                            'land_plot_return' 이면 다시 이륙해 프리롤 시작점 복귀 후 착륙·disarm (px4_return_to_start)
+    %  'return_land_plot'                     : 공중에서 바로 프리롤 시작점으로 부드럽게 복귀 -> 착륙 -> px4_main 이 ULog 결과
     %  'hold_return'                          : PX4 Hold(DO_REPOSITION)로 프리롤 시작점 복귀·호버, 착륙 안 함
     %                                            (ULog 가 닫히지 않으므로 px4_main 은 MATLAB 기록으로 결과)
     if isfield(px, 'end_mode') && ~isempty(px.end_mode), end_mode = lower(px.end_mode); else, end_mode = 'land_plot_return'; end
@@ -286,6 +287,18 @@ function meta = run_px4_mission(link, cfg, ref, posCtrl, agent)
             disp('⑤ 호버·착륙');
             t5 = tic;
             while toc(t5) < 3, hold_here(); pause(Ts); end
+            link.setLand();
+            pause(1);
+        case 'return_land_plot'
+            % 공중에서 바로 원래 프리롤 시작점으로 부드럽게 복귀 -> 착륙 (먼 곳에 착륙하지 않음: 직진 실험용)
+            %  Gazebo 바닥(ground_plane)은 크기가 유한해서 ~1 km 밖에 착륙하면 바닥을 뚫고 떨어져 disarm 이 안 됨
+            disp('⑤ 공중 복귀 -> 프리롤 시작점 착륙');
+            t5 = tic;
+            while toc(t5) < 1, hold_here(); pause(Ts); end
+            [x_now, ~] = link.getState();
+            p_from = [x_now(1); x_now(2); p_home_ned(3)];
+            px4_smooth_transit(link, p_from, p_home_ned, px);
+            hold_until(p_home_ned, yaw0 + rot, 0.3, 2.0, Inf);
             link.setLand();
             pause(1);
         case 'hold_return'
@@ -300,7 +313,7 @@ function meta = run_px4_mission(link, cfg, ref, posCtrl, agent)
                 link.setHold();
             end
         otherwise
-            error('cfg.px4.end_mode = ''%s'' 는 지원하지 않습니다 (land_plot_return / land_plot / hold_return).', end_mode);
+            error('cfg.px4.end_mode = ''%s'' 는 지원하지 않습니다 (land_plot_return / land_plot / return_land_plot / hold_return).', end_mode);
     end
 
     meta.log = LOG(1:nlog, :);

@@ -143,6 +143,7 @@ cfg.px4.abort_tilt_deg = 60;      % 기울기가 이보다 크면 중단 [deg]
 cfg.px4.end_mode       = 'land_plot_return';  % 주행 종료 후 동작
                                    %   'land_plot_return': 그 자리 착륙 -> disarm 후 ULog 결과창·저장 -> 다시 이륙해 프리롤 시작점 복귀 -> 착륙·disarm
                                    %   'land_plot'       : 그 자리 착륙 -> ULog 결과창·저장 (예전 방식)
+                                   %   'return_land_plot': 착륙하지 않고 공중에서 프리롤 시작점으로 복귀 -> 착륙 -> ULog 결과창·저장 (직진 실험용)
                                    %   'hold_return'     : PX4 Hold 로 프리롤 시작점 복귀·호버 (착륙 안 함, 결과는 MATLAB 기록 기준)
 cfg.px4.return_speed   = 20.0;    % 복귀·② 장거리 이동 최대 속도 [m/s] (px4_smooth_transit, PX4 MPC_XY_VEL_MAX 는 이동 중에만 올림)
 cfg.px4.return_acc     = 2.0;     % 복귀·② 장거리 이동 최대 가속도 [m/s^2] (사인 램프 가감속, 20 m/s 까지 약 16 s)
@@ -228,7 +229,7 @@ disp('ULog 위치(SITL): ~/PX4-Autopilot/build/px4_sitl_default/rootfs/fs/log/<�
 
 %% 6. 결과 그래프·저장 + (선택) 재이륙·복귀
 switch meta.end_mode
-    case {'land_plot_return', 'land_plot'}
+    case {'land_plot_return', 'land_plot', 'return_land_plot'}
         % 착륙 -> disarm 되면 ULog 가 닫힘 -> ULog 기준 결과 (plot_px4_result)
         disp('착륙·disarm 대기 중...');
         if link.waitDisarmed(120)

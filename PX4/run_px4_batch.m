@@ -14,8 +14,9 @@ function run_px4_batch()
 %   - 첫 실험: 원래 프리롤 시작점(경로 원점 기준)으로 부드럽게 이동(최대 20 m/s) 후 시작
 %   - 이후 실험: 착륙한 자리를 프리롤 시작점으로 삼아 바로 시작 (px4.start_here = true, 경로 원점 수평 이동)
 %     -> 결과는 경로 좌표계로 저장되므로 비교에는 영향 없음
-%   - 종료: 직진 실험과 마지막 실험은 결과 저장 후 재이륙 -> 원래 프리롤 시작점으로 부드럽게 복귀(최대 20 m/s,
-%     사인 램프 가감속) -> 착륙·disarm. 원 궤도 실험은 착륙·결과 저장까지만 (복귀 없음)
+%   - 종료: 직진 실험은 착륙하지 않고 공중에서 바로 원래 프리롤 시작점으로 부드럽게 복귀(최대 20 m/s, 사인 램프 가감속)
+%     -> 착륙·disarm -> 결과 저장 (Gazebo 바닥이 유한해서 ~1.2 km 밖에서는 착륙하면 바닥을 뚫고 떨어짐)
+%     마지막 실험(원)은 착륙·결과 저장 후 재이륙 -> 복귀 -> 착륙. 나머지 원 궤도 실험은 착륙·결과 저장까지만
 %   - 실행 사이 pause_between 초 대기 후 다음 실험 시작
 %   - 오류가 나거나 비행이 중단(abort)되면 나머지 실험은 건너뜀 (기체 상태를 확인하고 다시 실행할 것)
 %   - 끝나면 실험 이름과 시작·종료 시각 표를 출력하고 results/batch_<시각>.txt 로 저장
@@ -84,8 +85,10 @@ for i = 1:nRun
     if ~isfield(ov, 'px4'), ov.px4 = struct(); end
     ov.px4.start_here = (i > 1);
     is_straight_run = abs(ov.curvature) < 1e-6;
-    if is_straight_run || i == nRun
-        ov.px4.end_mode = 'land_plot_return';
+    if is_straight_run
+        ov.px4.end_mode = 'return_land_plot';   % 직진: ~1.2 km 밖은 Gazebo 바닥이 없어 착륙 불가 -> 공중에서 바로 복귀 후 착륙
+    elseif i == nRun
+        ov.px4.end_mode = 'land_plot_return';   % 마지막 원 실험: 착륙·결과 저장 후 재이륙해 복귀
     else
         ov.px4.end_mode = 'land_plot';
     end
