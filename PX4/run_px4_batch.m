@@ -11,7 +11,9 @@ function run_px4_batch()
 %  이전 구성(v = 8, phi_eq 35 / 40 deg 9회)은 커밋 19f67a7 참고
 %
 %  동작
-%   - 각 실행은 px4_main 과 똑같이 ①~⑤ -> 착륙·disarm -> ULog 결과 저장 -> 재이륙·프리롤 시작점 복귀 -> 착륙·disarm
+%   - 각 실행은 ①~⑤ -> 착륙·disarm -> ULog 결과 저장 까지만 (복귀 없음, end_mode = 'land_plot')
+%     다음 실험은 착륙한 자리에서 이륙해 ② 에서 프리롤 시작점으로 이동 (제한 시간은 이동 거리 기반)
+%   - 마지막 실험만 결과 저장 후 재이륙·프리롤 시작점 복귀 -> 착륙·disarm (end_mode = 'land_plot_return')
 %   - 실행 사이 pause_between 초 대기 후 다음 실험 시작
 %   - 오류가 나거나 비행이 중단(abort)되면 나머지 실험은 건너뜀 (기체 상태를 확인하고 다시 실행할 것)
 %   - 끝나면 실험 이름과 시작·종료 시각 표를 출력하고 results/batch_<시각>.txt 로 저장
@@ -74,6 +76,14 @@ fprintf('===== 일괄 실험 %d개 시작 (%s) =====\n', nRun, char(batch_time))
 for i = 1:nRun
     name = runs{i, 1};
     ov   = runs{i, 2};
+    % 종료 동작: 마지막 실험만 프리롤 시작점 복귀, 나머지는 착륙·결과 저장까지만
+    %  (다음 실험의 ② 가 착륙 지점에서 프리롤 시작점으로 이동하므로 중간 복귀는 불필요)
+    if ~isfield(ov, 'px4'), ov.px4 = struct(); end
+    if i < nRun
+        ov.px4.end_mode = 'land_plot';
+    else
+        ov.px4.end_mode = 'land_plot_return';
+    end
     fprintf('\n===== [%d/%d] %s =====\n', i, nRun, name);
     t_start(i) = datetime('now');
     try

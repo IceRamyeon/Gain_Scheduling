@@ -109,7 +109,17 @@ function meta = run_px4_mission(link, cfg, ref, posCtrl, agent)
     %% ② 프리롤 시작점 이동 (PX4 위치제어)
     disp('② 프리롤 시작점 이동');
     p_pre_ned = path_to_ned(p_pre, cfg);
-    hold_until(p_pre_ned, yaw0 + rot, 0.3, 2.0, 60);
+    % 제한 시간: 이동 거리 기반 (이전 실험의 착륙 지점에서 바로 시작하면 직진 실험 뒤 ~1 km 떨어져 있을 수 있음)
+    %  보수적으로 transit_speed_est [m/s] 로 나눈 시간 + 30 s, 최소 60 s
+    if isfield(px, 'transit_speed_est') && ~isempty(px.transit_speed_est)
+        v_tr = px.transit_speed_est;
+    else
+        v_tr = 5.0;
+    end
+    d_pre = norm(p_pre_ned(1:2) - p_to(1:2));
+    t_pre = max(60, d_pre / v_tr + 30);
+    fprintf('   프리롤 시작점까지 %.0f m (제한 시간 %.0f s)\n', d_pre, t_pre);
+    hold_until(p_pre_ned, yaw0 + rot, 0.3, 2.0, t_pre);
     meta.p_pre_ned = p_pre_ned; meta.yaw_pre = yaw0 + rot;   % 종료 후 복귀 목표 (px4_return_to_start)
 
     %% 호버 추력 측정 (② 호버 상태에서 1초 동안 PX4 추력 명령의 중앙값)

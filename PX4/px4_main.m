@@ -145,6 +145,7 @@ cfg.px4.end_mode       = 'land_plot_return';  % 주행 종료 후 동작
                                    %   'land_plot'       : 그 자리 착륙 -> ULog 결과창·저장 (예전 방식)
                                    %   'hold_return'     : PX4 Hold 로 프리롤 시작점 복귀·호버 (착륙 안 함, 결과는 MATLAB 기록 기준)
 cfg.px4.return_speed   = 10.0;    % 복귀 이동 속도 [m/s] (MATLAB 오프보드 복귀)
+cfg.px4.transit_speed_est = 5.0;    % ② 프리롤 시작점 이동 제한 시간 계산용 이동 속도 추정 [m/s] (제한 시간 = max(60, 거리/이 값 + 30) s)
 cfg.px4.ulog_close_wait = 4;     % disarm 후 ULog 파일이 닫힐 때까지 기다리는 시간 [s]
 cfg.px4.result_dir     = fullfile(here, 'results');
 
