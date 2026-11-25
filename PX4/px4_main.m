@@ -172,7 +172,10 @@ cfg.ppo.on_mode      = 'always';  % 'always': ④ 시작(정지·가속 구간 �
 cfg.ppo.ctrl.pos_Kp_ang        = 0.215;    % xy [rad/m] (내부에서 x g -> 2.109 m/s^2 per m)
 cfg.ppo.ctrl.pos_Ki_ang        = 0.0387;
 cfg.ppo.ctrl.pos_Kd_ang        = 0.203;
-cfg.ppo.ctrl.pos_Kp_z          = 6.0;      % z [m/s^2 단위]
+% 아래 z 6/2/4, k_ff_v/a, Z_Gain_Scheduling 은 예전 PX4 구조 PositionCtrl_PX4 용 (현재 사용 안 함).
+%  현재 PX4/ppo/PositionCtrl_PX4 (Sehyun 3b80175) 는 GS PositionCtrl 과 같은 법칙이고,
+%  xy·z 기본 게인(0.215/0.0387/0.203 -> 2.11/0.38/1.99, z 는 x m / cos phi_eq)과 제어 옵션을 아래 3절에서 cfg 최상위 값으로 넘긴다
+cfg.ppo.ctrl.pos_Kp_z          = 6.0;      % z [m/s^2 단위] (사용 안 함)
 cfg.ppo.ctrl.pos_Ki_z          = 2.0;
 cfg.ppo.ctrl.pos_Kd_z          = 4.0;
 cfg.ppo.ctrl.k_ff_v            = 1.0;      % 목표 속도 feedforward
@@ -203,6 +206,17 @@ agent = [];
 if isPPO
     pc = cfg.ppo.ctrl;
     pc.m = cfg.m;
+    % 기반 제어기(GS PositionCtrl 과 같은 법칙) 옵션·게인을 MATLAB 모드와 같은 값으로 (일괄 실험 덮어쓰기 반영 후)
+    pc.pos_Kp_ang         = cfg.posGain('P_x');
+    pc.pos_Ki_ang         = cfg.posGain('I_x');
+    pc.pos_Kd_ang         = cfg.posGain('D_x');
+    pc.Feedforward        = cfg.Feedforward;
+    pc.Z_Gain_Scheduling  = cfg.Z_Gain_Scheduling;
+    pc.Err_Yaw            = cfg.Err_Yaw;
+    pc.Z_D_on_measurement = cfg.Z_D_on_measurement;
+    pc.Eq_Delay_Comp      = cfg.Eq_Delay_Comp;
+    pc.K_att              = cfg.K_att;
+    pc.max_angle_deg      = cfg.max_angle_deg;
     pc.dt_pos = 1 / cfg.px4.rate_hz;                   % 학습: 50 Hz (0.02 s), 비행 중에는 실제 루프 주기로 갱신
     posCtrl = PositionCtrl_PX4(pc);
     S = load(cfg.ppo.agent_file);
