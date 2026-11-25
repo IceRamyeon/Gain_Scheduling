@@ -166,6 +166,22 @@ function finalize_and_save_results(log_data, cfg)
         rpt = [rpt; step_lines(:); {'----------------------------------'}];
     end
     fprintf('%s\n', rpt{:});
+
+    %% 0. 그래프 없이 저장만 (cfg.make_plots = false, 일괄 실험용): 결과 .mat + Summary 만 남기고 종료
+    %     그래프는 나중에 replot_px4_result('DroneSimResult_...') 로 다시 만들 수 있다
+    if isfield(cfg, 'make_plots') && ~isempty(cfg.make_plots) && ~cfg.make_plots
+        if isfield(cfg, 'auto_save') && cfg.auto_save
+            if ~exist(cfg.save_dir, 'dir'), mkdir(cfg.save_dir); end
+            baseFileName = fullfile(cfg.save_dir, sprintf('DroneSimResult_%s', datestr(now, 'yyyymmdd_HHMMSS')));
+            if isfield(cfg, 'result_name') && ~isempty(cfg.result_name)
+                baseFileName = fullfile(cfg.save_dir, cfg.result_name);
+            end
+            save([baseFileName, '.mat'], 'log_data', 'cfg');
+            writecell([hdr; rpt], [baseFileName, '_Summary.txt'], 'FileType', 'text', 'Delimiter', 'tab', 'Encoding', 'UTF-8');
+            disp(['그래프 없이 결과 .mat 과 Summary 만 저장했어: ', baseFileName]);
+        end
+        return;
+    end
     
     %% 1. [그래프 1] 위치 추종 (Position Tracking)
     h_fig_pos = figure('Name', 'Position Tracking', 'Theme', 'light', 'Position', [10 100 600 600]);

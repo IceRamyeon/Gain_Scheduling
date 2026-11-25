@@ -34,6 +34,23 @@ function meta = run_px4_mission(link, cfg, ref, posCtrl, agent)
         end
     end
 
+    %% 이착륙 시간 단축용 PX4 파라미터 (cfg.px4.fast_params: 이름 -> 값, 비어 있으면 건드리지 않음)
+    %  MPC_TKO_SPEED / MPC_TKO_RAMP_T: 이륙 상승 속도·램프 시간, MPC_LAND_SPEED: 착륙 하강 속도, COM_DISARM_LAND: 착륙 후 자동 disarm 대기
+    if isfield(px, 'fast_params') && isstruct(px.fast_params)
+        fp = fieldnames(px.fast_params);
+        for kf = 1:numel(fp)
+            try
+                vnow = link.setParam(fp{kf}, px.fast_params.(fp{kf}));
+                if isnan(vnow) || abs(vnow - px.fast_params.(fp{kf})) > 1e-3
+                    warning('%s 설정이 반영되지 않았습니다 (요청 %g, 현재 %g).', fp{kf}, px.fast_params.(fp{kf}), vnow);
+                end
+            catch errp
+                warning('%s 설정 실패: %s', fp{kf}, errp.message);
+            end
+        end
+        fprintf('이착륙 파라미터: %s\n', strjoin(cellfun(@(f) sprintf('%s=%g', f, px.fast_params.(f)), fp, 'UniformOutput', false), ', '));
+    end
+
     %% 호버 추력 (U1[N] -> 정규화 추력 변환에 사용)
     %  - cfg.px4.thr_hover 에 값이 있으면 그 값을 쓴다.
     %  - NaN 이면 ② 호버 중 PX4 가 실제로 쓰는 추력(ATTITUDE_TARGET.thrust)을 측정해서 쓴다.
@@ -127,7 +144,7 @@ function meta = run_px4_mission(link, cfg, ref, posCtrl, agent)
     if d_pre > 2.0
         px4_smooth_transit(link, p_to, p_pre_ned, px);   % 먼 거리면 부드러운 속도 프로파일로 이동 (최대 return_speed)
     end
-    hold_until(p_pre_ned, yaw0 + rot, 0.3, 2.0, Inf);
+    hold_until(p_pre_ned, yaw0 + rot, 0.3, 1.0, Inf);
     meta.p_pre_ned = p_home_ned; meta.yaw_pre = yaw0 + rot;  % 종료 후 복귀 목표 (원래 경로 원점 기준 프리롤 시작점, px4_return_to_start)
 
     %% 호버 추력 측정 (② 호버 상태에서 1초 동안 PX4 추력 명령의 중앙값)
@@ -286,7 +303,7 @@ function meta = run_px4_mission(link, cfg, ref, posCtrl, agent)
         case {'land_plot_return', 'land_plot'}
             disp('⑤ 호버·착륙');
             t5 = tic;
-            while toc(t5) < 3, hold_here(); pause(Ts); end
+            while toc(t5) < 1, hold_here(); pause(Ts); end
             link.setLand();
             pause(1);
         case 'return_land_plot'
@@ -298,7 +315,7 @@ function meta = run_px4_mission(link, cfg, ref, posCtrl, agent)
             [x_now, ~] = link.getState();
             p_from = [x_now(1); x_now(2); p_home_ned(3)];
             px4_smooth_transit(link, p_from, p_home_ned, px);
-            hold_until(p_home_ned, yaw0 + rot, 0.3, 2.0, Inf);
+            hold_until(p_home_ned, yaw0 + rot, 0.3, 1.0, Inf);
             link.setLand();
             pause(1);
         case 'hold_return'

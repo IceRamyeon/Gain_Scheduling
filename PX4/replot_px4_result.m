@@ -69,6 +69,7 @@ for i = 1:numel(metaFiles)
             % 결과 파일(DroneSimResult_*.mat): 저장된 log_data 로 바로 다시 그림
             cfg = S.cfg;
             cfg.auto_save = opt.save;
+            cfg.make_plots = true;          % 일괄 실험(그래프 생략)으로 저장된 cfg 도 그래프를 그리도록
             cfg.save_dir  = fullfile(opt.saveRoot, mname);
             cfg.result_name = [mname, '_replot'];
             if opt.save && ~exist(cfg.save_dir, 'dir'), mkdir(cfg.save_dir); end
@@ -102,6 +103,7 @@ for i = 1:numel(metaFiles)
         cfg = meta.cfg;
         cfg.save_dir  = fullfile(opt.saveRoot, mname);
         cfg.auto_save = opt.save;
+            cfg.make_plots = true;          % 일괄 실험(그래프 생략)으로 저장된 cfg 도 그래프를 그리도록
         tok = regexp(mname, 'px4_run_(\d{8}_\d{6})', 'tokens', 'once');   % 원래 비행 시각으로 파일 이름
         if ~isempty(tok), cfg.result_name = sprintf('DroneSimResult_%s_replot', tok{1}); end
         if opt.save && ~exist(cfg.save_dir, 'dir'), mkdir(cfg.save_dir); end

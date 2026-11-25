@@ -29,7 +29,7 @@ function px4_return_to_start(link, cfg, meta)
 
     % 프리롤 시작점까지 부드러운 속도 프로파일로 이동 (최대 return_speed, 최대 가속도 return_acc, 사인 램프 가감속)
     px4_smooth_transit(link, p_to, p_goal, px);
-    hold_until(p_goal, yaw_goal, 0.3, 2.0, Inf);       % 시간 제한 없음: 도달 여부만 판단
+    hold_until(p_goal, yaw_goal, 0.3, 1.0, Inf);       % 시간 제한 없음: 도달 여부만 판단
     disp('프리롤 시작점 도착 -> 착륙');
     link.setLand();
     if link.waitDisarmed(120)

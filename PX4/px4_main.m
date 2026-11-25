@@ -152,9 +152,15 @@ cfg.px4.end_mode       = 'land_plot_return';  % 주행 종료 후 동작
                                    %   'return_land_plot': 착륙하지 않고 공중에서 프리롤 시작점으로 복귀 -> 착륙 -> ULog 결과창·저장 (직진 실험용)
                                    %   'hold_return'     : PX4 Hold 로 프리롤 시작점 복귀·호버 (착륙 안 함, 결과는 MATLAB 기록 기준)
 cfg.px4.return_speed   = 20.0;    % 복귀·② 장거리 이동 최대 속도 [m/s] (px4_smooth_transit, PX4 MPC_XY_VEL_MAX 는 이동 중에만 올림)
-cfg.px4.return_acc     = 2.0;     % 복귀·② 장거리 이동 최대 가속도 [m/s^2] (사인 램프 가감속, 20 m/s 까지 약 16 s)
+cfg.px4.fast_params    = struct( ...   % 이착륙 시간 단축 (미션 시작 때 PX4 에 설정, [] 이면 건드리지 않음)
+    'MPC_TKO_SPEED',   3.0, ...       % 이륙 상승 속도 [m/s] (기본 1.5, MPC_Z_VEL_MAX_UP 3 이하)
+    'MPC_TKO_RAMP_T',  1.0, ...       % 이륙 램프 시간 [s] (기본 3)
+    'MPC_LAND_SPEED',  1.5, ...       % 착륙 하강 속도 [m/s] (기본 0.7, MPC_Z_VEL_MAX_DN 1.5 이하)
+    'COM_DISARM_LAND', 1.0);          % 착륙 감지 후 자동 disarm 까지 [s] (기본 2)
+cfg.px4.return_acc     = 3.0;     % 복귀·② 장거리 이동 최대 가속도 [m/s^2] (사인 램프 가감속, 20 m/s 까지 약 10.5 s)
 cfg.px4.start_here     = false;   % true: 지금 서 있는 곳을 프리롤 시작점으로 (경로 원점 수평 이동, ② 장거리 이동 생략). 배치 실행에서 사용
-cfg.px4.ulog_close_wait = 4;     % disarm 후 ULog 파일이 닫힐 때까지 기다리는 시간 [s]
+cfg.make_plots          = true;   % false: 결과 그래프 창을 만들지 않고 결과 .mat + Summary 만 저장 (일괄 실험은 false)
+cfg.px4.ulog_close_wait = 1;     % disarm 후 ULog 파일이 닫힐 때까지 기다리는 시간 [s]
 cfg.px4.result_dir     = fullfile(here, 'results');
 
 %% 1-1. PPO 모드 설정 (Sehyun 브랜치 Drone_LPV/PX4/RL_DroneEnv_PX4 + PositionCtrl_PX4 와 같은 값, 커밋 0bd9cfd)

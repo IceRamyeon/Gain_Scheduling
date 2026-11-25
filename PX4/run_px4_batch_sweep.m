@@ -38,7 +38,7 @@ addpath(here);
 evalin('base', 'clear(''link'', ''cleanupObj'')');
 pause(1);
 
-pause_between = 10;     % 실험 사이 대기 [s]
+pause_between = 1;      % 실험 사이 대기 [s]
 continue_on_abort = true;   % 비행이 중단돼도(⑤ 착륙·복귀는 마침) 다음 실험 계속 (MATLAB 오류면 멈춤)
 
 %% 공통 설정
@@ -93,6 +93,7 @@ for i = 1:nRun
     %  - 직진   : 착륙하지 않고 공중에서 원점 복귀 -> 착륙 -> 결과 저장 (return_land_plot)
     %             (~1.2 km 밖은 Gazebo 바닥이 없어 착륙하면 바닥을 뚫고 떨어짐)
     if ~isfield(ov, 'px4'), ov.px4 = struct(); end
+    ov.make_plots = false;             % 배치 중 그래프 창 없음 (결과 .mat + Summary 만, 그래프는 replot_px4_result 로)
     ov.px4.start_here = false;
     if abs(ov.curvature) < 1e-6
         ov.px4.end_mode = 'return_land_plot';
