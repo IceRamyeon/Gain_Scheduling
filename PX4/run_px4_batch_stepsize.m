@@ -1,8 +1,10 @@
-function run_px4_batch_stepsize(steps)
+function run_px4_batch_stepsize(steps, start_at)
 %RUN_PX4_BATCH_STEPSIZE  고도 계단 크기 비교 일괄 실험
 %   run_px4_batch_stepsize            % 0.3 m 세트 -> 0.7 m 세트 (총 96회)
 %   run_px4_batch_stepsize(0.3)       % 0.3 m 세트만 (48회)
 %   run_px4_batch_stepsize(0.7)       % 0.7 m 세트만 (48회)
+%   run_px4_batch_stepsize([], 34)    % 두 세트 목록 기준 34번째 실험부터 이어서 (번호는 [34/96] 표시와 같음)
+%   run_px4_batch_stepsize(0.7, 5)    % 0.7 m 세트 목록 기준 5번째부터
 %
 %  한 세트 = v = 10 / 9 / 8 x [직진 1회 + phi_eq 10/20/30/35/40 deg x {FF, GS, GS+PPO}] = 3 x 16 = 48회
 %    지연 보상 Eq_Delay_Comp = false
@@ -47,6 +49,7 @@ continue_on_abort = true;   % 비행이 중단돼도(⑤ 착륙·복귀는 마�
 
 %% 공통 설정
 if nargin < 1 || isempty(steps), steps = [0.3 0.7]; end   % 세트별 고도 계단 크기 [m]
+if nargin < 2 || isempty(start_at), start_at = 1; end    % 이어서 시작할 실험 번호 (중단 후 재개용)
 t_level  = 30;           % 원 궤도: 고도 단계 하나의 목표 시간 [s] -> n_laps 자동 계산
 vs       = [10 9 8];
 phis     = [10 20 30 35 40];
@@ -94,7 +97,10 @@ cleanupOv = onCleanup(@() rmappdata_safe());
 batch_time = datetime('now');
 fprintf('===== 일괄 실험 %d개 시작 (%s) =====\n', nRun, char(batch_time));
 
-for i = 1:nRun
+if start_at > 1
+    fprintf('%d번째 실험부터 이어서 시작 (1 ~ %d 번은 건너뜀)\n', start_at, start_at - 1);
+end
+for i = start_at:nRun
     name = runs{i, 1};
     ov   = runs{i, 2};
     % 모든 실험: 원래 프리롤 시작점(원점)에서 시작하고, 끝나면 원점으로 복귀

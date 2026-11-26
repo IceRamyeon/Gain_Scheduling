@@ -25,7 +25,8 @@ function px4_return_to_start(link, cfg, meta)
     end
     link.setOffboard(); pause(0.1);
     link.arm();
-    hold_until(p_to, yaw_now, 0.3, 1.0, Inf);          % 시간 제한 없음: 도달 여부만 판단
+    % 시간 제한 없음: 도달 여부만 판단. 단, disarm 직후 재시동이 거부되면(상승이 안 됨) 3 s 마다 OFFBOARD·ARM 재요청
+    hold_until(p_to, yaw_now, 0.3, 1.0, Inf, x(3));
 
     % 프리롤 시작점까지 부드러운 속도 프로파일로 이동 (최대 return_speed, 최대 가속도 return_acc, 사인 램프 가감속)
     px4_smooth_transit(link, p_to, p_goal, px);
@@ -38,11 +39,19 @@ function px4_return_to_start(link, cfg, meta)
         warning('disarm 을 확인하지 못했습니다 (120 s). PX4/QGC 에서 상태를 확인하세요.');
     end
 
-    function hold_until(p_ned, yaw_ned, tol_pos, hold_s, timeout_s)
-        th = tic; t_in = [];
+    function hold_until(p_ned, yaw_ned, tol_pos, hold_s, timeout_s, z_ground)
+        % z_ground 를 주면 재이륙 감시: 지면 고도에서 0.3 m 이상 올라가기 전까지 3 s 마다 OFFBOARD·ARM 재요청
+        if nargin < 6, z_ground = NaN; end
+        th = tic; t_in = []; t_re = tic; n_re = 0;
         while true
             link.sendPosition(p_ned, yaw_ned);
             [xs, ~, okk] = link.getState();
+            if ~isnan(z_ground) && okk && (z_ground - xs(3)) < 0.3 && toc(t_re) > 3
+                n_re = n_re + 1;
+                fprintf('재이륙이 시작되지 않아 OFFBOARD·ARM 재요청 (%d회)\n', n_re);
+                link.setOffboard(); pause(0.05); link.arm();
+                t_re = tic;
+            end
             if okk
                 yaw_err = abs(atan2(sin(xs(9) - yaw_ned), cos(xs(9) - yaw_ned)));
                 near = norm(xs(1:3) - p_ned) < tol_pos && norm(xs(4:6)) < 0.3 && yaw_err < deg2rad(5);
