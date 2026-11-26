@@ -3707,3 +3707,107 @@ Episode: 739/4000 | Episode reward: 14271.20 | Episode steps: 1200 | Average rew
 직선+원호(Arc) 궤적 총 길이: 10.00m
 비행 속력: 8.17m/s, 필요 비행 시간(tf): 1.22초
 Episode: 740/4000 | Episode reward: -1598.46 | Episode steps:  497 | Average reward:   548.44 | Step Count: 359764 | Episode Q0:   147.90
+[CircleTrajectory] R = 10.63 m, 가속 23.9 m (1.33 m/s^2, 6.0 s), 등속 직선 23.9 m (3.0 s), 원 6바퀴 400.6 m (9.0 ~ 59.4 s), 탈출 직선 47.7 m, tf = 65.4 s
+[CircleTrajectory] 고도 계단: 6.00 > 5.08 > 6.00 m (단계마다 133.5 m, 계단 시각 25.8, 42.6 s)
+직선+원호(Arc) 궤적 총 길이: 10.00m
+비행 속력: 7.95m/s, 필요 비행 시간(tf): 1.26초
+Episode: 741/4000 | Episode reward: -2124.69 | Episode steps:  654 | Average reward:   502.36 | Step Count: 360418 | Episode Q0:   322.67
+[CircleTrajectory] R = 5.54 m, 가속 13.6 m (0.75 m/s^2, 6.0 s), 등속 직선 13.6 m (3.0 s), 원 4바퀴 139.2 m (9.0 ~ 39.7 s), 탈출 직선 27.2 m, tf = 45.7 s
+[CircleTrajectory] 고도 계단: 6.00 > 5.03 m (단계마다 69.6 m, 계단 시각 24.4 s)
+직선+원호(Arc) 궤적 총 길이: 10.00m
+비행 속력: 4.53m/s, 필요 비행 시간(tf): 2.21초
+Episode: 742/4000 | Episode reward:  -512.43 | Episode steps:  458 | Average reward:   605.47 | Step Count: 360876 | Episode Q0:   325.37
+[CircleTrajectory] R = 2.74 m, 가속 12.3 m (0.68 m/s^2, 6.0 s), 등속 직선 12.3 m (3.0 s), 원 4바퀴 68.9 m (9.0 ~ 25.8 s), 탈출 직선 24.6 m, tf = 31.8 s
+[CircleTrajectory] 고도 계단: 6.00 > 6.58 m (단계마다 34.4 m, 계단 시각 17.4 s)
+직선+원호(Arc) 궤적 총 길이: 10.00m
+비행 속력: 4.10m/s, 필요 비행 시간(tf): 2.44초
+Episode: 743/4000 | Episode reward: -7866.57 | Episode steps:  318 | Average reward:   348.73 | Step Count: 361194 | Episode Q0:   323.85
+[CircleTrajectory] R = 14.98 m, 가속 27.5 m (1.53 m/s^2, 6.0 s), 등속 직선 27.5 m (3.0 s), 원 4바퀴 376.4 m (9.0 ~ 50.1 s), 탈출 직선 55.0 m, tf = 56.1 s
+[CircleTrajectory] 고도 계단: 6.00 > 5.34 m (단계마다 188.2 m, 계단 시각 29.5 s)
+직선+원호(Arc) 궤적 총 길이: 10.00m
+비행 속력: 9.17m/s, 필요 비행 시간(tf): 1.09초
+Episode: 744/4000 | Episode reward:  -473.17 | Episode steps:  561 | Average reward:   359.28 | Step Count: 361755 | Episode Q0:   319.54
+[CircleTrajectory] R = 15.33 m, 가속 26.2 m (1.45 m/s^2, 6.0 s), 등속 직선 26.2 m (3.0 s), 원 4바퀴 385.2 m (9.0 ~ 53.2 s), 탈출 직선 52.3 m, tf = 59.2 s
+[CircleTrajectory] 고도 계단: 6.00 > 6.25 m (단계마다 192.6 m, 계단 시각 31.1 s)
+직선+원호(Arc) 궤적 총 길이: 10.00m
+비행 속력: 8.72m/s, 필요 비행 시간(tf): 1.15초
+Episode: 745/4000 | Episode reward:   120.11 | Episode steps:  592 | Average reward:   442.40 | Step Count: 362347 | Episode Q0:   323.92
+[CircleTrajectory] R = 16.38 m, 가속 29.4 m (1.63 m/s^2, 6.0 s), 등속 직선 29.4 m (3.0 s), 원 4바퀴 411.7 m (9.0 ~ 51.1 s), 탈출 직선 58.7 m, tf = 57.1 s
+[CircleTrajectory] 고도 계단: 6.00 > 6.98 m (단계마다 205.8 m, 계단 시각 30.0 s)
+직선+원호(Arc) 궤적 총 길이: 10.00m
+비행 속력: 9.79m/s, 필요 비행 시간(tf): 1.02초
+Episode: 746/4000 | Episode reward: -1212.52 | Episode steps:  571 | Average reward:   435.53 | Step Count: 362918 | Episode Q0:   313.43
+[CircleTrajectory] R = 3.08 m, 가속 12.6 m (0.70 m/s^2, 6.0 s), 등속 직선 12.6 m (3.0 s), 원 4바퀴 77.4 m (9.0 ~ 27.4 s), 탈출 직선 25.2 m, tf = 33.4 s
+[CircleTrajectory] 고도 계단: 6.00 > 6.59 m (단계마다 38.7 m, 계단 시각 18.2 s)
+직선+원호(Arc) 궤적 총 길이: 10.00m
+비행 속력: 4.20m/s, 필요 비행 시간(tf): 2.38초
+Episode: 747/4000 | Episode reward: -2427.56 | Episode steps:  335 | Average reward:   147.51 | Step Count: 363253 | Episode Q0:   299.14
+[CircleTrajectory] R = 8.11 m, 가속 23.0 m (1.28 m/s^2, 6.0 s), 등속 직선 23.0 m (3.0 s), 원 6바퀴 305.8 m (9.0 ~ 48.9 s), 탈출 직선 46.0 m, tf = 54.9 s
+[CircleTrajectory] 고도 계단: 6.00 > 5.72 > 6.00 m (단계마다 101.9 m, 계단 시각 22.3, 35.6 s)
+직선+원호(Arc) 궤적 총 길이: 10.00m
+비행 속력: 7.67m/s, 필요 비행 시간(tf): 1.30초
+Episode: 748/4000 | Episode reward: -4810.77 | Episode steps:  549 | Average reward:  -701.78 | Step Count: 363802 | Episode Q0:   254.10
+[CircleTrajectory] R = 2.43 m, 가속 10.9 m (0.61 m/s^2, 6.0 s), 등속 직선 10.9 m (3.0 s), 원 6바퀴 91.6 m (9.0 ~ 34.2 s), 탈출 직선 21.8 m, tf = 40.2 s
+[CircleTrajectory] 고도 계단: 6.00 > 6.56 > 6.00 m (단계마다 30.5 m, 계단 시각 17.4, 25.8 s)
+직선+원호(Arc) 궤적 총 길이: 10.00m
+비행 속력: 3.64m/s, 필요 비행 시간(tf): 2.75초
+Episode: 749/4000 | Episode reward: -10090.67 | Episode steps:  402 | Average reward: -1088.11 | Step Count: 364204 | Episode Q0:   299.86
+[CircleTrajectory] R = 9.44 m, 가속 16.8 m (0.93 m/s^2, 6.0 s), 등속 직선 16.8 m (3.0 s), 원 6바퀴 355.9 m (9.0 ~ 72.5 s), 탈출 직선 33.6 m, tf = 78.5 s
+[CircleTrajectory] 고도 계단: 6.00 > 6.89 > 6.00 m (단계마다 118.6 m, 계단 시각 30.2, 51.4 s)
+직선+원호(Arc) 궤적 총 길이: 10.00m
+비행 속력: 5.60m/s, 필요 비행 시간(tf): 1.79초
+Episode: 750/4000 | Episode reward:  1117.66 | Episode steps:  786 | Average reward: -1243.53 | Step Count: 364990 | Episode Q0:   261.65
+[CircleTrajectory] R = 8.14 m, 가속 12.5 m (0.69 m/s^2, 6.0 s), 등속 직선 12.5 m (3.0 s), 원 6바퀴 306.7 m (9.0 ~ 82.6 s), 탈출 직선 25.0 m, tf = 88.6 s
+[CircleTrajectory] 고도 계단: 6.00 > 6.24 > 6.00 m (단계마다 102.2 m, 계단 시각 33.5, 58.1 s)
+직선+원호(Arc) 궤적 총 길이: 10.00m
+비행 속력: 4.17m/s, 필요 비행 시간(tf): 2.40초
+Episode: 751/4000 | Episode reward:  5277.58 | Episode steps:  887 | Average reward:  -796.38 | Step Count: 365877 | Episode Q0:   285.05
+[CircleTrajectory] R = 17.66 m, 가속 22.2 m (1.23 m/s^2, 6.0 s), 등속 직선 22.2 m (3.0 s), 원 4바퀴 443.9 m (9.0 ~ 69.1 s), 탈출 직선 44.4 m, tf = 75.1 s
+[CircleTrajectory] 고도 계단: 6.00 > 6.48 m (단계마다 222.0 m, 계단 시각 39.0 s)
+직선+원호(Arc) 궤적 총 길이: 10.00m
+비행 속력: 7.39m/s, 필요 비행 시간(tf): 1.35초
+Episode: 752/4000 | Episode reward:  4944.35 | Episode steps:  751 | Average reward:  -754.57 | Step Count: 366628 | Episode Q0:   264.26
+[CircleTrajectory] R = 5.66 m, 가속 14.8 m (0.82 m/s^2, 6.0 s), 등속 직선 14.8 m (3.0 s), 원 6바퀴 213.5 m (9.0 ~ 52.3 s), 탈출 직선 29.6 m, tf = 58.3 s
+[CircleTrajectory] 고도 계단: 6.00 > 5.85 > 6.00 m (단계마다 71.2 m, 계단 시각 23.4, 37.8 s)
+직선+원호(Arc) 궤적 총 길이: 10.00m
+비행 속력: 4.93m/s, 필요 비행 시간(tf): 2.03초
+Episode: 753/4000 | Episode reward: -1273.26 | Episode steps:  583 | Average reward:  -775.22 | Step Count: 367211 | Episode Q0:   306.11
+[CircleTrajectory] R = 11.31 m, 가속 19.4 m (1.08 m/s^2, 6.0 s), 등속 직선 19.4 m (3.0 s), 원 6바퀴 426.3 m (9.0 ~ 74.8 s), 탈출 직선 38.9 m, tf = 80.8 s
+[CircleTrajectory] 고도 계단: 6.00 > 5.37 > 6.00 m (단계마다 142.1 m, 계단 시각 30.9, 52.9 s)
+직선+원호(Arc) 궤적 총 길이: 10.00m
+비행 속력: 6.48m/s, 필요 비행 시간(tf): 1.54초
+Episode: 754/4000 | Episode reward:   734.92 | Episode steps:  809 | Average reward:  -715.75 | Step Count: 368020 | Episode Q0:   292.13
+[CircleTrajectory] R = 8.47 m, 가속 20.9 m (1.16 m/s^2, 6.0 s), 등속 직선 20.9 m (3.0 s), 원 6바퀴 319.2 m (9.0 ~ 54.8 s), 탈출 직선 41.8 m, tf = 60.8 s
+[CircleTrajectory] 고도 계단: 6.00 > 5.90 > 6.00 m (단계마다 106.4 m, 계단 시각 24.3, 39.6 s)
+직선+원호(Arc) 궤적 총 길이: 10.00m
+비행 속력: 6.96m/s, 필요 비행 시간(tf): 1.44초
+Episode: 755/4000 | Episode reward: -2870.34 | Episode steps:  609 | Average reward:  -829.37 | Step Count: 368629 | Episode Q0:   284.91
+[CircleTrajectory] R = 14.88 m, 가속 27.5 m (1.53 m/s^2, 6.0 s), 등속 직선 27.5 m (3.0 s), 원 6바퀴 560.9 m (9.0 ~ 70.1 s), 탈출 직선 55.1 m, tf = 76.1 s
+[CircleTrajectory] 고도 계단: 6.00 > 5.24 > 6.00 m (단계마다 187.0 m, 계단 시각 29.4, 49.7 s)
+직선+원호(Arc) 궤적 총 길이: 10.00m
+비행 속력: 9.18m/s, 필요 비행 시간(tf): 1.09초
+Episode: 756/4000 | Episode reward: -1168.31 | Episode steps:  761 | Average reward:  -752.77 | Step Count: 369390 | Episode Q0:   235.65
+[CircleTrajectory] R = 7.21 m, 가속 17.7 m (0.98 m/s^2, 6.0 s), 등속 직선 17.7 m (3.0 s), 원 6바퀴 271.9 m (9.0 ~ 55.1 s), 탈출 직선 35.4 m, tf = 61.1 s
+[CircleTrajectory] 고도 계단: 6.00 > 5.57 > 6.00 m (단계마다 90.6 m, 계단 시각 24.4, 39.7 s)
+직선+원호(Arc) 궤적 총 길이: 10.00m
+비행 속력: 5.90m/s, 필요 비행 시간(tf): 1.70초
+Episode: 757/4000 | Episode reward: -1567.34 | Episode steps:  612 | Average reward:  -703.73 | Step Count: 370002 | Episode Q0:   286.11
+[CircleTrajectory] R = 7.56 m, 가속 25.0 m (1.39 m/s^2, 6.0 s), 등속 직선 25.0 m (3.0 s), 원 6바퀴 284.8 m (9.0 ~ 43.2 s), 탈출 직선 50.0 m, tf = 49.2 s
+[CircleTrajectory] 고도 계단: 6.00 > 5.37 > 6.00 m (단계마다 94.9 m, 계단 시각 20.4, 31.8 s)
+직선+원호(Arc) 궤적 총 길이: 10.00m
+비행 속력: 8.33m/s, 필요 비행 시간(tf): 1.20초
+Episode: 758/4000 | Episode reward: -3100.68 | Episode steps:  128 | Average reward:  -731.55 | Step Count: 370130 | Episode Q0:   211.70
+[CircleTrajectory] R = 2.71 m, 가속 13.0 m (0.72 m/s^2, 6.0 s), 등속 직선 13.0 m (3.0 s), 원 6바퀴 102.2 m (9.0 ~ 32.7 s), 탈출 직선 25.9 m, tf = 38.7 s
+[CircleTrajectory] 고도 계단: 6.00 > 6.86 > 6.00 m (단계마다 34.1 m, 계단 시각 16.9, 24.8 s)
+직선+원호(Arc) 궤적 총 길이: 10.00m
+비행 속력: 4.32m/s, 필요 비행 시간(tf): 2.31초
+Episode: 759/4000 | Episode reward: -2311.22 | Episode steps:  136 | Average reward: -1560.67 | Step Count: 370266 | Episode Q0:   280.29
+[CircleTrajectory] R = 3.46 m, 가속 14.2 m (0.79 m/s^2, 6.0 s), 등속 직선 14.2 m (3.0 s), 원 6바퀴 130.3 m (9.0 ~ 36.6 s), 탈출 직선 28.3 m, tf = 42.6 s
+[CircleTrajectory] 고도 계단: 6.00 > 5.63 > 6.00 m (단계마다 43.4 m, 계단 시각 18.2, 27.4 s)
+직선+원호(Arc) 궤적 총 길이: 10.00m
+비행 속력: 4.72m/s, 필요 비행 시간(tf): 2.12초
+Episode: 760/4000 | Episode reward: -9305.13 | Episode steps:  427 | Average reward: -1946.00 | Step Count: 370693 | Episode Q0:   275.76
+[CircleTrajectory] R = 10.36 m, 가속 25.2 m (1.40 m/s^2, 6.0 s), 등속 직선 25.2 m (3.0 s), 원 6바퀴 390.6 m (9.0 ~ 55.5 s), 탈출 직선 50.4 m, tf = 61.5 s
+[CircleTrajectory] 고도 계단: 6.00 > 6.94 > 6.00 m (단계마다 130.2 m, 계단 시각 24.5, 40.0 s)
+직선+원호(Arc) 궤적 총 길이: 10.00m
+비행 속력: 8.40m/s, 필요 비행 시간(tf): 1.19초
