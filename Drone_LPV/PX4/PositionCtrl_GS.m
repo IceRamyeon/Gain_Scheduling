@@ -135,10 +135,15 @@ classdef PositionCtrl_GS < handle
         end
 
         function setResidualOffsets(obj, dP_xy, dD_xy, dP_z, dD_z)
-            obj.offset_P_xy = dP_xy;
-            obj.offset_D_xy = dD_xy;
-            obj.offset_P_z  = dP_z;
-            obj.offset_D_z  = dD_z;
+            if dP_xy == 0 && dD_xy == 0 && dP_z == 0 && dD_z == 0
+                obj.offset_P_xy = 0.0; obj.offset_D_xy = 0.0;
+                obj.offset_P_z  = 0.0; obj.offset_D_z  = 0.0;
+                return;
+            end
+            obj.offset_P_xy = 0.92 * obj.offset_P_xy + 0.08 * dP_xy;
+            obj.offset_D_xy = 0.92 * obj.offset_D_xy + 0.08 * dD_xy;
+            obj.offset_P_z  = 0.70 * obj.offset_P_z  + 0.30 * min(0.0, dP_z);
+            obj.offset_D_z  = 0.80 * obj.offset_D_z  + 0.20 * dD_z;
         end
 
         function pid_gains = GetZ_PID(obj)
@@ -204,23 +209,29 @@ classdef PositionCtrl_GS < handle
                     U1_eq  = obj.m * obj.g;
                 end
                 
-                % X, Y축 게인 자동 산출 (+ PPO 잔차 오프셋 합성, 기본값 0)
-                kP_xy = max(obj.lpv_a1 / obj.g + obj.offset_P_xy, 0.02);
+                % X, Y축 게인 자동 산출 (+ 대각도 위상여유 보호 PPO 잔차 합성)
+                cos_phi_eq = max(cos(phi_eq), 0.5);
+                omega_turn = abs(obj.v_des * obj.kappa_des);
+                lambda_lat = (1.0 / (cos_phi_eq^2)) * (1.0 + 0.4 * omega_turn);
+                s_xy       = max(0.15, min(1.0, (2.50 - lambda_lat) / 0.60));
+                inv_cos_z  = 1.0 / cos_phi_eq;
+
+                kP_xy = max(obj.lpv_a1 / obj.g + obj.offset_P_xy * s_xy, 0.02);
                 kI_xy = obj.lpv_a0 / obj.g;
-                kD_xy = max(obj.lpv_a2 / obj.g + obj.offset_D_xy, 0.02);
+                kD_xy = max(obj.lpv_a2 / obj.g + obj.offset_D_xy * s_xy, 0.02);
                 
                 % Z축 게인 산출 로직 분리
                 if obj.use_z_scheduling && obj.use_feedforward
                     % 3번 모델: 기울기(phi_eq)에 따른 스케줄링 적용
-                    b_z = cos(phi_eq) / obj.m;
+                    b_z = cos_phi_eq / obj.m;
                 else
                     % 2번 모델: 호버링 기준 고정 게인 (cos(0) = 1)
                     b_z = 1.0 / obj.m;
                 end
                 
-                kP_z = max(obj.lpv_a1 / b_z + obj.offset_P_z, 0.5);
+                kP_z = max(obj.lpv_a1 / b_z + obj.offset_P_z * inv_cos_z, 0.5);
                 kI_z = obj.lpv_a0 / b_z;
-                kD_z = max(obj.lpv_a2 / b_z + obj.offset_D_z, 0.2);
+                kD_z = max(obj.lpv_a2 / b_z + obj.offset_D_z * inv_cos_z, 0.2);
                 
                 % 로깅을 위해 객체 속성에 저장
                 obj.current_kP_z = kP_z; 

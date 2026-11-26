@@ -85,6 +85,20 @@ classdef PositionCtrl_PX4 < handle
                 obj.K_att = cfg.K_att;
             end
 
+            % ChoeJae px4_main 최상위 제어 옵션 호환
+            if isfield(cfg, 'Feedforward') && ~isempty(cfg.Feedforward)
+                obj.use_feedforward = logical(cfg.Feedforward);
+            end
+            if isfield(cfg, 'Err_Yaw') && ~isempty(cfg.Err_Yaw)
+                obj.err_yaw_desired = strcmpi(cfg.Err_Yaw, 'desired');
+            end
+            if isfield(cfg, 'Z_D_on_measurement') && ~isempty(cfg.Z_D_on_measurement)
+                obj.z_D_on_meas = logical(cfg.Z_D_on_measurement);
+            end
+            if isfield(cfg, 'Eq_Delay_Comp') && ~isempty(cfg.Eq_Delay_Comp)
+                obj.eq_delay_comp = logical(cfg.Eq_Delay_Comp);
+            end
+
             obj.Reset();
         end
 
@@ -104,13 +118,21 @@ classdef PositionCtrl_PX4 < handle
         end
 
         function setResidualOffsets(obj, dP_xy, dD_xy, dP_z, dD_z)
-            % run_px4_mission.m 호환:
-            %   run_px4_mission 은 range_P_xy=0.8, range_D_xy=1.0, range_P_z=1.5, range_D_z=1.0 으로
-            %   스케일된 오프셋을 전달하므로, 위상 여유와 추력 스파이크 억제가 보장되는 안전 범위로 매핑
-            obj.offset_P_xy = dP_xy;
-            obj.offset_D_xy = dD_xy;
-            obj.offset_P_z  = dP_z;
-            obj.offset_D_z  = dD_z;
+            % run_px4_mission.m 호환 (10 Hz 호출):
+            %   - 모든 입력이 0(PPO 비활성 구간)이면 즉시 0으로 리셋
+            %   - XY 잔차는 저역통과(alpha=0.08 @ 10Hz)로 원 선회 중 World-NED 방위각 회전 리플 억제
+            %   - Z 비례 잔차(dP_z)는 계단 Soft-Start 하향 감쇠(<=0)만 허용해 정상상태 리플 차단, 미분 잔차(dD_z)는 감쇠 보강 유지
+            if dP_xy == 0 && dD_xy == 0 && dP_z == 0 && dD_z == 0
+                obj.offset_P_xy = 0.0;
+                obj.offset_D_xy = 0.0;
+                obj.offset_P_z  = 0.0;
+                obj.offset_D_z  = 0.0;
+                return;
+            end
+            obj.offset_P_xy = 0.92 * obj.offset_P_xy + 0.08 * dP_xy;
+            obj.offset_D_xy = 0.92 * obj.offset_D_xy + 0.08 * dD_xy;
+            obj.offset_P_z  = 0.70 * obj.offset_P_z  + 0.30 * min(0.0, dP_z);
+            obj.offset_D_z  = 0.80 * obj.offset_D_z  + 0.20 * dD_z;
         end
 
         function pid_gains = GetZ_PID(obj)
@@ -188,17 +210,23 @@ classdef PositionCtrl_PX4 < handle
                 U1_eq  = obj.m * obj.g;
             end
 
-            % 6. 게인 산출 (ChoeJae PositionCtrl.m 기저 게인 + PPO 잔차 오프셋 1:1 매핑)
-            %    RL_DroneEnv_GS_AltStep 의 PositionCtrl_GS 스케일(P_xy=0.05, D_xy=0.16, P_z=[-1.5,+0.25], D_z=1.5 N/m)과
-            %    정확히 1:1 일치하도록 매핑
-            dP_xy_rad = 0.05 * (obj.offset_P_xy / 0.8);
-            dD_xy_rad = 0.16 * (max(0.0, obj.offset_D_xy) / 1.0);
-            if obj.offset_P_z >= 0
-                dP_z_N = 0.25 * (obj.offset_P_z / 1.5);
-            else
-                dP_z_N = 1.50 * (obj.offset_P_z / 1.5); % 계단 입력 시 P-kick 완화 (-1.5 N/m)
-            end
-            dD_z_N = 1.50 * (max(0.0, obj.offset_D_z) / 1.0);
+            % 6. 게인 산출 (ChoeJae PositionCtrl.m 기저 게인 + 대각도 위상여유 보호 PPO 잔차 합성)
+            %    - 대각도 선회(phi_eq -> 40 deg)에서는 횡방향 유효 플랜트 이득 d(g*tan(phi))/d(phi) = g*sec^2(phi_eq) 가
+            %      1.70배 증폭되고 선회 각속도(omega = v*|kappa|) 교차 결합이 커져 위상 여유가 감소함.
+            %    - 복합 유효 부하 지수 Lambda = sec^2(phi_eq) * (1 + 0.4 * v * |kappa|) 에 따라
+            %      phi_eq <= 33 deg 에서는 XY 잔차를 100% 유지하고, 40 deg 고각속도 구간에서만 부드럽게 감쇠시켜
+            %      롤-고도 한계사이클(Limit Cycle) 진동을 원천 차단함.
+            %    - Z 잔차는 기저 Z 스케줄링(1/cos(phi_eq))과 동일하게 1/cos(phi_eq) 스케일을 곱해 대각도 감쇠력 보존.
+            cos_phi_eq = max(cos(phi_eq), 0.5);
+            omega_turn = v_xy * abs(kappa_des);
+            lambda_lat = (1.0 / (cos_phi_eq^2)) * (1.0 + 0.4 * omega_turn);
+            s_xy       = max(0.15, min(1.0, (2.50 - lambda_lat) / 0.60));
+            inv_cos_z  = 1.0 / cos_phi_eq;
+
+            dP_xy_rad = 0.05 * (obj.offset_P_xy / 0.8) * s_xy;
+            dD_xy_rad = 0.16 * (max(0.0, obj.offset_D_xy) / 1.0) * s_xy;
+            dP_z_N    = 1.50 * (min(0.0, obj.offset_P_z) / 1.5) * inv_cos_z;
+            dD_z_N    = 1.50 * (max(0.0, obj.offset_D_z) / 1.0) * inv_cos_z;
 
             kP_xy = max(obj.lpv_a1 / obj.g + dP_xy_rad, 0.05);
             kI_xy = obj.lpv_a0 / obj.g;
