@@ -25,8 +25,8 @@ function run_px4_batch_stepsize(steps, start_at)
 %
 %  동작
 %   - 모든 실험은 원래 프리롤 시작점(원점)에서 시작하고, 끝나면 원점으로 복귀 (복귀는 최대 20 m/s, 사인 램프 가감속)
-%     원 궤도: 그 자리 착륙 -> 결과 저장 -> 재이륙 -> 원점 복귀 -> 착륙·disarm (end_mode = 'land_plot_return')
-%     직진   : 착륙하지 않고 공중에서 원점 복귀 -> 착륙·disarm -> 결과 저장 (end_mode = 'return_land_plot')
+%     원 궤도·직진 모두: 착륙하지 않고 공중에서 바로 원점 복귀 -> 착륙·disarm -> ULog 결과 저장 (end_mode = 'return_land_plot')
+%       (착륙 -> disarm -> 재이륙 과정이 없어 재시동 거부로 멈추는 문제를 피함)
 %              (Gazebo 바닥이 유한해서 ~1.2 km 밖에서 착륙하면 바닥을 뚫고 떨어짐)
 %   - 실행 사이 pause_between 초 대기 후 다음 실험 시작
 %   - 비행이 중단(abort)되어도 다음 실험 계속 (continue_on_abort), MATLAB 오류가 나면 나머지 실험은 건너뜀
@@ -104,16 +104,10 @@ for i = start_at:nRun
     name = runs{i, 1};
     ov   = runs{i, 2};
     % 모든 실험: 원래 프리롤 시작점(원점)에서 시작하고, 끝나면 원점으로 복귀
-    %  - 원 궤도: 그 자리 착륙 -> 결과 저장 -> 재이륙 -> 원점 복귀 -> 착륙 (land_plot_return)
-    %  - 직진   : 착륙하지 않고 공중에서 원점 복귀 -> 착륙 -> 결과 저장 (return_land_plot)
-    %             (~1.2 km 밖은 Gazebo 바닥이 없어 착륙하면 바닥을 뚫고 떨어짐)
+    %  - 원 궤도·직진 모두: 착륙하지 않고 공중에서 원점 복귀 -> 착륙 -> ULog 결과 저장 (return_land_plot)
     if ~isfield(ov, 'px4'), ov.px4 = struct(); end
     ov.px4.start_here = false;
-    if abs(ov.curvature) < 1e-6
-        ov.px4.end_mode = 'return_land_plot';
-    else
-        ov.px4.end_mode = 'land_plot_return';
-    end
+    ov.px4.end_mode = 'return_land_plot';
     fprintf('\n===== [%d/%d] %s =====\n', i, nRun, name);
     setappdata(0, 'px4_batch_label', sprintf('[%d/%d] %s', i, nRun, name));   % px4_main 이 clc 후 표시
     t_start(i) = datetime('now');
